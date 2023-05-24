@@ -1,0 +1,132 @@
+{
+    "required": [
+      {
+        "name": "mip_era",
+        "data_type": "enum",
+        "supported": true
+      },
+      {
+        "name": "activity_drs",
+        "data_type": "enum",
+        "supported": true
+      },
+      {
+        "name": "institution_id",
+        "data_type": "enum",
+        "supported": true
+      },
+      {
+        "name": "source_id",
+        "data_type": "enum",
+        "supported": true
+      },
+      {
+        "name": "experiment_id",
+        "data_type": "enum",
+        "supported": true
+      },
+      {
+        "name": "member_id",
+        "data_type": "string",
+        "supported": true
+      },
+      {
+        "name": "table_id",
+        "data_type": "enum",
+        "supported": true
+      },
+      {
+        "name": "variable_id",
+        "data_type": "string",
+        "supported": true
+      },
+      {
+        "name": "grid_label",
+        "data_type": "enum",
+        "supported": true
+      },
+      {
+        "name": "model_cohort",
+        "data_type": "string",
+        "supported": true
+      }
+    ],
+    "optional": [
+      {
+        "name": "frequency",
+        "data_type": "string",
+        "supported": true
+      },
+      {
+        "name": "realm",
+        "data_type": "string",
+        "supported": true
+      },
+      {
+        "name": "product",
+        "data_type": "string",
+        "supported": true
+      },
+      {
+        "name": "nominal_resolution",
+        "data_type": "string",
+        "supported": true
+      },
+      {
+        "name": "source_type",
+        "data_type": "string",
+        "supported": true
+      },
+      {
+        "name": "grid",
+        "data_type": "string",
+        "supported": true
+      },
+      {
+        "name": "creation_date",
+        "data_type": "string",
+        "supported": true
+      },
+      {
+        "name": "variant_label",
+        "data_type": "string",
+        "supported": true
+      },
+      {
+        "name": "sub_experiment_id",
+        "data_type": "enum",
+        "supported": true
+      },
+      {
+        "name": "further_info_url",
+        "data_type": "string",
+        "supported": true
+      },
+      {
+        "name": "activity_id",
+        "data_type": "string",
+        "supported": true
+      },
+      {
+        "name": "data_specs_version",
+        "data_type": "string",
+        "supported": true
+      },
+      {
+        "name": "experiment_title",
+        "data_type": "string",
+        "supported": true
+      },
+      {
+        "name": "project",
+        "data_type": "string",
+        "supported": true
+      },
+      {
+        "name": "description",
+        "data_type": "text",
+        "supported": false
+      }
+    ]
+  }
+  
