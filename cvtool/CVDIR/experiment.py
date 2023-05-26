@@ -1,7 +1,7 @@
 import os
 import sys
 import glob
-
+from experiment_vars import experiment_template
 try:  # as a module
     from ..core.curses_toolbox import curses, CursesEditor, CursesSelector
     from ..core.stdout import log
@@ -19,37 +19,12 @@ except:
 import json
 import argparse
 import time
+from pprint import pprint
 from collections import Counter
 
 
-print = log(__file__.split("activity")[1])
+print = log(__file__.split("experiment")[1])
 
-
-def new_activity(data, key=None, value=None):
-    """
-    Add a new activity to the data dictionary.
-
-    Args:
-        data (dict): The dictionary to add the new activity to.
-        key (str, optional): The key for the new activity. If not provided, user input will be requested.
-        value (str, optional): The description for the new activity. If not provided, user input will be requested.
-
-    Returns:
-        dict: The updated data dictionary.
-
-    Raises:
-        SystemExit: If the provided key already exists in the data dictionary.
-
-    """
-    key = key or input("Enter NEW activity: ")
-    value = value or input("Enter NEW activity description: ")
-
-    if key in data['activity_id']:
-        print.error(f'Activity {key} exists')
-        sys.exit()
-    
-    data['activity_id'][key] = value
-    return data
 
 
 def update_meta(data):
@@ -72,7 +47,7 @@ def update_meta(data):
 
 
 
-def main(directory, edit=False):
+def main(directory,experiment_id, edit=False):
     if directory[-1] != '/':
         directory += '/'
     exists(directory)
@@ -85,40 +60,45 @@ def main(directory, edit=False):
 
     time.sleep(2)
 
-    data = json.load(open(f'{directory}{PROJECT}_activity_id.json', 'r'))
+    data = json.load(open(f'{directory}{PROJECT}_experiment_id.json', 'r'))
     # print.warning(data)
 
-    if not edit:
-        print.warning('Loading Activity VIEWER. Please Wait')
+    if not experiment_id :
+
         time.sleep(2)
-        items = data['activity_id']
-        editor = CursesSelector(items)
+        items = list(data['experiment_id'].keys())
+        # pprint(type(items))
+
+        # pprint(data) 
+
+
+        editor = CursesSelector(items,title='Select experiment to edit')
         select = curses.wrapper(editor.main)
 
-        if select == 'new':
-            data = new_activity(data)
+        # if select == 'new':
+        #     data = new_activity(data)
 
-    else:
+    # else:
 
-        print.warning('Loading Activity EDITOR. Please Wait')
-        time.sleep(2)
-        items = data['activity_id']
+    #     print.warning('Loading Activity EDITOR. Please Wait')
+    #     time.sleep(2)
+    #     items = data['activity_id']
 
-        def save(pair_list):
-            return dict(pair_list)
+    #     def save(pair_list):
+    #         return dict(pair_list)
 
-        editor = CursesEditor(items, save_func=save)
-        updates = curses.wrapper(editor.main)
+    #     editor = CursesEditor(items, save_func=save)
+    #     updates = curses.wrapper(editor.main)
 
-        # print.info(updates)
-        import pprint
-        pprint.pprint(updates)
-        # update the table 
+    #     # print.info(updates)
+    #     import pprint
+    #     pprint.pprint(updates)
+    #     # update the table 
         
 
 
-    # UPDATE THE LAST COMMIT DATA
-    data = update_meta(data)
+    # # UPDATE THE LAST COMMIT DATA
+    # data = update_meta(data)
 
     
 

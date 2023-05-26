@@ -5,9 +5,9 @@ A list editor written in ncurses.
 
 Author: Daniel Ellis
 github: @wolfiex
-email:  admin@danielellisresearch.com
+email:  curses_toolbox@danielellisresearch.com
 
-Usage for CMIP and ESA granted by: 
+Modification and Usage for CMIP granted by author: 
 daniel.ellis@ext.esa.int
 '''
 
@@ -15,10 +15,19 @@ daniel.ellis@ext.esa.int
 
 import curses
 
+def get_terminal_lines():
+    stdscr = curses.initscr()
+    num_lines, _ = stdscr.getmaxyx()
+    curses.endwin()
+    return num_lines
+
+
 def reformat(items):
     if isinstance( items, dict ): items = items.items()
     if type(items) is type(dict().items()): items = [[*i] for i in items]
-    if len(items[0]) == 1 : items =  [[*i] for i in enumerate(items)]
+    if isinstance(items,list) and not isinstance(items[0],list) : items =  [[*i] for i in enumerate(items)]
+    import pprint
+    pprint.pprint(items)
     return items
 
 
@@ -62,7 +71,7 @@ class CursesEditor:
         curses.echo()
         new_value = stdscr.getstr().decode()
 
-        if not self.is_valid(new_value):
+        if not self.is_valid(self.items[self.selected_row][0] , new_value):
             stdscr.addstr(len(self.items) + 2, 0, "Invalid value!", curses.A_BOLD)
             stdscr.refresh()
             stdscr.getch()
@@ -84,7 +93,7 @@ class CursesEditor:
             return self.save_func(self.items)
         return False
 
-    def is_valid(self,value):
+    def is_valid(self,key, value):
         if self.check is None: return True
         else: 
             return self.check(value)
@@ -130,27 +139,43 @@ class CursesEditor:
 
 
 class CursesSelector:
-    def __init__(self, items):
+    def __init__(self, items, title=''):
         self.items = reformat(items)
         self.selected_row = 0
-
+        self.n = get_terminal_lines() - 6
+        self.title = title
+    
     def display_items(self, stdscr):
         stdscr.clear()
+        start_index = self.selected_row - (self.selected_row % self.n)
+        end_index = min(start_index + self.n, len(self.items))
 
-        for i, row in enumerate(self.items):
+        title = f" {self.title} "
+        title_length = len(title)
+        title_start = (stdscr.getmaxyx()[1] - title_length) // 2
+
+        stdscr.attron(curses.color_pair(3))  # Apply the violet color pair
+        stdscr.addstr(0, title_start, title)
+        stdscr.attroff(curses.color_pair(3))  # Restore default color
+
+        for i, row in enumerate(self.items[start_index:end_index], start=start_index):
             if i == self.selected_row:
-                stdscr.addstr(i, 0, f"{row[0]} : {row[1]}", curses.color_pair(1))
+                stdscr.addstr(i - start_index + 2, 0, f"{row[0]} : {row[1]}", curses.color_pair(1))
             else:
-                stdscr.addstr(i, 0, f"{row[0]} : {row[1]}")
+                stdscr.addstr(i - start_index + 2, 0, f"{row[0]} : {row[1]}")
 
-        if self.selected_row == len(self.items):
-            stdscr.addstr(len(self.items), 0, "Add New", curses.color_pair(2) | curses.A_REVERSE)
+        if self.selected_row >= len(self.items):
+            stdscr.addstr(self.n + 2, 0, "Add New", curses.color_pair(2) | curses.A_REVERSE)
         else:
-            stdscr.addstr(len(self.items), 0, "Add New", curses.color_pair(2))
+            stdscr.addstr(self.n + 2, 0, "Add New", curses.color_pair(2))
+
         if self.selected_row == len(self.items) + 1:
-            stdscr.addstr(len(self.items) + 1, 0, "Quit", curses.color_pair(2) | curses.A_REVERSE)
+            stdscr.addstr(self.n + 3, 0, "Quit", curses.color_pair(2) | curses.A_REVERSE)
         else:
-            stdscr.addstr(len(self.items) + 1, 0, "Quit", curses.color_pair(2))
+            stdscr.addstr(self.n + 3, 0, "Quit", curses.color_pair(2))
+
+        counter_text = f"{start_index + 1} - {min(start_index + self.n, len(self.items))} items out of {len(self.items)}"
+        stdscr.addstr(self.n + 4, 0, counter_text, curses.color_pair(2))
 
         stdscr.refresh()
 
@@ -161,16 +186,14 @@ class CursesSelector:
             self.selected_row -= 1
         elif key == curses.KEY_DOWN and self.selected_row < len(self.items) + 1:
             self.selected_row += 1
-        elif key == curses.KEY_ENTER or key in [113, 115, 110]:
+        elif key == curses.KEY_ENTER or key in [10,13,113, 115, 110]:
             if self.selected_row == len(self.items) or key == ord('n'):
                 return 'new'
             elif self.selected_row == len(self.items) + 1 or key == ord('q'):
                 return False
             else:
-                
                 value = list(self.items)[self.selected_row]
                 return value
-
 
     def main(self, stdscr):
         curses.curs_set(0)
@@ -178,11 +201,12 @@ class CursesSelector:
         curses.start_color()
         curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+        curses.init_pair(3, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
 
         while True:
             self.display_items(stdscr)
             result = self.select_value(stdscr)
-            
+
             if result is not None:
                 return result
 
