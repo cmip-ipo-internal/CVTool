@@ -1,3 +1,8 @@
+'''
+This is where all the scripts for creating the CV files from the CVDIR will go
+'''
+
+
 import json
 from typing import List, Optional, Union
 from copy import deepcopy

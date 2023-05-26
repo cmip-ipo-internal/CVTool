@@ -1,3 +1,7 @@
+'''
+Files for editing various mip tables. 
+'''
+
 
 import json
 import re
