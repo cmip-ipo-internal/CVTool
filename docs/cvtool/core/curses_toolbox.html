@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>cvtool.core.curses_toolbox API documentation</title>
+<meta name="description" content="A list editor written in ncurses …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>cvtool.core.curses_toolbox</code></h1>
+</header>
+<section id="section-intro">
+<p>A list editor written in ncurses. </p>
+<p>*** Use of this program requires attribution. ***</p>
+<p>Author: Daniel Ellis
+github: @wolfiex
+email:
+curses_toolbox@danielellisresearch.com</p>
+<p>Modification and Usage for CMIP granted by author:
+daniel.ellis@ext.esa.int</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#39;&#39;&#39; 
+A list editor written in ncurses. 
+
+*** Use of this program requires attribution. ***
+
+Author: Daniel Ellis
+github: @wolfiex
+email:  curses_toolbox@danielellisresearch.com
+
+Modification and Usage for CMIP granted by author: 
+daniel.ellis@ext.esa.int
+&#39;&#39;&#39;
+
+
+
+import curses
+
+def get_terminal_lines():
+    stdscr = curses.initscr()
+    num_lines, _ = stdscr.getmaxyx()
+    curses.endwin()
+    return num_lines
+
+
+def reformat(items):
+    if isinstance( items, dict ): items = items.items()
+    if type(items) is type(dict().items()): items = [[*i] for i in items]
+    if isinstance(items,list) and not isinstance(items[0],list) : items =  [[*i] for i in enumerate(items)]
+    # import pprint
+    # pprint.pprint(items)
+    return items
+
+
+
+class CursesEditor:
+    def __init__(self, items, save_func=None, check=None, title=&#39;&#39;):
+        self.items = reformat(items)
+        self.historic = self.items.copy()
+        self.save_func = save_func
+        self.check = check
+        self.selected_row = 0
+        self.title = title
+
+    def display_items(self, stdscr):
+        stdscr.clear()
+
+        title = f&#34; {self.title} &#34;
+        title_length = len(title)
+        title_start = (stdscr.getmaxyx()[1] - title_length) // 2
+
+        stdscr.attron(curses.color_pair(3))  # Apply the violet color pair
+        stdscr.addstr(0, title_start, title)
+        stdscr.attroff(curses.color_pair(3))  # Restore default color
+
+        for i, row in enumerate(self.items):
+            if i == self.selected_row:
+                stdscr.addstr(i + 2, 0, f&#34;{row[0]} : {row[1]}&#34;, curses.color_pair(1))
+            else:
+                stdscr.addstr(i + 2, 0, f&#34;{row[0]} : {row[1]}&#34;)
+
+        if self.selected_row == len(self.items):
+            stdscr.addstr(len(self.items) + 2, 0, &#34;Save (s)&#34;, curses.color_pair(2) | curses.A_REVERSE)
+        else:
+            stdscr.addstr(len(self.items) + 2, 0, &#34;Save (s)&#34;, curses.color_pair(2))
+        if self.selected_row == len(self.items) + 1:
+            stdscr.addstr(len(self.items) + 3, 0, &#34;Quit (q)&#34;, curses.color_pair(2) | curses.A_REVERSE)
+        else:
+            stdscr.addstr(len(self.items) + 3, 0, &#34;Quit (q)&#34;, curses.color_pair(2))
+
+        stdscr.refresh()
+
+    def edit_value(self, stdscr):
+        stdscr.move(self.selected_row + 2, len(self.items[self.selected_row][0]) + 2)
+        stdscr.clrtoeol()
+
+        curses.echo()
+        new_value = stdscr.getstr().decode()
+
+        valid = self.is_valid(self.items[self.selected_row][0] , new_value)
+        if not valid:
+            stdscr.addstr(len(self.items) +2, 0, &#34;Invalid value !&#34; , curses.A_BOLD)
+            stdscr.refresh()
+            stdscr.getch()
+        else:
+            self.items[self.selected_row][1] = new_value
+            curses.noecho()
+            self.check_value(stdscr)
+
+    def check_value(self, stdscr):
+        value = self.items[self.selected_row][1]
+        if value == &#39;invalid&#39;:
+            stdscr.addstr(len(self.items) + 2, 0, &#34;Invalid value!&#34;, curses.A_BOLD)
+        else:
+            stdscr.addstr(len(self.items) + 2, 0, &#34;Value is valid.&#34;, curses.A_BOLD)
+        stdscr.refresh()
+
+    def save_items(self):
+        if self.save_func is not None:
+            return self.save_func(self.items)
+        return False
+
+    def is_valid(self,key, value):
+        if self.check is None: return (True,&#34;&#34;)
+        else: 
+            # c = self.check(key,value)
+            # if c[0]:
+            #     return c           
+            # # change output to {status,msg}   
+
+            return self.check(key,value)
+                
+
+
+    def main(self, stdscr):
+        curses.curs_set(0)
+        stdscr.keypad(1)
+        curses.start_color()
+        curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
+        curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+        curses.init_pair(3, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
+
+        while True:
+            self.display_items(stdscr)
+            key = stdscr.getch()
+
+            if key == curses.KEY_UP and self.selected_row &gt; 0:
+                self.selected_row -= 1
+            elif key == curses.KEY_DOWN and self.selected_row &lt; len(self.items) + 1:
+                self.selected_row += 1
+            elif key == curses.KEY_ENTER or key in [10, 113, 115, 110,101,114]:
+                #[ord(&#39;\n&#39;), ord(&#39;q&#39;), ord(&#39;s&#39;), ord(&#39;n&#39;), ord(&#39;e&#39;),ord(r)]:
+                
+                if self.selected_row == len(self.items) or key == ord(&#39;s&#39;):
+                    return self.save_items()
+                    break
+                elif self.selected_row == len(self.items) + 1 or key == ord(&#39;q&#39;):
+                    return False
+                    break
+                elif key == ord(&#39;r&#39;):
+                    curses.echo()
+                    self.items[self.selected_row][1] = &#39;&#39;+self.historic[self.selected_row][1]
+                    curses.noecho()
+
+                elif self.selected_row &lt; len(self.items) or key == ord(&#39;e&#39;):
+                        self.edit_value(stdscr)
+
+        ######
+        # fix revert
+        #######
+        stdscr.clear()
+        stdscr.refresh()
+
+
+
+class CursesSelector:
+    def __init__(self, items, title=&#39;&#39;):
+        self.items = reformat(items)
+        self.selected_row = 0
+        self.n = get_terminal_lines() - 6
+        self.title = title
+    
+    def display_items(self, stdscr):
+        stdscr.clear()
+        start_index = self.selected_row - (self.selected_row % self.n)
+        end_index = min(start_index + self.n, len(self.items))
+
+        title = f&#34; {self.title} &#34;
+        title_length = len(title)
+        title_start = (stdscr.getmaxyx()[1] - title_length) // 2
+
+        stdscr.attron(curses.color_pair(3))  # Apply the violet color pair
+        stdscr.addstr(0, title_start, title)
+        stdscr.attroff(curses.color_pair(3))  # Restore default color
+
+        for i, row in enumerate(self.items[start_index:end_index], start=start_index):
+            if i == self.selected_row:
+                stdscr.addstr(i - start_index + 2, 0, f&#34;{row[0]} : {row[1]}&#34;, curses.color_pair(1))
+            else:
+                stdscr.addstr(i - start_index + 2, 0, f&#34;{row[0]} : {row[1]}&#34;)
+
+        if self.selected_row &gt;= len(self.items):
+            stdscr.addstr(self.n + 2, 0, &#34;Add New (n)&#34;, curses.color_pair(2) | curses.A_REVERSE)
+        else:
+            stdscr.addstr(self.n + 2, 0, &#34;Add New (n)&#34;, curses.color_pair(2))
+
+        if self.selected_row == len(self.items) + 1:
+            stdscr.addstr(self.n + 3, 0, &#34;Quit (q)&#34;, curses.color_pair(2) | curses.A_REVERSE)
+        else:
+            stdscr.addstr(self.n + 3, 0, &#34;Quit (q)&#34;, curses.color_pair(2))
+
+        counter_text = f&#34;{start_index + 1} - {min(start_index + self.n, len(self.items))} items out of {len(self.items)}&#34;
+        stdscr.addstr(self.n + 4, 0, counter_text, curses.color_pair(2))
+
+        stdscr.refresh()
+
+    def select_value(self, stdscr):
+        key = stdscr.getch()
+
+        if key == curses.KEY_UP and self.selected_row &gt; 0:
+            self.selected_row -= 1
+        elif key == curses.KEY_DOWN and self.selected_row &lt; len(self.items) + 1:
+            self.selected_row += 1
+        elif key == curses.KEY_ENTER or key in [10,13,113, 115, 110]:
+            if self.selected_row == len(self.items) or key == ord(&#39;n&#39;):
+                return &#39;new&#39;
+            elif self.selected_row == len(self.items) + 1 or key == ord(&#39;q&#39;):
+                return False
+            else:
+                value = list(self.items)[self.selected_row]
+                return value
+
+    def main(self, stdscr):
+        curses.curs_set(0)
+        stdscr.keypad(1)
+        curses.start_color()
+        curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
+        curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+        curses.init_pair(3, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
+
+        while True:
+            self.display_items(stdscr)
+            result = self.select_value(stdscr)
+
+            if result is not None:
+                return result
+
+        stdscr.clear()
+        stdscr.refresh()
+
+&#39;&#39;&#39;
+# Example usage:
+items = [
+    [&#39;Item 1&#39;, &#39;Value 1&#39;],
+    [&#39;Item 2&#39;, &#39;Value 2&#39;],
+    [&#39;Item 3&#39;, &#39;Value 3&#39;]
+]
+
+
+def valid(value):
+        if value == &#39;invalid&#39;:
+            return False
+        return True
+
+
+def save_items():
+    # Custom save function
+    print(&#34;Custom save function called.&#34;)
+
+editor = CursesEditor(items, save_func=save_items,check = valid)
+curses.wrapper(editor.main)
+
+&#39;&#39;&#39;</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="cvtool.core.curses_toolbox.get_terminal_lines"><code class="name flex">
+<span>def <span class="ident">get_terminal_lines</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_terminal_lines():
+    stdscr = curses.initscr()
+    num_lines, _ = stdscr.getmaxyx()
+    curses.endwin()
+    return num_lines</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.curses_toolbox.reformat"><code class="name flex">
+<span>def <span class="ident">reformat</span></span>(<span>items)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reformat(items):
+    if isinstance( items, dict ): items = items.items()
+    if type(items) is type(dict().items()): items = [[*i] for i in items]
+    if isinstance(items,list) and not isinstance(items[0],list) : items =  [[*i] for i in enumerate(items)]
+    # import pprint
+    # pprint.pprint(items)
+    return items</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="cvtool.core.curses_toolbox.CursesEditor"><code class="flex name class">
+<span>class <span class="ident">CursesEditor</span></span>
+<span>(</span><span>items, save_func=None, check=None, title='')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CursesEditor:
+    def __init__(self, items, save_func=None, check=None, title=&#39;&#39;):
+        self.items = reformat(items)
+        self.historic = self.items.copy()
+        self.save_func = save_func
+        self.check = check
+        self.selected_row = 0
+        self.title = title
+
+    def display_items(self, stdscr):
+        stdscr.clear()
+
+        title = f&#34; {self.title} &#34;
+        title_length = len(title)
+        title_start = (stdscr.getmaxyx()[1] - title_length) // 2
+
+        stdscr.attron(curses.color_pair(3))  # Apply the violet color pair
+        stdscr.addstr(0, title_start, title)
+        stdscr.attroff(curses.color_pair(3))  # Restore default color
+
+        for i, row in enumerate(self.items):
+            if i == self.selected_row:
+                stdscr.addstr(i + 2, 0, f&#34;{row[0]} : {row[1]}&#34;, curses.color_pair(1))
+            else:
+                stdscr.addstr(i + 2, 0, f&#34;{row[0]} : {row[1]}&#34;)
+
+        if self.selected_row == len(self.items):
+            stdscr.addstr(len(self.items) + 2, 0, &#34;Save (s)&#34;, curses.color_pair(2) | curses.A_REVERSE)
+        else:
+            stdscr.addstr(len(self.items) + 2, 0, &#34;Save (s)&#34;, curses.color_pair(2))
+        if self.selected_row == len(self.items) + 1:
+            stdscr.addstr(len(self.items) + 3, 0, &#34;Quit (q)&#34;, curses.color_pair(2) | curses.A_REVERSE)
+        else:
+            stdscr.addstr(len(self.items) + 3, 0, &#34;Quit (q)&#34;, curses.color_pair(2))
+
+        stdscr.refresh()
+
+    def edit_value(self, stdscr):
+        stdscr.move(self.selected_row + 2, len(self.items[self.selected_row][0]) + 2)
+        stdscr.clrtoeol()
+
+        curses.echo()
+        new_value = stdscr.getstr().decode()
+
+        valid = self.is_valid(self.items[self.selected_row][0] , new_value)
+        if not valid:
+            stdscr.addstr(len(self.items) +2, 0, &#34;Invalid value !&#34; , curses.A_BOLD)
+            stdscr.refresh()
+            stdscr.getch()
+        else:
+            self.items[self.selected_row][1] = new_value
+            curses.noecho()
+            self.check_value(stdscr)
+
+    def check_value(self, stdscr):
+        value = self.items[self.selected_row][1]
+        if value == &#39;invalid&#39;:
+            stdscr.addstr(len(self.items) + 2, 0, &#34;Invalid value!&#34;, curses.A_BOLD)
+        else:
+            stdscr.addstr(len(self.items) + 2, 0, &#34;Value is valid.&#34;, curses.A_BOLD)
+        stdscr.refresh()
+
+    def save_items(self):
+        if self.save_func is not None:
+            return self.save_func(self.items)
+        return False
+
+    def is_valid(self,key, value):
+        if self.check is None: return (True,&#34;&#34;)
+        else: 
+            # c = self.check(key,value)
+            # if c[0]:
+            #     return c           
+            # # change output to {status,msg}   
+
+            return self.check(key,value)
+                
+
+
+    def main(self, stdscr):
+        curses.curs_set(0)
+        stdscr.keypad(1)
+        curses.start_color()
+        curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
+        curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+        curses.init_pair(3, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
+
+        while True:
+            self.display_items(stdscr)
+            key = stdscr.getch()
+
+            if key == curses.KEY_UP and self.selected_row &gt; 0:
+                self.selected_row -= 1
+            elif key == curses.KEY_DOWN and self.selected_row &lt; len(self.items) + 1:
+                self.selected_row += 1
+            elif key == curses.KEY_ENTER or key in [10, 113, 115, 110,101,114]:
+                #[ord(&#39;\n&#39;), ord(&#39;q&#39;), ord(&#39;s&#39;), ord(&#39;n&#39;), ord(&#39;e&#39;),ord(r)]:
+                
+                if self.selected_row == len(self.items) or key == ord(&#39;s&#39;):
+                    return self.save_items()
+                    break
+                elif self.selected_row == len(self.items) + 1 or key == ord(&#39;q&#39;):
+                    return False
+                    break
+                elif key == ord(&#39;r&#39;):
+                    curses.echo()
+                    self.items[self.selected_row][1] = &#39;&#39;+self.historic[self.selected_row][1]
+                    curses.noecho()
+
+                elif self.selected_row &lt; len(self.items) or key == ord(&#39;e&#39;):
+                        self.edit_value(stdscr)
+
+        ######
+        # fix revert
+        #######
+        stdscr.clear()
+        stdscr.refresh()</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="cvtool.core.curses_toolbox.CursesEditor.check_value"><code class="name flex">
+<span>def <span class="ident">check_value</span></span>(<span>self, stdscr)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_value(self, stdscr):
+    value = self.items[self.selected_row][1]
+    if value == &#39;invalid&#39;:
+        stdscr.addstr(len(self.items) + 2, 0, &#34;Invalid value!&#34;, curses.A_BOLD)
+    else:
+        stdscr.addstr(len(self.items) + 2, 0, &#34;Value is valid.&#34;, curses.A_BOLD)
+    stdscr.refresh()</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.curses_toolbox.CursesEditor.display_items"><code class="name flex">
+<span>def <span class="ident">display_items</span></span>(<span>self, stdscr)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def display_items(self, stdscr):
+    stdscr.clear()
+
+    title = f&#34; {self.title} &#34;
+    title_length = len(title)
+    title_start = (stdscr.getmaxyx()[1] - title_length) // 2
+
+    stdscr.attron(curses.color_pair(3))  # Apply the violet color pair
+    stdscr.addstr(0, title_start, title)
+    stdscr.attroff(curses.color_pair(3))  # Restore default color
+
+    for i, row in enumerate(self.items):
+        if i == self.selected_row:
+            stdscr.addstr(i + 2, 0, f&#34;{row[0]} : {row[1]}&#34;, curses.color_pair(1))
+        else:
+            stdscr.addstr(i + 2, 0, f&#34;{row[0]} : {row[1]}&#34;)
+
+    if self.selected_row == len(self.items):
+        stdscr.addstr(len(self.items) + 2, 0, &#34;Save (s)&#34;, curses.color_pair(2) | curses.A_REVERSE)
+    else:
+        stdscr.addstr(len(self.items) + 2, 0, &#34;Save (s)&#34;, curses.color_pair(2))
+    if self.selected_row == len(self.items) + 1:
+        stdscr.addstr(len(self.items) + 3, 0, &#34;Quit (q)&#34;, curses.color_pair(2) | curses.A_REVERSE)
+    else:
+        stdscr.addstr(len(self.items) + 3, 0, &#34;Quit (q)&#34;, curses.color_pair(2))
+
+    stdscr.refresh()</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.curses_toolbox.CursesEditor.edit_value"><code class="name flex">
+<span>def <span class="ident">edit_value</span></span>(<span>self, stdscr)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edit_value(self, stdscr):
+    stdscr.move(self.selected_row + 2, len(self.items[self.selected_row][0]) + 2)
+    stdscr.clrtoeol()
+
+    curses.echo()
+    new_value = stdscr.getstr().decode()
+
+    valid = self.is_valid(self.items[self.selected_row][0] , new_value)
+    if not valid:
+        stdscr.addstr(len(self.items) +2, 0, &#34;Invalid value !&#34; , curses.A_BOLD)
+        stdscr.refresh()
+        stdscr.getch()
+    else:
+        self.items[self.selected_row][1] = new_value
+        curses.noecho()
+        self.check_value(stdscr)</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.curses_toolbox.CursesEditor.is_valid"><code class="name flex">
+<span>def <span class="ident">is_valid</span></span>(<span>self, key, value)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_valid(self,key, value):
+    if self.check is None: return (True,&#34;&#34;)
+    else: 
+        # c = self.check(key,value)
+        # if c[0]:
+        #     return c           
+        # # change output to {status,msg}   
+
+        return self.check(key,value)</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.curses_toolbox.CursesEditor.main"><code class="name flex">
+<span>def <span class="ident">main</span></span>(<span>self, stdscr)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main(self, stdscr):
+    curses.curs_set(0)
+    stdscr.keypad(1)
+    curses.start_color()
+    curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    curses.init_pair(3, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
+
+    while True:
+        self.display_items(stdscr)
+        key = stdscr.getch()
+
+        if key == curses.KEY_UP and self.selected_row &gt; 0:
+            self.selected_row -= 1
+        elif key == curses.KEY_DOWN and self.selected_row &lt; len(self.items) + 1:
+            self.selected_row += 1
+        elif key == curses.KEY_ENTER or key in [10, 113, 115, 110,101,114]:
+            #[ord(&#39;\n&#39;), ord(&#39;q&#39;), ord(&#39;s&#39;), ord(&#39;n&#39;), ord(&#39;e&#39;),ord(r)]:
+            
+            if self.selected_row == len(self.items) or key == ord(&#39;s&#39;):
+                return self.save_items()
+                break
+            elif self.selected_row == len(self.items) + 1 or key == ord(&#39;q&#39;):
+                return False
+                break
+            elif key == ord(&#39;r&#39;):
+                curses.echo()
+                self.items[self.selected_row][1] = &#39;&#39;+self.historic[self.selected_row][1]
+                curses.noecho()
+
+            elif self.selected_row &lt; len(self.items) or key == ord(&#39;e&#39;):
+                    self.edit_value(stdscr)
+
+    ######
+    # fix revert
+    #######
+    stdscr.clear()
+    stdscr.refresh()</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.curses_toolbox.CursesEditor.save_items"><code class="name flex">
+<span>def <span class="ident">save_items</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_items(self):
+    if self.save_func is not None:
+        return self.save_func(self.items)
+    return False</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="cvtool.core.curses_toolbox.CursesSelector"><code class="flex name class">
+<span>class <span class="ident">CursesSelector</span></span>
+<span>(</span><span>items, title='')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CursesSelector:
+    def __init__(self, items, title=&#39;&#39;):
+        self.items = reformat(items)
+        self.selected_row = 0
+        self.n = get_terminal_lines() - 6
+        self.title = title
+    
+    def display_items(self, stdscr):
+        stdscr.clear()
+        start_index = self.selected_row - (self.selected_row % self.n)
+        end_index = min(start_index + self.n, len(self.items))
+
+        title = f&#34; {self.title} &#34;
+        title_length = len(title)
+        title_start = (stdscr.getmaxyx()[1] - title_length) // 2
+
+        stdscr.attron(curses.color_pair(3))  # Apply the violet color pair
+        stdscr.addstr(0, title_start, title)
+        stdscr.attroff(curses.color_pair(3))  # Restore default color
+
+        for i, row in enumerate(self.items[start_index:end_index], start=start_index):
+            if i == self.selected_row:
+                stdscr.addstr(i - start_index + 2, 0, f&#34;{row[0]} : {row[1]}&#34;, curses.color_pair(1))
+            else:
+                stdscr.addstr(i - start_index + 2, 0, f&#34;{row[0]} : {row[1]}&#34;)
+
+        if self.selected_row &gt;= len(self.items):
+            stdscr.addstr(self.n + 2, 0, &#34;Add New (n)&#34;, curses.color_pair(2) | curses.A_REVERSE)
+        else:
+            stdscr.addstr(self.n + 2, 0, &#34;Add New (n)&#34;, curses.color_pair(2))
+
+        if self.selected_row == len(self.items) + 1:
+            stdscr.addstr(self.n + 3, 0, &#34;Quit (q)&#34;, curses.color_pair(2) | curses.A_REVERSE)
+        else:
+            stdscr.addstr(self.n + 3, 0, &#34;Quit (q)&#34;, curses.color_pair(2))
+
+        counter_text = f&#34;{start_index + 1} - {min(start_index + self.n, len(self.items))} items out of {len(self.items)}&#34;
+        stdscr.addstr(self.n + 4, 0, counter_text, curses.color_pair(2))
+
+        stdscr.refresh()
+
+    def select_value(self, stdscr):
+        key = stdscr.getch()
+
+        if key == curses.KEY_UP and self.selected_row &gt; 0:
+            self.selected_row -= 1
+        elif key == curses.KEY_DOWN and self.selected_row &lt; len(self.items) + 1:
+            self.selected_row += 1
+        elif key == curses.KEY_ENTER or key in [10,13,113, 115, 110]:
+            if self.selected_row == len(self.items) or key == ord(&#39;n&#39;):
+                return &#39;new&#39;
+            elif self.selected_row == len(self.items) + 1 or key == ord(&#39;q&#39;):
+                return False
+            else:
+                value = list(self.items)[self.selected_row]
+                return value
+
+    def main(self, stdscr):
+        curses.curs_set(0)
+        stdscr.keypad(1)
+        curses.start_color()
+        curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
+        curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+        curses.init_pair(3, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
+
+        while True:
+            self.display_items(stdscr)
+            result = self.select_value(stdscr)
+
+            if result is not None:
+                return result
+
+        stdscr.clear()
+        stdscr.refresh()</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="cvtool.core.curses_toolbox.CursesSelector.display_items"><code class="name flex">
+<span>def <span class="ident">display_items</span></span>(<span>self, stdscr)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def display_items(self, stdscr):
+    stdscr.clear()
+    start_index = self.selected_row - (self.selected_row % self.n)
+    end_index = min(start_index + self.n, len(self.items))
+
+    title = f&#34; {self.title} &#34;
+    title_length = len(title)
+    title_start = (stdscr.getmaxyx()[1] - title_length) // 2
+
+    stdscr.attron(curses.color_pair(3))  # Apply the violet color pair
+    stdscr.addstr(0, title_start, title)
+    stdscr.attroff(curses.color_pair(3))  # Restore default color
+
+    for i, row in enumerate(self.items[start_index:end_index], start=start_index):
+        if i == self.selected_row:
+            stdscr.addstr(i - start_index + 2, 0, f&#34;{row[0]} : {row[1]}&#34;, curses.color_pair(1))
+        else:
+            stdscr.addstr(i - start_index + 2, 0, f&#34;{row[0]} : {row[1]}&#34;)
+
+    if self.selected_row &gt;= len(self.items):
+        stdscr.addstr(self.n + 2, 0, &#34;Add New (n)&#34;, curses.color_pair(2) | curses.A_REVERSE)
+    else:
+        stdscr.addstr(self.n + 2, 0, &#34;Add New (n)&#34;, curses.color_pair(2))
+
+    if self.selected_row == len(self.items) + 1:
+        stdscr.addstr(self.n + 3, 0, &#34;Quit (q)&#34;, curses.color_pair(2) | curses.A_REVERSE)
+    else:
+        stdscr.addstr(self.n + 3, 0, &#34;Quit (q)&#34;, curses.color_pair(2))
+
+    counter_text = f&#34;{start_index + 1} - {min(start_index + self.n, len(self.items))} items out of {len(self.items)}&#34;
+    stdscr.addstr(self.n + 4, 0, counter_text, curses.color_pair(2))
+
+    stdscr.refresh()</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.curses_toolbox.CursesSelector.main"><code class="name flex">
+<span>def <span class="ident">main</span></span>(<span>self, stdscr)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main(self, stdscr):
+    curses.curs_set(0)
+    stdscr.keypad(1)
+    curses.start_color()
+    curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    curses.init_pair(3, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
+
+    while True:
+        self.display_items(stdscr)
+        result = self.select_value(stdscr)
+
+        if result is not None:
+            return result
+
+    stdscr.clear()
+    stdscr.refresh()</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.curses_toolbox.CursesSelector.select_value"><code class="name flex">
+<span>def <span class="ident">select_value</span></span>(<span>self, stdscr)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def select_value(self, stdscr):
+    key = stdscr.getch()
+
+    if key == curses.KEY_UP and self.selected_row &gt; 0:
+        self.selected_row -= 1
+    elif key == curses.KEY_DOWN and self.selected_row &lt; len(self.items) + 1:
+        self.selected_row += 1
+    elif key == curses.KEY_ENTER or key in [10,13,113, 115, 110]:
+        if self.selected_row == len(self.items) or key == ord(&#39;n&#39;):
+            return &#39;new&#39;
+        elif self.selected_row == len(self.items) + 1 or key == ord(&#39;q&#39;):
+            return False
+        else:
+            value = list(self.items)[self.selected_row]
+            return value</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="cvtool.core" href="index.html">cvtool.core</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="cvtool.core.curses_toolbox.get_terminal_lines" href="#cvtool.core.curses_toolbox.get_terminal_lines">get_terminal_lines</a></code></li>
+<li><code><a title="cvtool.core.curses_toolbox.reformat" href="#cvtool.core.curses_toolbox.reformat">reformat</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="cvtool.core.curses_toolbox.CursesEditor" href="#cvtool.core.curses_toolbox.CursesEditor">CursesEditor</a></code></h4>
+<ul class="two-column">
+<li><code><a title="cvtool.core.curses_toolbox.CursesEditor.check_value" href="#cvtool.core.curses_toolbox.CursesEditor.check_value">check_value</a></code></li>
+<li><code><a title="cvtool.core.curses_toolbox.CursesEditor.display_items" href="#cvtool.core.curses_toolbox.CursesEditor.display_items">display_items</a></code></li>
+<li><code><a title="cvtool.core.curses_toolbox.CursesEditor.edit_value" href="#cvtool.core.curses_toolbox.CursesEditor.edit_value">edit_value</a></code></li>
+<li><code><a title="cvtool.core.curses_toolbox.CursesEditor.is_valid" href="#cvtool.core.curses_toolbox.CursesEditor.is_valid">is_valid</a></code></li>
+<li><code><a title="cvtool.core.curses_toolbox.CursesEditor.main" href="#cvtool.core.curses_toolbox.CursesEditor.main">main</a></code></li>
+<li><code><a title="cvtool.core.curses_toolbox.CursesEditor.save_items" href="#cvtool.core.curses_toolbox.CursesEditor.save_items">save_items</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="cvtool.core.curses_toolbox.CursesSelector" href="#cvtool.core.curses_toolbox.CursesSelector">CursesSelector</a></code></h4>
+<ul class="">
+<li><code><a title="cvtool.core.curses_toolbox.CursesSelector.display_items" href="#cvtool.core.curses_toolbox.CursesSelector.display_items">display_items</a></code></li>
+<li><code><a title="cvtool.core.curses_toolbox.CursesSelector.main" href="#cvtool.core.curses_toolbox.CursesSelector.main">main</a></code></li>
+<li><code><a title="cvtool.core.curses_toolbox.CursesSelector.select_value" href="#cvtool.core.curses_toolbox.CursesSelector.select_value">select_value</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,8 +1,10 @@
 import os
 import sys
 import glob
-from experiment_vars import experiment_template
+
 try:  # as a module
+    from .experiment_vars import experiment_template
+    from . import experiment_checks as exchk
     from ..core.curses_toolbox import curses, CursesEditor, CursesSelector
     from ..core.stdout import log
     from ..core.io import exists
@@ -12,6 +14,8 @@ except:
     parent_dir = os.path.dirname(current_dir)
     sys.path.append(parent_dir)
 
+    from experiment_vars import experiment_template
+    import experiment_checks as exchk
     from core.curses_toolbox import curses, CursesEditor, CursesSelector
     from core.stdout import log, git_user, yymmdd
     from core.io import exists
@@ -47,7 +51,7 @@ def update_meta(data):
 
 
 
-def main(directory,experiment_id, edit=False):
+def main(directory,selected_experiment=None):
     if directory[-1] != '/':
         directory += '/'
     exists(directory)
@@ -59,21 +63,45 @@ def main(directory,experiment_id, edit=False):
     print.info(f"{'Project Name:':50} : {PROJECT:50}")
 
     time.sleep(2)
-
-    data = json.load(open(f'{directory}{PROJECT}_experiment_id.json', 'r'))
+    PATH=f'{directory}{PROJECT}'
+    data = json.load(open(f'{PATH}_experiment_id.json', 'r'))
     # print.warning(data)
 
-    if not experiment_id :
+    eid = data['experiment_id'].copy()
+
+
+    if not selected_experiment :
 
         time.sleep(2)
-        items = list(data['experiment_id'].keys())
-        # pprint(type(items))
-
-        # pprint(data) 
-
+        items = list(eid.keys())
 
         editor = CursesSelector(items,title='Select experiment to edit')
-        select = curses.wrapper(editor.main)
+        selected_experiment = curses.wrapper(editor.main)[1]
+
+
+        pprint( eid[selected_experiment])
+    else:
+        assert selected_experiment in eid
+
+    ''' 
+    Start the editor
+    '''
+    
+    items = eid[selected_experiment]
+
+    def save(pair_list):
+        return dict(pair_list)
+    
+    def check(key,value):
+        if hasattr(exchk, key):
+            return getattr(exchk, key)(PATH,value)
+        else: 
+            return True
+
+    editor = CursesEditor(items, save_func=save, check=check, title='EDIT an Experiment') 
+    update = curses.wrapper(editor.main)
+
+
 
         # if select == 'new':
         #     data = new_activity(data)
@@ -109,7 +137,7 @@ def main(directory,experiment_id, edit=False):
 if __name__ == '__main__':
 
     defaultloc = '/Users/daniel.ellis/WIPwork/CMIP6_CVs'
-    edit = False
+
     # parser = argparse.ArgumentParser(description='Process a directory location.')
     # parser.add_argument('dir_location', type=str, help='Path to the directory')
 
@@ -117,4 +145,4 @@ if __name__ == '__main__':
 
     # directory = args.dir_location
 
-    main(defaultloc, edit)
+    main(defaultloc)

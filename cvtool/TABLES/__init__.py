@@ -1,15 +1,15 @@
 
 import json
 import re
-from test_functions import tests, ACCEPTED_VARS
+# from test_functions import tests, ACCEPTED_VARS
 
 
 
 
-
+'''
 
 class Table:
-    def __init__(self, file_path)
+    def __init__(self, file_path):
         with open(file_path) as f:
             self.json_data = json.load(f)
     
@@ -29,7 +29,7 @@ class Table:
         with open(file_path, 'w') as f:
             json.dump(self.json_data, f, indent=4)
 
-
+'''
 
 
 

@@ -84,15 +84,15 @@ def main(directory, edit=False):
     print.info(f"{'Project Name:':50} : {PROJECT:50}")
 
     time.sleep(2)
-
-    data = json.load(open(f'{directory}{PROJECT}_activity_id.json', 'r'))
+    PATH=f'{directory}{PROJECT}'
+    data = json.load(open(f'{PATH}_activity_id.json', 'r'))
     # print.warning(data)
 
     if not edit:
         print.warning('Loading Activity VIEWER. Please Wait')
         time.sleep(2)
         items = data['activity_id']
-        editor = CursesSelector(items)
+        editor = CursesSelector(items, title='Activity VIEWER')
         select = curses.wrapper(editor.main)
 
         if select == 'new':
@@ -107,14 +107,14 @@ def main(directory, edit=False):
         def save(pair_list):
             return dict(pair_list)
 
-        editor = CursesEditor(items, save_func=save)
+        editor = CursesEditor(items, save_func=save, title='Activity EDITOR')
         updates = curses.wrapper(editor.main)
 
         # print.info(updates)
         import pprint
         pprint.pprint(updates)
         # update the table 
-        
+
 
 
     # UPDATE THE LAST COMMIT DATA
@@ -129,7 +129,16 @@ def main(directory, edit=False):
 if __name__ == '__main__':
 
     defaultloc = '/Users/daniel.ellis/WIPwork/CMIP6_CVs'
-    edit = False
+   
+
+    import argparse
+    parser = argparse.ArgumentParser(description='Your program description')
+
+    parser.add_argument('-e', '--edit', action='store_true', help='Enable editing')
+    args = parser.parse_args()
+
+
+
     # parser = argparse.ArgumentParser(description='Process a directory location.')
     # parser.add_argument('dir_location', type=str, help='Path to the directory')
 
@@ -137,4 +146,4 @@ if __name__ == '__main__':
 
     # directory = args.dir_location
 
-    main(defaultloc, edit)
+    main(defaultloc, args.edit)

@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>cvtool.ESGF.cv2ini API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>cvtool.ESGF.cv2ini</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import json
+import re,os,sys
+import glob
+from collections import Counter
+from typing import Any, Dict
+try: # as a module
+    from ..core.stdout import log
+    from ..core.io import exists
+except:
+    #direct 
+    # Get the current file&#39;s directory
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    parent_dir = os.path.dirname(current_dir)
+    sys.path.append(parent_dir)
+    from core.stdout import log
+    from core.io import exists
+
+from pprint import pprint
+
+print = log(__file__.split(&#39;cvtool&#39;)[1])
+
+
+def loopformat(dictionary: Dict[str, Any], key: str, prefix: str) -&gt; str:
+    &#34;&#34;&#34;
+    Given a dictionary, a key string and a prefix string, loop through the dictionary and format a new string with the
+    key-value pairs.
+
+    :param dictionary: A dictionary.
+    :param key: A key string.
+    :param prefix: A prefix string.
+    :return: A formatted string with the key-value pairs from the dictionary.
+    &#34;&#34;&#34;
+    try:
+        for dkey, value in dictionary.items():
+            prefix += f&#34;{dkey.ljust(30)} | {value.get(key)}\n&#34;
+    except AttributeError:
+        for dkey, value in dictionary.items():
+            prefix += f&#34;{dkey.ljust(30)} | {value}\n&#34;
+
+    return prefix
+
+
+
+&#34;&#34;&#34;
+    Given a string, replace certain substrings within the string with the corresponding format string.
+
+    :param s: A string.
+    :return: A new string with the substrings formatted accordingly.
+&#34;&#34;&#34;
+path2ini = lambda s: s.replace(&#39;&lt;&#39;, &#39;%(&#39;).replace(&#39;&gt;&#39;, &#39;)s&#39;).replace(&#39;activity_id&#39;,&#39;activity_drs&#39;)
+
+
+
+
+
+
+def make( output_loc , CVDIR=None, CVFILE=None, INI_CATEGORIES=&#39;&#39; ):
+
+    exists(output_loc)
+
+    if CVDIR[-1] != &#39;/&#39;:
+        CVDIR += &#39;/&#39;
+
+
+    if bool(CVDIR) &amp; bool(CVFILE):
+        print.warning(&#39;Both a CV file and a CV Directory defined. Using CVDIR only!&#39;)
+
+    if exists(CVDIR):
+        PROJECT = Counter(
+            [i.split(&#39;/&#39;)[-1].split(&#39;_&#39;)[0] for i in glob.glob(f&#39;{CVDIR}*.json&#39;)]).most_common()[0][0]
+
+        def read_section(section: str) -&gt; Dict[str, Any]:
+            &#34;&#34;&#34;
+            Given a section, load its corresponding file from the CV directory, parse and return it as a dictionary.
+
+            :param section: A string.
+            :return: A dictionary parsed from the corresponding file in the CV directory.
+            &#34;&#34;&#34;
+            return json.load(open(exists(f&#39;{CVDIR}{PROJECT}_{section}.json&#39;), &#39;r&#39;))
+
+    else:
+        exists(CVFILE)
+        CVOBJ = json.load(open(f&#39;{CVFILE}.json&#39;, &#39;r&#39;))
+        PROJECT = re.search(&#39;/(\w+)_CV.json&#39;, CVLOC)[1]
+
+        def read_section(section: str) -&gt; Dict[str, Any]:
+            &#34;&#34;&#34;
+            Given a section, parse and return it as a dictionary.
+
+            :param section: A string.
+            :return: A dictionary parsed from the given object.
+            &#34;&#34;&#34;
+            return CVOBJ[section]
+
+
+    if not INI_CATEGORIES:
+        INI_CATEGORIES = __file__.replace(
+            &#39;cv2ini.py&#39;, &#39;&#39;)+&#39;../sampleconf/ini_categories.json&#39;
+        print.warn(&#39;Reading INI categories from preset file. Please ensure these are correct. &#39;)
+
+
+    DRS = read_section(&#39;DRS&#39;).get(&#39;DRS&#39;)
+
+
+    # Categories
+
+    cat = json.load(open(INI_CATEGORIES, &#39;r&#39;))
+    counter = 0
+
+    categories = &#39;&#39;
+    for requirement in (&#39;required&#39;, &#39;optional&#39;):
+        req = requirement == &#39;required&#39;
+        for row in cat[requirement]:
+            if row.get(&#39;name&#39;) != &#39;description&#39;:
+                index = counter
+                counter += 1
+            else:
+                index = 99
+            categories += f&#34;{row.get(&#39;name&#39;):20} | {row.get(&#39;data_type&#39;):6} | {bool(req):5} | {bool(row.get(&#39;supported&#39;)):5} | {index}\n&#34;
+
+
+    category_defaults = &#39;    project | &#39; + PROJECT
+
+    filename_format = path2ini(DRS.get(&#34;filename_template&#34;))
+
+    dataset_id = path2ini(DRS.get(&#34;directory_path_template&#34;))
+
+    directory_format = f&#39;%(root)s/{dataset_id}/%(version)s&#39;
+
+    dataset_name_format = f&#34;mip_era=%(mip_era)s, source_id=%(source_id)s, experiment=%(experiment_title)s, member_id=%(member_id)s, variable=%(variable_id)s, version=%(version)s&#34;
+
+    # ids
+    print.warning(&#39;Manually added CMIP6 Plus mipera file to CMIP6 dir&#39;)
+    mip_era_options = read_section(&#39;mip_era&#39;)
+
+    activity_drs_options = &#39;, &#39;.join(list(read_section(&#39;activity_id&#39;).keys()))
+
+    institution_id_options = &#39;, &#39;.join(list(read_section(&#39;institution_id&#39;).keys()))
+
+    source_id_options = &#39;, &#39;.join(list(read_section(&#39;source_id&#39;).keys()))
+
+    experiment_id_options = &#39;, &#39;.join(list(read_section(&#39;experiment_id&#39;).keys()))
+
+    # maps
+
+    maps = &#39;experiment_title_map, model_cohort_map, las_time_delta_map&#39;
+
+    experiment_title_map = loopformat(read_section(&#39;experiment_id&#39;),&#39;experiment&#39;,&#39;map(experiment_id : experiment_title)\n&#39;)
+
+
+    member_id_pattern = f&#39;[%(sub_experiment_id)s-]%(variant_label)s&#39;
+
+    table_id_options = &#39;, &#39;.join(list(read_section(&#39;table_id&#39;)))
+
+    variable_id_pattern = f&#39;%(string)s&#39;
+
+    grid_label_options = &#39;, &#39;.join(list(read_section(&#39;grid_label&#39;).keys()))
+
+    model_cohort_map = loopformat(read_section(&#39;source_id&#39;),&#39;cohort&#39;,&#39;map(source_id : model_cohort)\n&#39;)
+
+    project_options = PROJECT
+
+    sub_experiment_id_options =  &#39;, &#39;.join(list(read_section(&#39;sub_experiment_id&#39;).keys()))
+
+    variant_label_pattern = f&#39;r%(digit)si%(digit)sp%(digit)sf%(digit)s&#39;
+
+    frequency_options = &#39;, &#39;.join(list(read_section(&#39;frequency&#39;).keys()))
+
+    version_pattern = f&#39;v%(digit)s&#39;
+
+    las_time_delta_map = loopformat(read_section(&#39;frequency&#39;),False,&#39;map(frequency : las_time_delta)\n&#39;) 
+    ########
+    print.warning(&#39;Handler CMOR CF Version definitions required. Do we want a ESGFparse file?&#39;)
+    ########
+    handler = &#39;esgcet.config.cmip6_handler:CMIP6Handler&#39;
+    min_cmor_version = &#39;3.2.4&#39;
+    min_cf_version = &#39;1.6&#39;
+    min_data_specs_version = &#39;01.00.13&#39;
+    create_cim = &#39;true&#39;
+    source_type_delimiter = &#39;space&#39;
+    activity_id_delimiter = &#39;space&#39;
+    realm_delimiter = &#39;space&#39;
+    model_cohort_delimiter = &#39;space&#39;
+    las_configure = &#39;false&#39;
+
+    extract_global_attrs = &#39;WE HAVE NOT YET EXTRACTED THESE&#39;
+    # extract_global_attrs = frequency, realm, product, nominal_resolution, source_type, grid, creation_date, variant_label, sub_experiment_id, further_info_url, activity_id, data_specs_version
+
+
+    print.warning(&#39;thredds_exclude_variables,variable_locate,variable_per_file,version_by_date&#39; )
+    thredds_exclude_variables=&#39;CHECK WHERE TO FIND THESE&#39;
+    # thredds_exclude_variables = a, a_bnds, alev1, alevel, alevhalf, alt40, b, b_bnds, bnds, bounds_lat, bounds_lon, dbze, depth, depth0m, depth100m, depth_bnds, geo_region, height, height10m, height2m, lat, lat_bnds, latitude, latitude_bnds, layer, lev, lev_bnds, location, lon, lon_bnds, longitude, longitude_bnds, olayer100m, olevel, oline, p0, p220, p500, p560, p700, p840, plev, plev3, plev7, plev8, plev_bnds, plevs, pressure1, region, rho, scatratio, sdepth, sdepth1, sza5, time, time1, time2, time_bnds, vegtype, i, j, rlat, rlat_bnds, sector, type, vertices_latitude, vertices_longitude
+
+    variable_locate = &#39;ASK ABOUT THIS&#39;
+    # variable_locate = ps, ps_ | tau, tau_
+
+    variable_per_file = &#39;true&#39;
+
+    version_by_date = &#39;true&#39;
+
+    # for value in locals():
+    #     if isinstance(value, str):
+    #         pprint(value)
+
+    write = (&#39;categories&#39;, &#39;category_defaults&#39;, &#39;filename_format&#39;, &#39;dataset_id&#39;, &#39;directory_format&#39;, &#39;dataset_name_format&#39;, &#39;mip_era_options&#39;, &#39;activity_drs_options&#39;, &#39;institution_id_options&#39;, &#39;source_id_options&#39;, &#39;experiment_id_options&#39;, &#39;maps&#39;, &#39;experiment_title_map&#39;, &#39;member_id_pattern&#39;, &#39;table_id_options&#39;, &#39;variable_id_pattern&#39;, &#39;grid_label_options&#39;, &#39;model_cohort_map&#39;, &#39;project_options&#39;, &#39;sub_experiment_id_options&#39;, &#39;variant_label_pattern&#39;, &#39;frequency_options&#39;, &#39;version_pattern&#39;, &#39;las_time_delta_map&#39;, &#39;handler&#39;, &#39;min_cmor_version&#39;, &#39;min_cf_version&#39;, &#39;min_data_specs_version&#39;, &#39;create_cim&#39;, &#39;source_type_delimiter&#39;, &#39;activity_id_delimiter&#39;, &#39;realm_delimiter&#39;, &#39;model_cohort_delimiter&#39;, &#39;las_configure&#39;, &#39;extract_global_attrs&#39;, &#39;thredds_exclude_variables&#39;, &#39;variable_locate&#39;, &#39;variable_per_file&#39;, &#39;version_by_date&#39;)
+
+    with open(f&#34;{output_loc}{PROJECT}.ini&#34;,&#39;w&#39;) as f: 
+        for var in write:
+            f.write(f&#34;{var} = {locals().get(var)}\n\n&#34;)
+
+
+
+
+
+if __name__ == &#39;__main__&#39;:
+
+    # only need CV DIR or CVFILE
+    # Combination can be used to run tests for equivalency.
+    
+    CVDIR = &#34;/Users/daniel.ellis/WIPwork/CMIP6_CVs&#34;
+    # OR
+    CVFILE = &#34;/Users/daniel.ellis/WIPwork/mip-cmor-tables/mip_cmor_tables/out/CMIP6Plus_CV.json&#34;
+
+    INI_CATEGORIES = &#39;&#39;
+
+    make(CVDIR=CVDIR, INI_CATEGORIES=INI_CATEGORIES, 
+         output_loc = &#39;./&#39;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="cvtool.ESGF.cv2ini.loopformat"><code class="name flex">
+<span>def <span class="ident">loopformat</span></span>(<span>dictionary: Dict[str, Any], key: str, prefix: str) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Given a dictionary, a key string and a prefix string, loop through the dictionary and format a new string with the
+key-value pairs.</p>
+<p>:param dictionary: A dictionary.
+:param key: A key string.
+:param prefix: A prefix string.
+:return: A formatted string with the key-value pairs from the dictionary.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def loopformat(dictionary: Dict[str, Any], key: str, prefix: str) -&gt; str:
+    &#34;&#34;&#34;
+    Given a dictionary, a key string and a prefix string, loop through the dictionary and format a new string with the
+    key-value pairs.
+
+    :param dictionary: A dictionary.
+    :param key: A key string.
+    :param prefix: A prefix string.
+    :return: A formatted string with the key-value pairs from the dictionary.
+    &#34;&#34;&#34;
+    try:
+        for dkey, value in dictionary.items():
+            prefix += f&#34;{dkey.ljust(30)} | {value.get(key)}\n&#34;
+    except AttributeError:
+        for dkey, value in dictionary.items():
+            prefix += f&#34;{dkey.ljust(30)} | {value}\n&#34;
+
+    return prefix</code></pre>
+</details>
+</dd>
+<dt id="cvtool.ESGF.cv2ini.make"><code class="name flex">
+<span>def <span class="ident">make</span></span>(<span>output_loc, CVDIR=None, CVFILE=None, INI_CATEGORIES='')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make( output_loc , CVDIR=None, CVFILE=None, INI_CATEGORIES=&#39;&#39; ):
+
+    exists(output_loc)
+
+    if CVDIR[-1] != &#39;/&#39;:
+        CVDIR += &#39;/&#39;
+
+
+    if bool(CVDIR) &amp; bool(CVFILE):
+        print.warning(&#39;Both a CV file and a CV Directory defined. Using CVDIR only!&#39;)
+
+    if exists(CVDIR):
+        PROJECT = Counter(
+            [i.split(&#39;/&#39;)[-1].split(&#39;_&#39;)[0] for i in glob.glob(f&#39;{CVDIR}*.json&#39;)]).most_common()[0][0]
+
+        def read_section(section: str) -&gt; Dict[str, Any]:
+            &#34;&#34;&#34;
+            Given a section, load its corresponding file from the CV directory, parse and return it as a dictionary.
+
+            :param section: A string.
+            :return: A dictionary parsed from the corresponding file in the CV directory.
+            &#34;&#34;&#34;
+            return json.load(open(exists(f&#39;{CVDIR}{PROJECT}_{section}.json&#39;), &#39;r&#39;))
+
+    else:
+        exists(CVFILE)
+        CVOBJ = json.load(open(f&#39;{CVFILE}.json&#39;, &#39;r&#39;))
+        PROJECT = re.search(&#39;/(\w+)_CV.json&#39;, CVLOC)[1]
+
+        def read_section(section: str) -&gt; Dict[str, Any]:
+            &#34;&#34;&#34;
+            Given a section, parse and return it as a dictionary.
+
+            :param section: A string.
+            :return: A dictionary parsed from the given object.
+            &#34;&#34;&#34;
+            return CVOBJ[section]
+
+
+    if not INI_CATEGORIES:
+        INI_CATEGORIES = __file__.replace(
+            &#39;cv2ini.py&#39;, &#39;&#39;)+&#39;../sampleconf/ini_categories.json&#39;
+        print.warn(&#39;Reading INI categories from preset file. Please ensure these are correct. &#39;)
+
+
+    DRS = read_section(&#39;DRS&#39;).get(&#39;DRS&#39;)
+
+
+    # Categories
+
+    cat = json.load(open(INI_CATEGORIES, &#39;r&#39;))
+    counter = 0
+
+    categories = &#39;&#39;
+    for requirement in (&#39;required&#39;, &#39;optional&#39;):
+        req = requirement == &#39;required&#39;
+        for row in cat[requirement]:
+            if row.get(&#39;name&#39;) != &#39;description&#39;:
+                index = counter
+                counter += 1
+            else:
+                index = 99
+            categories += f&#34;{row.get(&#39;name&#39;):20} | {row.get(&#39;data_type&#39;):6} | {bool(req):5} | {bool(row.get(&#39;supported&#39;)):5} | {index}\n&#34;
+
+
+    category_defaults = &#39;    project | &#39; + PROJECT
+
+    filename_format = path2ini(DRS.get(&#34;filename_template&#34;))
+
+    dataset_id = path2ini(DRS.get(&#34;directory_path_template&#34;))
+
+    directory_format = f&#39;%(root)s/{dataset_id}/%(version)s&#39;
+
+    dataset_name_format = f&#34;mip_era=%(mip_era)s, source_id=%(source_id)s, experiment=%(experiment_title)s, member_id=%(member_id)s, variable=%(variable_id)s, version=%(version)s&#34;
+
+    # ids
+    print.warning(&#39;Manually added CMIP6 Plus mipera file to CMIP6 dir&#39;)
+    mip_era_options = read_section(&#39;mip_era&#39;)
+
+    activity_drs_options = &#39;, &#39;.join(list(read_section(&#39;activity_id&#39;).keys()))
+
+    institution_id_options = &#39;, &#39;.join(list(read_section(&#39;institution_id&#39;).keys()))
+
+    source_id_options = &#39;, &#39;.join(list(read_section(&#39;source_id&#39;).keys()))
+
+    experiment_id_options = &#39;, &#39;.join(list(read_section(&#39;experiment_id&#39;).keys()))
+
+    # maps
+
+    maps = &#39;experiment_title_map, model_cohort_map, las_time_delta_map&#39;
+
+    experiment_title_map = loopformat(read_section(&#39;experiment_id&#39;),&#39;experiment&#39;,&#39;map(experiment_id : experiment_title)\n&#39;)
+
+
+    member_id_pattern = f&#39;[%(sub_experiment_id)s-]%(variant_label)s&#39;
+
+    table_id_options = &#39;, &#39;.join(list(read_section(&#39;table_id&#39;)))
+
+    variable_id_pattern = f&#39;%(string)s&#39;
+
+    grid_label_options = &#39;, &#39;.join(list(read_section(&#39;grid_label&#39;).keys()))
+
+    model_cohort_map = loopformat(read_section(&#39;source_id&#39;),&#39;cohort&#39;,&#39;map(source_id : model_cohort)\n&#39;)
+
+    project_options = PROJECT
+
+    sub_experiment_id_options =  &#39;, &#39;.join(list(read_section(&#39;sub_experiment_id&#39;).keys()))
+
+    variant_label_pattern = f&#39;r%(digit)si%(digit)sp%(digit)sf%(digit)s&#39;
+
+    frequency_options = &#39;, &#39;.join(list(read_section(&#39;frequency&#39;).keys()))
+
+    version_pattern = f&#39;v%(digit)s&#39;
+
+    las_time_delta_map = loopformat(read_section(&#39;frequency&#39;),False,&#39;map(frequency : las_time_delta)\n&#39;) 
+    ########
+    print.warning(&#39;Handler CMOR CF Version definitions required. Do we want a ESGFparse file?&#39;)
+    ########
+    handler = &#39;esgcet.config.cmip6_handler:CMIP6Handler&#39;
+    min_cmor_version = &#39;3.2.4&#39;
+    min_cf_version = &#39;1.6&#39;
+    min_data_specs_version = &#39;01.00.13&#39;
+    create_cim = &#39;true&#39;
+    source_type_delimiter = &#39;space&#39;
+    activity_id_delimiter = &#39;space&#39;
+    realm_delimiter = &#39;space&#39;
+    model_cohort_delimiter = &#39;space&#39;
+    las_configure = &#39;false&#39;
+
+    extract_global_attrs = &#39;WE HAVE NOT YET EXTRACTED THESE&#39;
+    # extract_global_attrs = frequency, realm, product, nominal_resolution, source_type, grid, creation_date, variant_label, sub_experiment_id, further_info_url, activity_id, data_specs_version
+
+
+    print.warning(&#39;thredds_exclude_variables,variable_locate,variable_per_file,version_by_date&#39; )
+    thredds_exclude_variables=&#39;CHECK WHERE TO FIND THESE&#39;
+    # thredds_exclude_variables = a, a_bnds, alev1, alevel, alevhalf, alt40, b, b_bnds, bnds, bounds_lat, bounds_lon, dbze, depth, depth0m, depth100m, depth_bnds, geo_region, height, height10m, height2m, lat, lat_bnds, latitude, latitude_bnds, layer, lev, lev_bnds, location, lon, lon_bnds, longitude, longitude_bnds, olayer100m, olevel, oline, p0, p220, p500, p560, p700, p840, plev, plev3, plev7, plev8, plev_bnds, plevs, pressure1, region, rho, scatratio, sdepth, sdepth1, sza5, time, time1, time2, time_bnds, vegtype, i, j, rlat, rlat_bnds, sector, type, vertices_latitude, vertices_longitude
+
+    variable_locate = &#39;ASK ABOUT THIS&#39;
+    # variable_locate = ps, ps_ | tau, tau_
+
+    variable_per_file = &#39;true&#39;
+
+    version_by_date = &#39;true&#39;
+
+    # for value in locals():
+    #     if isinstance(value, str):
+    #         pprint(value)
+
+    write = (&#39;categories&#39;, &#39;category_defaults&#39;, &#39;filename_format&#39;, &#39;dataset_id&#39;, &#39;directory_format&#39;, &#39;dataset_name_format&#39;, &#39;mip_era_options&#39;, &#39;activity_drs_options&#39;, &#39;institution_id_options&#39;, &#39;source_id_options&#39;, &#39;experiment_id_options&#39;, &#39;maps&#39;, &#39;experiment_title_map&#39;, &#39;member_id_pattern&#39;, &#39;table_id_options&#39;, &#39;variable_id_pattern&#39;, &#39;grid_label_options&#39;, &#39;model_cohort_map&#39;, &#39;project_options&#39;, &#39;sub_experiment_id_options&#39;, &#39;variant_label_pattern&#39;, &#39;frequency_options&#39;, &#39;version_pattern&#39;, &#39;las_time_delta_map&#39;, &#39;handler&#39;, &#39;min_cmor_version&#39;, &#39;min_cf_version&#39;, &#39;min_data_specs_version&#39;, &#39;create_cim&#39;, &#39;source_type_delimiter&#39;, &#39;activity_id_delimiter&#39;, &#39;realm_delimiter&#39;, &#39;model_cohort_delimiter&#39;, &#39;las_configure&#39;, &#39;extract_global_attrs&#39;, &#39;thredds_exclude_variables&#39;, &#39;variable_locate&#39;, &#39;variable_per_file&#39;, &#39;version_by_date&#39;)
+
+    with open(f&#34;{output_loc}{PROJECT}.ini&#34;,&#39;w&#39;) as f: 
+        for var in write:
+            f.write(f&#34;{var} = {locals().get(var)}\n\n&#34;)</code></pre>
+</details>
+</dd>
+<dt id="cvtool.ESGF.cv2ini.path2ini"><code class="name flex">
+<span>def <span class="ident">path2ini</span></span>(<span>s)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">path2ini = lambda s: s.replace(&#39;&lt;&#39;, &#39;%(&#39;).replace(&#39;&gt;&#39;, &#39;)s&#39;).replace(&#39;activity_id&#39;,&#39;activity_drs&#39;)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="cvtool.ESGF" href="index.html">cvtool.ESGF</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="cvtool.ESGF.cv2ini.loopformat" href="#cvtool.ESGF.cv2ini.loopformat">loopformat</a></code></li>
+<li><code><a title="cvtool.ESGF.cv2ini.make" href="#cvtool.ESGF.cv2ini.make">make</a></code></li>
+<li><code><a title="cvtool.ESGF.cv2ini.path2ini" href="#cvtool.ESGF.cv2ini.path2ini">path2ini</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

@@ -26,53 +26,59 @@ def reformat(items):
     if isinstance( items, dict ): items = items.items()
     if type(items) is type(dict().items()): items = [[*i] for i in items]
     if isinstance(items,list) and not isinstance(items[0],list) : items =  [[*i] for i in enumerate(items)]
-    import pprint
-    pprint.pprint(items)
+    # import pprint
+    # pprint.pprint(items)
     return items
 
 
 
-
 class CursesEditor:
-    def __init__(self, items, save_func=None, check=None):
-        items=reformat(items)
-        print(type(items),type(items[0]),items)
+    def __init__(self, items, save_func=None, check=None, title=''):
         self.items = reformat(items)
         self.historic = self.items.copy()
-
         self.save_func = save_func
         self.check = check
         self.selected_row = 0
+        self.title = title
 
     def display_items(self, stdscr):
         stdscr.clear()
 
+        title = f" {self.title} "
+        title_length = len(title)
+        title_start = (stdscr.getmaxyx()[1] - title_length) // 2
+
+        stdscr.attron(curses.color_pair(3))  # Apply the violet color pair
+        stdscr.addstr(0, title_start, title)
+        stdscr.attroff(curses.color_pair(3))  # Restore default color
+
         for i, row in enumerate(self.items):
             if i == self.selected_row:
-                stdscr.addstr(i, 0, f"{row[0]} : {row[1]}", curses.color_pair(1))
+                stdscr.addstr(i + 2, 0, f"{row[0]} : {row[1]}", curses.color_pair(1))
             else:
-                stdscr.addstr(i, 0, f"{row[0]} : {row[1]}")
+                stdscr.addstr(i + 2, 0, f"{row[0]} : {row[1]}")
 
         if self.selected_row == len(self.items):
-            stdscr.addstr(len(self.items), 0, "Save", curses.color_pair(2) | curses.A_REVERSE)
+            stdscr.addstr(len(self.items) + 2, 0, "Save (s)", curses.color_pair(2) | curses.A_REVERSE)
         else:
-            stdscr.addstr(len(self.items), 0, "Save", curses.color_pair(2))
+            stdscr.addstr(len(self.items) + 2, 0, "Save (s)", curses.color_pair(2))
         if self.selected_row == len(self.items) + 1:
-            stdscr.addstr(len(self.items) + 1, 0, "Quit", curses.color_pair(2) | curses.A_REVERSE)
+            stdscr.addstr(len(self.items) + 3, 0, "Quit (q)", curses.color_pair(2) | curses.A_REVERSE)
         else:
-            stdscr.addstr(len(self.items) + 1, 0, "Quit", curses.color_pair(2))
+            stdscr.addstr(len(self.items) + 3, 0, "Quit (q)", curses.color_pair(2))
 
         stdscr.refresh()
 
     def edit_value(self, stdscr):
-        stdscr.move(self.selected_row, len(self.items[self.selected_row][0]) + 2)
+        stdscr.move(self.selected_row + 2, len(self.items[self.selected_row][0]) + 2)
         stdscr.clrtoeol()
 
         curses.echo()
         new_value = stdscr.getstr().decode()
 
-        if not self.is_valid(self.items[self.selected_row][0] , new_value):
-            stdscr.addstr(len(self.items) + 2, 0, "Invalid value!", curses.A_BOLD)
+        valid = self.is_valid(self.items[self.selected_row][0] , new_value)
+        if not valid:
+            stdscr.addstr(len(self.items) +2, 0, "Invalid value !" , curses.A_BOLD)
             stdscr.refresh()
             stdscr.getch()
         else:
@@ -94,9 +100,16 @@ class CursesEditor:
         return False
 
     def is_valid(self,key, value):
-        if self.check is None: return True
+        if self.check is None: return (True,"")
         else: 
-            return self.check(value)
+            # c = self.check(key,value)
+            # if c[0]:
+            #     return c           
+            # # change output to {status,msg}   
+
+            return self.check(key,value)
+                
+
 
     def main(self, stdscr):
         curses.curs_set(0)
@@ -104,6 +117,7 @@ class CursesEditor:
         curses.start_color()
         curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+        curses.init_pair(3, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
 
         while True:
             self.display_items(stdscr)
@@ -165,14 +179,14 @@ class CursesSelector:
                 stdscr.addstr(i - start_index + 2, 0, f"{row[0]} : {row[1]}")
 
         if self.selected_row >= len(self.items):
-            stdscr.addstr(self.n + 2, 0, "Add New", curses.color_pair(2) | curses.A_REVERSE)
+            stdscr.addstr(self.n + 2, 0, "Add New (n)", curses.color_pair(2) | curses.A_REVERSE)
         else:
-            stdscr.addstr(self.n + 2, 0, "Add New", curses.color_pair(2))
+            stdscr.addstr(self.n + 2, 0, "Add New (n)", curses.color_pair(2))
 
         if self.selected_row == len(self.items) + 1:
-            stdscr.addstr(self.n + 3, 0, "Quit", curses.color_pair(2) | curses.A_REVERSE)
+            stdscr.addstr(self.n + 3, 0, "Quit (q)", curses.color_pair(2) | curses.A_REVERSE)
         else:
-            stdscr.addstr(self.n + 3, 0, "Quit", curses.color_pair(2))
+            stdscr.addstr(self.n + 3, 0, "Quit (q)", curses.color_pair(2))
 
         counter_text = f"{start_index + 1} - {min(start_index + self.n, len(self.items))} items out of {len(self.items)}"
         stdscr.addstr(self.n + 4, 0, counter_text, curses.color_pair(2))
