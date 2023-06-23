@@ -7,3 +7,4 @@ Core Lib files. These deal with:
 - print formatting
 etc.
 '''
+from . import stdout, io, dynamic_imports, curses_toolbox, checksum

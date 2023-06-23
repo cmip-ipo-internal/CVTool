@@ -1,0 +1,29 @@
+Experiment,Name,Description,Tier,Start year,End year,Notes
+"Single forcing historical simulations","hist-GHG","Well-mixed greenhouse-gas-only historical simulations",1,1850,2020,"As DAMIP but with larger ensembles (10 members minimum with a target of 50 members). To fully capture the effects of volcanic forcing and solar forcing"
+"Single forcing historical simulations","hist-aer","Anthropogenic-aerosol-only historical simulations",1,1850,2020,"In models with prescribed ozone, ozone changes associated with solar and volcanic forcing should be prescribed in the hist-volc, hist-sol, and hist-nat"
+"Single forcing historical simulations","hist-sol","Solar-only historical simulations",1,1850,2020,"Simulations, as in the DAMIP simulations. Note that ozone changes should not be prescribed in hist-GHG"
+"Single forcing historical simulations","hist-volc","Volcanic-only historical simulations",1,1850,2020,
+"Single forcing historical simulations","hist-totalO3","Ozone-only historical simulations",1,1850,2020,
+"Single forcing historical simulations","hist-lu","Historical simulations with only land use changes",1,1850,2020,"New experiment"
+"Single forcing projections","fut-GHG","As hist-GHG but with updated forcings",2,2015 onwards,2024 onwards,"Ongoing start dates (yearly max frequency) as updated forcings become available. Each simulation to be 10 years long to enable improved attribution of recent changes and attribution of forecast signals. This will be especially important in the event of a future major volcanic eruption, but will also allow deviations in aerosol and GHG emissions and other forcings from the scenario used in experiment set 1 to be assessed."
+"Single forcing projections","fut-Aer","As hist-aer but with updated forcings",2,2015 onwards,2024 onwards,
+"Single forcing projections","fut-sol","As hist-sol but with updated forcings",2,2015 onwards,2024 onwards,
+"Single forcing projections","fut-volc","As hist-volc but with updated forcings",2,2015 onwards,2024 onwards,
+"Single forcing projections","fut-totalO3","As hist-totalO3 but with updated forcings",2,2015 onwards,2024 onwards,"Note that ozone changes should not be prescribed in fut-GHG"
+"Single forcing projections","fut-lu","As hist-lu but with updated forcings",2,2015 onwards,2024 onwards,
+"Combined forcings simulations","historical","All forcings",3,1850,2020,"Standard CMIP6 and DAMIP experiments but with larger ensembles, to allow additivity of forcings to be assessed by comparing with experiment set 1"
+"Combined forcings simulations","hist-nat","Natural forcings (solar + volcanic)",3,1850,2020,
+"All but one historical simulations","abo-hist-GHG","Historical simulations with only greenhouse-gas forcing kept constant at 1850 levels",3,1850,2020,"To assess influence of background state when compared to experiment set 1"
+"All but one historical simulations","abo-hist-aer","Historical simulations with only anthropogenic aerosol forcing kept constant at 1850 levels",3,1850,2020,
+"All but one historical simulations","abo-hist-sol","Historical simulations with only solar forcing kept constant at 1850 levels",3,1850,2020,
+"All but one historical
+
+ simulations","abo-hist-volc","Historical simulations with only volcanic forcing kept constant at 1850 levels",3,1850,2020,
+"All but one historical simulations","abo-hist-totalO3","Historical simulations with only ozone forcing kept constant at 1850 levels",3,1850,2020,
+"All but one historical simulations","abo-hist-lu","Historical simulations with only land use changes",3,1850,2020,
+"All but one projections","abo-fut-GHG","Projections with only greenhouse-gas forcing kept constant at 1850 levels",3,2015 onwards,2024 onwards,"To assess influence of background state when compared to experiment set 2"
+"All but one projections","abo-fut-Aer","Projections with only anthropogenic aerosol forcing kept constant at 1850 levels",3,2015 onwards,2024 onwards,
+"All but one projections","abo-fut-sol","Projections with only solar forcing kept constant at 1850 levels",3,2015 onwards,2024 onwards,
+"All but one projections","abo-fut-volc","Projections with only volcanic forcing kept constant at 1850 levels",3,2015 onwards,2024 onwards,
+"All but one projections","abo-fut-totalO3","Projections with only ozone forcing kept constant at 1850 levels",3,2015 onwards,2024 onwards,
+"All but one projections","abo-fut-lu","Projections with only land use changes",3,2015 onwards,2024 onwards
