@@ -17,6 +17,10 @@ import os,sys
 # print(sys.modules)
 from .. import core
 from ..core.dynamic_imports import load_module
+from . import meta
+
+
+
 
 try:
     debug = sys.argv[1]
@@ -130,7 +134,7 @@ class CVDIR:
         output_path = os.path.join(self.directory, output_name+'.json') 
 
         module = load_module(*basepath(file_name))
-        print(module,[*basepath(file_name)])
+        # print(module,[*basepath(file_name)])
 
         # preparse the data 
         update_func = update_func or getattr(module, "preparse", None)
