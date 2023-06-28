@@ -14,6 +14,7 @@ prefix = 'MY_PREFIX'
 # Example usage
 handler = CV.CVDIR(prefix=prefix, directory='testdir', base_files=[
     "mip_era",
+    "DRS",
     # "experimet_id",
     # "table_id"
 ])

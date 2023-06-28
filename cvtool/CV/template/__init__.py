@@ -1,67 +1,65 @@
 import sys
 import os
 
-# Importing 'core' module from 'cvtool.core'
+# Importing 'cvtool.core' and 'cvtool.CV.meta' modules
 core = sys.modules.get('cvtool.core')
-if not core:
-    sys.path.append('../../')
-    import core
+meta = sys.modules.get('cvtool.CV.meta')
 
 # Extracting the parent directory name from the current file path
 whoami = __file__.split('/')[-2]
 
+# Logging 'info' level message using 'core.stdout.log' function
+info = core.stdout.log(whoami, level='info')
 
-def create(institution, gitowner='WCRP-CMIP', gitrepo='CMIP6Plus_CVs', user=None):
+
+def create(optdata):
     """
-    Create a dictionary representing the header of a CV collection.
+    Create a dictionary representing the header and content of a CV collection.
 
     Args:
-        institution (str): The institution ID.
-        gitowner (str): The owner of the Git repository (default: 'WCRP-CMIP').
-        gitrepo (str): The name of the Git repository (default: 'CMIP6Plus_CVs').
-        user (dict): User information dictionary (default: None).
+        optdata (dict): Optional data dictionary.
 
     Returns:
-        dict: A dictionary representing the header of the CV collection.
+        dict: A dictionary representing the header and content of the CV collection.
 
     """
-    current_date = core.stdout.yymmdd()
-    user = user or core.stdout.get_user()
+    this = core.io.get_current_function_name()
+    optdata = optdata.get(this) or {}
 
-    return {
-        "Header": {
-            "CV_collection_modified": current_date,
-            "CV_collection_version": core.stdout.get_github_version(gitowner, gitrepo),
-            "author": f'{user.get("user")} <{user.get("email")}>',
-            "checksum": "md5: EDITEDITEDITEDITEDITEDITEDITEDIT",
-            "institution_id": institution,
-            "previous_commit": core.stdout.get_github_version(gitowner, gitrepo),
-            "specs_doc": "v6.3.0 (link TBC)"
-        }
-    }
+    content = optdata.get('templatecontent')
+    institution = optdata.get('institution')
+
+    header = meta.create(institution)
+    header[whoami] = content
+
+    return header
 
 
-def update(gitowner='WCRP-CMIP', gitrepo='CMIP6Plus_CVs'):
-    '''
-    Function to be used in combination with core.io.combine(optdata, overwrite).
+def update(jsn, optdata):
+    """
+    Update the metadata of a CV collection.
 
     Args:
-        gitowner (str): The owner of the Git repository (default: 'WCRP-CMIP').
-        gitrepo (str): The name of the Git repository (default: 'CMIP6Plus_CVs').
+        jsn (dict): The existing CV collection dictionary.
+        optdata (dict): Optional data dictionary.
 
     Returns:
-        dict: A dictionary representing the header for updating the CV collection.
+        dict: The updated CV collection dictionary.
 
-    '''
-    user = core.stdout.get_user()
+    """
+    this = core.io.get_current_function_name()
+    optdata = optdata.get(this)
+    if not optdata:
+        info('nothing to update')
+        return None
+
+    # Check if there is something to update
+    assert len(jsn) >= 0
+
+    # Update some of the metadata
     current_date = core.stdout.yymmdd()
+    overwrite = meta.update()
 
-    return {
-        "Header": {
-            'updatetest': 'Yay! - to be removed.',
-            "CV_collection_modified": current_date,
-            "CV_collection_version": core.stdout.get_github_version(gitowner, gitrepo),
-            "previous_commit": core.stdout.get_github_version(gitowner, gitrepo),
-            "author": f'{user.get("user")} <{user.get("email")}>',
-        }
-    }
+    optdata = core.io.combine(optdata, overwrite)
+
+    return core.io.combine(jsn, optdata)
