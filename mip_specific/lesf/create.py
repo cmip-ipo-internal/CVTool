@@ -83,6 +83,8 @@ for _, r in df.iterrows():
         entry['start'] = (r['Start year'])
         entry['end'] = (r['End year'])
 
+        experiments[name] = entry
+
 
 # pdb.set_trace()
 

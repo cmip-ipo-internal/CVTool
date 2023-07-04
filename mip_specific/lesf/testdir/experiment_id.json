@@ -143,6 +143,16 @@
             "start": 1850,
             "end": 2020
         },
+        "hist-lu": {
+            "experiment": "Single forcing historical simulations",
+            "activity_id": [
+                "LESFMIP"
+            ],
+            "experiment_id": "hist-lu",
+            "tier": 1,
+            "start": "1850",
+            "end": "2020"
+        },
         "fut-GHG": {
             "activity_id": [
                 "LESFMIP"
@@ -166,6 +176,16 @@
             "sub_experiment_id": [
                 "none"
             ],
+            "tier": 2,
+            "start": "2015 onwards",
+            "end": "2024 onwards"
+        },
+        "fut-Aer": {
+            "experiment": "Single forcing projections",
+            "activity_id": [
+                "LESFMIP"
+            ],
+            "experiment_id": "fut-Aer",
             "tier": 2,
             "start": "2015 onwards",
             "end": "2024 onwards"
@@ -249,6 +269,26 @@
             "tier": 2,
             "start": "2015 onwards",
             "end": "2024 onwards"
+        },
+        "fut-lu": {
+            "experiment": "Single forcing projections",
+            "activity_id": [
+                "LESFMIP"
+            ],
+            "experiment_id": "fut-lu",
+            "tier": 2,
+            "start": "2015 onwards",
+            "end": "2024 onwards"
+        },
+        "historical": {
+            "experiment": "Combined forcings simulations",
+            "activity_id": [
+                "LESFMIP"
+            ],
+            "experiment_id": "historical",
+            "tier": 3,
+            "start": "1850",
+            "end": "2020"
         },
         "hist-nat": {
             "activity_id": [
