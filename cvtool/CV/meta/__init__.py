@@ -58,7 +58,7 @@ def update(gitowner='WCRP-CMIP', gitrepo='CMIP6Plus_CVs'):
 
     return {
         "Header": {
-            'updatetest': 'Yay! - to be removed.',
+            # 'updatetest': 'Yay! - to be removed.',
             "CV_collection_modified": current_date,
             "CV_collection_version": core.stdout.get_github_version(gitowner, gitrepo),
             "previous_commit": core.stdout.get_github_version(gitowner, gitrepo),

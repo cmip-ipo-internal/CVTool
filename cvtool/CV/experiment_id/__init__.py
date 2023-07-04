@@ -1,66 +1,72 @@
 import sys
 import os
+import json
 
+# Importing 'cvtool.core' and 'cvtool.CV.meta' modules
 core = sys.modules.get('cvtool.core')
-whoami = __file__.split('/')[-2:-1]
+meta = sys.modules.get('cvtool.CV.meta')
 
-#####################
+# Extracting the parent directory name from the current file path
+whoami = __file__.split('/')[-2]
 
-#### Take this out of each 
-def create_meta(whoami, content,institution):
-    current_date = core.stdout.yymmdd()
-    user = core.stdout.get_user()
+# Logging 'info' level message using 'core.stdout.log' function
+logger = core.stdout.log(whoami, level='info')
 
-    return {
-        "Header": {
-            "CV_collection_modified": current_date,
-            "CV_collection_version": core.stdout.get_github_version('WCRP-CMIP','CMIP6Plus_CVs'),
-            "author": f'{user.get("user")} <{user.get("email")}>',
-            "checksum": "md5: EDITEDITEDITEDITEDITEDITEDITEDIT",
-            "institution_id": institution,
-            "previous_commit": core.stdout.get_github_version('WCRP-CMIP','CMIP6Plus_CVs'),
-            "specs_doc": "v6.3.0 (link TBC)"
-        },
-        whoami: content
-        }
+default = {}
+# create a blank as it needs to be populated
 
-#####################
-
-
+    # default_content = json.load(open(f"{DRSpath}_CV.json",'r'))[whoami]
 
 def create(optdata):
+    """
+    Create a dictionary representing the header and content of a CV collection.
+
+    Args:
+        optdata (dict): Optional data dictionary.
+
+    Returns:
+        dict: A dictionary representing the header and content of the CV collection.
+
+    """
     this = core.io.get_current_function_name()
-    print(whoami,this)
+
+    # get the globals before overwriting
+    institution = optdata['globals']['institution']
     optdata = optdata.get(this) or {}
 
-    content = optdata.get('mipera')
+    content = optdata.get(whoami) # this may be different if the varaible does not reflect the file name (e.g. mip_era and mipera)
     institution = optdata.get('institution')
 
-    return create_meta(whoami, content, institution)
-     
-  
+    header = meta.create(institution)
+    header[whoami] = content or default
 
+    return header
 
 
 def update(jsn, optdata):
+    """
+    Update the metadata of a CV collection.
+
+    Args:
+        jsn (dict): The existing CV collection dictionary.
+        optdata (dict): Optional data dictionary.
+
+    Returns:
+        dict: The updated CV collection dictionary.
+
+    """
     this = core.io.get_current_function_name()
     optdata = optdata.get(this)
-    if not optdata: 
-        print ('nothing to update ', whoami)
+    if not optdata:
+        logger.info('nothing to update')
+        return jsn
 
-    # we need something to update
+    # Check if there is something to update
     assert len(jsn) >= 0
 
-    # update some of the metadata
-    current_date = core.stdout.yymmdd()
+    # Update some of the metadata
+    overwrite = meta.update()
 
-    overwrite={"Header": {
-        'updatetest': 'Yay!',
-        "CV_collection_modified": current_date,
-        "CV_collection_version": core.stdout.get_github_version('WCRP-CMIP', 'CMIP6Plus_CVs'),
-        "previous_commit": core.stdout.get_github_version('WCRP-CMIP', 'CMIP6Plus_CVs'),
-    }}
+    optdata = core.io.combine(optdata, overwrite)
 
-    optdata = core.io.combine(optdata,overwrite)
-
-    return core.io.combine(jsn,optdata)
+    return core.io.combine(jsn, optdata)

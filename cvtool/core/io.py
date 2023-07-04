@@ -37,8 +37,16 @@ def combine(new, old):
     Returns:
         dict: The merged dictionary.
     """
+    # merged_dict = old.copy()
+    # merged_dict.update(new)
+    # return merged_dict
+
     merged_dict = old.copy()
-    merged_dict.update(new)
+    for key, value in new.items():
+        if key in merged_dict and isinstance(merged_dict[key], dict) and isinstance(value, dict):
+            merged_dict[key] = combine(value, merged_dict[key])
+        else:
+            merged_dict[key] = value
     return merged_dict
 
 

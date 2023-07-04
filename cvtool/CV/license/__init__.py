@@ -1,6 +1,5 @@
 import sys
 import os
-import json
 
 # Importing 'cvtool.core' and 'cvtool.CV.meta' modules
 core = sys.modules.get('cvtool.core')
@@ -12,9 +11,11 @@ whoami = __file__.split('/')[-2]
 # Logging 'info' level message using 'core.stdout.log' function
 logger = core.stdout.log(whoami, level='info')
 
-default = None
 
-    # default_content = json.load(open(f"{DRSpath}_CV.json",'r'))[whoami]
+default = "^CMIP6Plus model data produced by .* is licensed under a Creative Commons .* License (https://creativecommons\\.org/.*)\\. *Consult https://pcmdi\\.llnl\\.gov/CMIP6Plus/TermsOfUse for terms of use governing CMIP6Plus output, including citation requirements and proper acknowledgment\\. *Further information about this data, including some limitations, can be found via the further_info_url (recorded as a global attribute in this file).*\\. *The data producers and data providers make no warranty, either express or implied, including, but not limited to, warranties of merchantability and fitness for a particular purpose\\. *All liabilities arising from the supply of the information (including any liability arising in negligence) are excluded to the fullest extent permitted by law\\.$"
+
+
+
 
 def create(optdata):
     """
@@ -33,7 +34,8 @@ def create(optdata):
     institution = optdata['globals']['institution']
     optdata = optdata.get(this) or {}
 
-    content = optdata.get(whoami) # this may be different if the varaible does not reflect the file name (e.g. mip_era and mipera)
+    # this may be different if the varaible does not reflect the file name (e.g. mip_era and mipera)
+    content = optdata.get(this)
     institution = optdata.get('institution')
 
     header = meta.create(institution)

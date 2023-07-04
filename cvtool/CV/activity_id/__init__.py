@@ -14,7 +14,6 @@ logger = core.stdout.log(whoami, level='info')
 
 default = None
 
-    # default_content = json.load(open(f"{DRSpath}_CV.json",'r'))[whoami]
 
 def create(optdata):
     """
@@ -60,6 +59,7 @@ def update(jsn, optdata):
         logger.info('nothing to update')
         return jsn
 
+
     # Check if there is something to update
     assert len(jsn) >= 0
 
@@ -67,5 +67,5 @@ def update(jsn, optdata):
     overwrite = meta.update()
 
     optdata = core.io.combine(optdata, overwrite)
-
+    
     return core.io.combine(jsn, optdata)

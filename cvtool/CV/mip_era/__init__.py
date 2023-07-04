@@ -9,7 +9,7 @@ meta = sys.modules.get('cvtool.CV.meta')
 whoami = __file__.split('/')[-2]
 
 # Logging 'info' level message using 'core.stdout.log' function
-info = core.stdout.log(whoami, level='info')
+logger = core.stdout.log(whoami, level='info')
 
 
 def create(optdata):
@@ -24,11 +24,14 @@ def create(optdata):
 
     """
     this = core.io.get_current_function_name()
-    print(whoami, this)
+    print(whoami, this,optdata)
+
+    institution = optdata['globals']['institution']
+
     optdata = optdata.get(this) or {}
 
     content = optdata.get('mipera')
-    institution = optdata.get('institution')
+  
 
     header = meta.create(institution)
     header[whoami] = content
@@ -52,7 +55,7 @@ def update(jsn, optdata):
     optdata = optdata.get(this)
     if not optdata:
         info('nothing to update')
-        return None
+        return jsn
 
     # Check if there is something to update
     assert len(jsn) >= 0

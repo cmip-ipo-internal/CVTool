@@ -26,10 +26,18 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import logging, subprocess
+<pre><code class="python">import logging
+import requests
+import subprocess
+import json
 
-# Configure logger
-import logging
+
+def view(x):
+    &#39;&#39;&#39;
+    temporary json viewer
+    &#39;&#39;&#39;
+    import pprint
+    pprint.pprint(x)
 
 def log(name, level=&#39;info&#39;):
     &#34;&#34;&#34;
@@ -111,7 +119,55 @@ def yymmdd(delimiter=&#39;-&#39;):
     from datetime import date
     current_date = date.today()
     formatted_date = current_date.strftime(f&#34;%Y{delimiter}%m{delimiter}%d&#34;)
-    return formatted_date</code></pre>
+    return formatted_date
+
+
+
+
+
+def get_github_version(owner,repo):
+    try:
+        
+
+        if not owner and not repo:
+            # Get the repository name and owner from the local .git directory
+            command = [&#34;git&#34;, &#34;config&#34;, &#34;--get&#34;, &#34;remote.origin.url&#34;]
+            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+            output, _ = process.communicate()
+            if process.returncode != 0:
+                raise RuntimeError(&#34;Failed to get repository information.&#34;)
+            remote_url = output.strip().decode(&#34;utf-8&#34;)
+            owner, repo = remote_url.split(&#34;/&#34;)[-2:]
+
+        # Make a request to the GitHub API for the latest release
+        api_url = f&#34;https://api.github.com/repos/{owner}/{repo}/releases/latest&#34;
+        response = requests.get(api_url)
+        response.raise_for_status()
+        json_data = response.json()
+        version = json_data.get(&#34;tag_name&#34;)
+        return version if version else &#34;-0.0.0&#34;
+    except (subprocess.CalledProcessError, requests.RequestException, ValueError, IndexError) as e:
+            print(f&#34;Error: {str(e)}&#34;)
+            return None
+
+
+
+def get_commit_hashes(owner, repo ,latest = True):
+    try:
+        # Make a request to the GitHub API for the repository information
+        api_url = f&#34;https://api.github.com/repos/{owner}/{repo}/commits&#34;
+        response = requests.get(api_url)
+        response.raise_for_status()
+        json_data = response.json()
+
+        # Extract the latest and previous commit hashes
+        latest_commit = json_data[0][&#34;sha&#34;]
+        previous_commit = json_data[1][&#34;sha&#34;]
+
+        return  [previous_commit,latest_commit][latest]
+    except (requests.RequestException, ValueError, IndexError) as e:
+        print(f&#34;Error: {str(e)}&#34;)
+        return None</code></pre>
 </details>
 </section>
 <section>
@@ -121,6 +177,68 @@ def yymmdd(delimiter=&#39;-&#39;):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="cvtool.core.stdout.get_commit_hashes"><code class="name flex">
+<span>def <span class="ident">get_commit_hashes</span></span>(<span>owner, repo, latest=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_commit_hashes(owner, repo ,latest = True):
+    try:
+        # Make a request to the GitHub API for the repository information
+        api_url = f&#34;https://api.github.com/repos/{owner}/{repo}/commits&#34;
+        response = requests.get(api_url)
+        response.raise_for_status()
+        json_data = response.json()
+
+        # Extract the latest and previous commit hashes
+        latest_commit = json_data[0][&#34;sha&#34;]
+        previous_commit = json_data[1][&#34;sha&#34;]
+
+        return  [previous_commit,latest_commit][latest]
+    except (requests.RequestException, ValueError, IndexError) as e:
+        print(f&#34;Error: {str(e)}&#34;)
+        return None</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.stdout.get_github_version"><code class="name flex">
+<span>def <span class="ident">get_github_version</span></span>(<span>owner, repo)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_github_version(owner,repo):
+    try:
+        
+
+        if not owner and not repo:
+            # Get the repository name and owner from the local .git directory
+            command = [&#34;git&#34;, &#34;config&#34;, &#34;--get&#34;, &#34;remote.origin.url&#34;]
+            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+            output, _ = process.communicate()
+            if process.returncode != 0:
+                raise RuntimeError(&#34;Failed to get repository information.&#34;)
+            remote_url = output.strip().decode(&#34;utf-8&#34;)
+            owner, repo = remote_url.split(&#34;/&#34;)[-2:]
+
+        # Make a request to the GitHub API for the latest release
+        api_url = f&#34;https://api.github.com/repos/{owner}/{repo}/releases/latest&#34;
+        response = requests.get(api_url)
+        response.raise_for_status()
+        json_data = response.json()
+        version = json_data.get(&#34;tag_name&#34;)
+        return version if version else &#34;-0.0.0&#34;
+    except (subprocess.CalledProcessError, requests.RequestException, ValueError, IndexError) as e:
+            print(f&#34;Error: {str(e)}&#34;)
+            return None</code></pre>
+</details>
+</dd>
 <dt id="cvtool.core.stdout.get_user"><code class="name flex">
 <span>def <span class="ident">get_user</span></span>(<span>shell=False)</span>
 </code></dt>
@@ -238,6 +356,23 @@ def yymmdd(delimiter=&#39;-&#39;):
     return logger</code></pre>
 </details>
 </dd>
+<dt id="cvtool.core.stdout.view"><code class="name flex">
+<span>def <span class="ident">view</span></span>(<span>x)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>temporary json viewer</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def view(x):
+    &#39;&#39;&#39;
+    temporary json viewer
+    &#39;&#39;&#39;
+    import pprint
+    pprint.pprint(x)</code></pre>
+</details>
+</dd>
 <dt id="cvtool.core.stdout.yymmdd"><code class="name flex">
 <span>def <span class="ident">yymmdd</span></span>(<span>delimiter='-')</span>
 </code></dt>
@@ -290,10 +425,13 @@ def yymmdd(delimiter=&#39;-&#39;):
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
-<ul class="">
+<ul class="two-column">
+<li><code><a title="cvtool.core.stdout.get_commit_hashes" href="#cvtool.core.stdout.get_commit_hashes">get_commit_hashes</a></code></li>
+<li><code><a title="cvtool.core.stdout.get_github_version" href="#cvtool.core.stdout.get_github_version">get_github_version</a></code></li>
 <li><code><a title="cvtool.core.stdout.get_user" href="#cvtool.core.stdout.get_user">get_user</a></code></li>
 <li><code><a title="cvtool.core.stdout.git_user" href="#cvtool.core.stdout.git_user">git_user</a></code></li>
 <li><code><a title="cvtool.core.stdout.log" href="#cvtool.core.stdout.log">log</a></code></li>
+<li><code><a title="cvtool.core.stdout.view" href="#cvtool.core.stdout.view">view</a></code></li>
 <li><code><a title="cvtool.core.stdout.yymmdd" href="#cvtool.core.stdout.yymmdd">yymmdd</a></code></li>
 </ul>
 </li>

@@ -26,16 +26,84 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import os, sys
+<pre><code class="python">import os
+import sys
+import json
 
-def exists(path,error = True):
+def exists(path, error=True):
+    &#34;&#34;&#34;
+    Check if a given path exists.
+
+    Args:
+        path (str): The path to check.
+        error (bool): Flag indicating whether to raise an error if the path does not exist.
+    
+    Returns:
+        str or False: The path if it exists, False otherwise.
+    
+    Raises:
+        FileNotFoundError: If the path does not exist and error is set to True.
+    &#34;&#34;&#34;
     if path:
         if not os.path.exists(path):
             if error:
                 raise FileNotFoundError(f&#34;The path &#39;{path}&#39; does not exist.&#34;)
-            else: return False
+            else:
+                return False
         return path
-    return False</code></pre>
+    return False
+
+
+def combine(new, old):
+    &#34;&#34;&#34;
+    Combine two dictionaries.
+
+    Args:
+        new (dict): The new dictionary to merge.
+        old (dict): The old dictionary to merge into.
+
+    Returns:
+        dict: The merged dictionary.
+    &#34;&#34;&#34;
+    # merged_dict = old.copy()
+    # merged_dict.update(new)
+    # return merged_dict
+
+    merged_dict = old.copy()
+    for key, value in new.items():
+        if key in merged_dict and isinstance(merged_dict[key], dict) and isinstance(value, dict):
+            merged_dict[key] = combine(value, merged_dict[key])
+        else:
+            merged_dict[key] = value
+    return merged_dict
+
+
+def jsonwrite(jsndata, filename, mode=&#39;w&#39;):
+    &#34;&#34;&#34;
+    Write JSON data to a file.
+
+    Args:
+        jsndata (dict): The JSON data to write.
+        filename (str): The name of the file to write to.
+        mode (str): The file mode (default is &#39;w&#39; for write).
+
+    Raises:
+        IOError: If there is an error writing the JSON data to the file.
+    &#34;&#34;&#34;
+    if filename [-5:] != &#39;.json&#39;: 
+        filename += &#39;.json&#39;
+        
+    with open(filename, mode) as file:
+        json.dump(jsndata, file, indent=4)
+
+
+
+def get_current_function_name():
+    import inspect
+    current_frame = inspect.currentframe()
+    caller_frame = inspect.getouterframes(current_frame)[1]
+    function_name = caller_frame.function
+    return function_name</code></pre>
 </details>
 </section>
 <section>
@@ -45,8 +113,103 @@ def exists(path,error = True):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="cvtool.core.io.combine"><code class="name flex">
+<span>def <span class="ident">combine</span></span>(<span>new, old)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Combine two dictionaries.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>new</code></strong> :&ensp;<code>dict</code></dt>
+<dd>The new dictionary to merge.</dd>
+<dt><strong><code>old</code></strong> :&ensp;<code>dict</code></dt>
+<dd>The old dictionary to merge into.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>The merged dictionary.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def combine(new, old):
+    &#34;&#34;&#34;
+    Combine two dictionaries.
+
+    Args:
+        new (dict): The new dictionary to merge.
+        old (dict): The old dictionary to merge into.
+
+    Returns:
+        dict: The merged dictionary.
+    &#34;&#34;&#34;
+    # merged_dict = old.copy()
+    # merged_dict.update(new)
+    # return merged_dict
+
+    merged_dict = old.copy()
+    for key, value in new.items():
+        if key in merged_dict and isinstance(merged_dict[key], dict) and isinstance(value, dict):
+            merged_dict[key] = combine(value, merged_dict[key])
+        else:
+            merged_dict[key] = value
+    return merged_dict</code></pre>
+</details>
+</dd>
 <dt id="cvtool.core.io.exists"><code class="name flex">
 <span>def <span class="ident">exists</span></span>(<span>path, error=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check if a given path exists.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>path</code></strong> :&ensp;<code>str</code></dt>
+<dd>The path to check.</dd>
+<dt><strong><code>error</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Flag indicating whether to raise an error if the path does not exist.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code> or <code>False</code></dt>
+<dd>The path if it exists, False otherwise.</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>FileNotFoundError</code></dt>
+<dd>If the path does not exist and error is set to True.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def exists(path, error=True):
+    &#34;&#34;&#34;
+    Check if a given path exists.
+
+    Args:
+        path (str): The path to check.
+        error (bool): Flag indicating whether to raise an error if the path does not exist.
+    
+    Returns:
+        str or False: The path if it exists, False otherwise.
+    
+    Raises:
+        FileNotFoundError: If the path does not exist and error is set to True.
+    &#34;&#34;&#34;
+    if path:
+        if not os.path.exists(path):
+            if error:
+                raise FileNotFoundError(f&#34;The path &#39;{path}&#39; does not exist.&#34;)
+            else:
+                return False
+        return path
+    return False</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.io.get_current_function_name"><code class="name flex">
+<span>def <span class="ident">get_current_function_name</span></span>(<span>)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -54,14 +217,54 @@ def exists(path,error = True):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def exists(path,error = True):
-    if path:
-        if not os.path.exists(path):
-            if error:
-                raise FileNotFoundError(f&#34;The path &#39;{path}&#39; does not exist.&#34;)
-            else: return False
-        return path
-    return False</code></pre>
+<pre><code class="python">def get_current_function_name():
+    import inspect
+    current_frame = inspect.currentframe()
+    caller_frame = inspect.getouterframes(current_frame)[1]
+    function_name = caller_frame.function
+    return function_name</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.io.jsonwrite"><code class="name flex">
+<span>def <span class="ident">jsonwrite</span></span>(<span>jsndata, filename, mode='w')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Write JSON data to a file.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>jsndata</code></strong> :&ensp;<code>dict</code></dt>
+<dd>The JSON data to write.</dd>
+<dt><strong><code>filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>The name of the file to write to.</dd>
+<dt><strong><code>mode</code></strong> :&ensp;<code>str</code></dt>
+<dd>The file mode (default is 'w' for write).</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>IOError</code></dt>
+<dd>If there is an error writing the JSON data to the file.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def jsonwrite(jsndata, filename, mode=&#39;w&#39;):
+    &#34;&#34;&#34;
+    Write JSON data to a file.
+
+    Args:
+        jsndata (dict): The JSON data to write.
+        filename (str): The name of the file to write to.
+        mode (str): The file mode (default is &#39;w&#39; for write).
+
+    Raises:
+        IOError: If there is an error writing the JSON data to the file.
+    &#34;&#34;&#34;
+    if filename [-5:] != &#39;.json&#39;: 
+        filename += &#39;.json&#39;
+        
+    with open(filename, mode) as file:
+        json.dump(jsndata, file, indent=4)</code></pre>
 </details>
 </dd>
 </dl>
@@ -82,7 +285,10 @@ def exists(path,error = True):
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="cvtool.core.io.combine" href="#cvtool.core.io.combine">combine</a></code></li>
 <li><code><a title="cvtool.core.io.exists" href="#cvtool.core.io.exists">exists</a></code></li>
+<li><code><a title="cvtool.core.io.get_current_function_name" href="#cvtool.core.io.get_current_function_name">get_current_function_name</a></code></li>
+<li><code><a title="cvtool.core.io.jsonwrite" href="#cvtool.core.io.jsonwrite">jsonwrite</a></code></li>
 </ul>
 </li>
 </ul>

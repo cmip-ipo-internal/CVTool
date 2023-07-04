@@ -8,10 +8,10 @@ The CV module manages changes and creation of initial files.
 '''
 
 
-
 import json
 import importlib.util
-import os,sys
+import os
+import sys
 
 
 # print(sys.modules)
@@ -20,30 +20,27 @@ from ..core.dynamic_imports import load_module
 from . import meta
 
 
-
-
 try:
     debug = sys.argv[1]
-except: 
-    debug=False
+except:
+    debug = False
 
-if not debug: 
+if not debug:
     class pdbover:
         def set_trace(self):
             pass
     pdb = pdbover()
-else: 
+else:
     import pdb
 
 
-def basepath(name,basepath=''):
-    return __file__.replace('__init__',f'{basepath}{name}/__init__'),name
+def basepath(name, basepath=''):
+    return __file__.replace('__init__', f'{basepath}{name}/__init__'), name
 
 
 # mip= load_module(*basepath('mip_era'))
 
-
-
+global_keys = ['institution']
 
 
 base = [
@@ -67,7 +64,7 @@ base = [
 
 
 class CVDIR:
-    def __init__(self, prefix='', directory='', base_files=None):
+    def __init__(self, prefix='', directory='', base_files=None, tables='', table_prefix=''):
         """
         Initializes the CVDIR class.
 
@@ -82,8 +79,13 @@ class CVDIR:
         self.directory = directory
         self.file_names = base_files or base
         self.files = {}
+        self.tables = tables
+        self.table_prefix = table_prefix
 
-        if not os.path.exists(directory):
+        # ensure that the tables exist
+        core.io.exists(tables)
+
+        if not core.io.exists(directory, False):
             self.create_project()
 
         for file_name in self.file_names:
@@ -126,55 +128,51 @@ class CVDIR:
             update_func (callable): Custom update function. If None, uses the create function from the parent module.
         """
 
-
-
-        pdb.set_trace()
+        # pdb.set_trace()
 
         output_name = file_name.split('.')[0]
-        output_path = os.path.join(self.directory, output_name+'.json') 
+        output_path = os.path.join(self.directory, output_name+'.json')
 
         module = load_module(*basepath(file_name))
         # print(module,[*basepath(file_name)])
 
-        # preparse the data 
+        # preparse the data
         update_func = update_func or getattr(module, "preparse", None)
         if callable(update_func):
             preprocessed_data = self.pre_parse_update(file_name, data)
             data = update_func(self.files[file_name], preprocessed_data)
+
             # self.files[file_name] = updated_data
             # file_path = os.path.join(self.directory, self.prefix + file_name)
             # with open(file_path, 'w') as file:
             #     json.dump(updated_data, file)
 
-        
         if module:
-            # processing functions need a create and an update. 
-            if not core.io.exists(output_path,error = False):
+            # processing functions need a create and an update.
+            if not core.io.exists(output_path, error=False):
+                pdb.set_trace()
                 jsn_data = module.create(data)
-            else: 
-                jsn_data = json.load(open(output_path,'r'))
+            else:
+                jsn_data = json.load(open(output_path, 'r'))
                 if not jsn_data:
                     # empty files?
-                    print('empty:',file_name)
+                    print('empty:', file_name)
                     jsn_data = module.create(data)
+                print(jsn_data)
 
             # update
-            jsn_data = module.update(jsn_data,data)
+            jsn_data = module.update(jsn_data, data)
 
-        else: 
-            # the user wants to do something special. 
-            # code needs to be formatted within their update function. 
+        else:
+            # the user wants to do something special.
+            # code needs to be formatted within their update function.
+
             jsn_data = data
 
         # make a backup here!?
         core.io.jsonwrite(jsn_data, output_path)
 
-
-        
-        
-
-
-    def update_all(self, data=None, opt_func=None):
+    def update_all(self, data, opt_func=None):
         """
         Creates all files with new data using the specified update function or the corresponding create functions
         from the parent modules.
@@ -184,30 +182,41 @@ class CVDIR:
             opt_func (callable): Custom update function.
         """
 
-        
- 
-        if data == None: 
-            data= {}
+        #  ensure that the mandatory keys are contained.
+        for key in global_keys:
+            assert data.get('globals').get(
+                key), f'Please provide {key} in the globals element'
+
+        data['globals']['tables'] = self.tables
+        data['globals']['table_prefix'] = self.table_prefix
+
+        # if data == None:
+        #     data = {}
 
         if opt_func is not None:
-            if not isinstance(opt_func, dict): 
-                print("Warning: opt_func must be a dictionary of keys with corresponding values as functions or None.")
+            if not isinstance(opt_func, dict):
+                print(
+                    "Warning: opt_func must be a dictionary of keys with corresponding values as functions or None.")
                 opt_func = None
             else:
                 for file_name, func in opt_func.items():
                     if not callable(func) and func is not None:
-                        print(f"Warning: value of key {file_name} must be a function or None. Changing this to None.")
+                        print(
+                            f"Warning: value of key {file_name} must be a function or None. Changing this to None.")
                         opt_func[file_name] = None
 
-        # we are doing a multi operation. 
-        if opt_func == None: opt_func = {}
+        # we are doing a multi operation.
+        if opt_func == None:
+            opt_func = {}
 
         for file_name in self.file_names:
             # print(file_name, data.get(file_name) or None, opt_func.get(file_name) or None)
 
-            self.update_file(file_name, data.get(file_name) or dict(), opt_func.get(file_name) or None)
+            subdict = data.get(file_name) or dict()
+            subdict['globals'] = data.get('globals')
 
-
+            self.update_file(file_name,  subdict,
+                             opt_func.get(file_name) or None)
 
     def pre_parse_update(self, file_name, data):
         """
@@ -227,8 +236,30 @@ class CVDIR:
             preprocessed_data[f"{self.prefix}{key}"] = value
         return preprocessed_data
 
+    def get_activity(self, activity='CMIP'):
 
+        #  default = cmip deck 
+        path = self.tables + self.table_prefix
+        tabledata = json.load(open(f"{path}_CV.json", 'r'))
 
+        deck = {}
+        deck['activity_id'] = {activity : tabledata['activity_id'][activity]}
+
+        def filter_dict(data):
+            if data:
+                if isinstance(data, list):
+                    return activity in data
+
+                return {key: value for key, value in data.items() if
+                    (isinstance(value, dict) and filter_dict(value.get('activity_id',''))) or
+                    (isinstance(value, str) and value == activity)} 
+        
+
+        experiments = tabledata['experiment_id']
+        deck['experiment_id'] = filter_dict(experiments)
+
+    
+        return deck
 
 class ProjectCreator:
     def __init__(self, prefix='', directory='', base_files=None):
@@ -252,25 +283,26 @@ class ProjectCreator:
         Creates the project by running the 'create' function from the parent module for each file.
         """
         for file_name in self.files:
-            
 
             output_name = file_name.split('.')[0]
             output_path = os.path.join(self.directory, output_name)
-            module_path =  os.path.join(os.path.dirname(__file__), output_name)
+            module_path = os.path.join(os.path.dirname(__file__), output_name)
             file_path = os.path.join(self.directory, self.prefix + file_name)
-                        
+
             if not os.path.exists(file_path):
                 if os.path.exists(output_path):
-                    module = importlib.import_module(module_path,output_name)
+                    module = importlib.import_module(module_path, output_name)
                     opt_func = opt_func or getattr(module, "create", None)
-               
+
                     if callable(opt_func):
                         with open(file_path, 'w') as file:
                             json.dump(opt_func(), file)
                     else:
-                        print(f"Create function not implemented for {file_name}")
+                        print(
+                            f"Create function not implemented for {file_name}")
             else:
-                print(f"ERROR: No function provided for processing. Writing an empty file at {file_name}")
+                print(
+                    f"ERROR: No function provided for processing. Writing an empty file at {file_name}")
 
 
 # # Example usage

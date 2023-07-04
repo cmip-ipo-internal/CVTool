@@ -4,6 +4,13 @@ import subprocess
 import json
 
 
+def view(x):
+    '''
+    temporary json viewer
+    '''
+    import pprint
+    pprint.pprint(x)
+
 def log(name, level='info'):
     """
     Configure a logger with a console handler.

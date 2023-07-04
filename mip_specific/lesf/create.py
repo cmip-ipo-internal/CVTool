@@ -1,11 +1,15 @@
 import sys
 sys.path.append('../../')
-# from mymodule import myfunction
-
-
+#  keep this 
+import pdb
 import cvtool
+# and then this 
 from cvtool import CV
+from cvtool.core.stdout import view
 
+import pandas as pd
+
+# from mymodule import myfunction
 
 
 prefix = 'MY_PREFIX'
@@ -15,131 +19,131 @@ prefix = 'MY_PREFIX'
 handler = CV.CVDIR(prefix=prefix, directory='testdir', base_files=[
     "mip_era",
     "DRS",
-    # "experimet_id",
-    # "table_id"
-])
+    "required_global_attributes",
+    "license",
+    "activity_id",
+    "experiment_id"
+], tables='/Users/daniel.ellis/WIPwork/mip-cmor-tables/Tables/', table_prefix='CMIP6Plus')
 
 # # Update all files with data using the example update function
 
-data = {'mip_era':{'create':{'mipera':prefix,'institution':'testipo'},'update':{'updatedadd':'topleveltest'}}}
+
+deck = handler.get_activity()
+damip = handler.get_activity(activity='DAMIP')
+
+
+'''
+Lets extract the names 
+'''
+
+df = pd.read_csv('./data/exp_in.csv')
+# omit the simarly named all but one experiments.
+df = df[~df['Name'].str.contains('abo')]
+
+experiments = {}
+
+for _, r in df.iterrows():
+    name = r.Name
+    if name in damip['experiment_id']:
+        #  existing historical
+        entry = damip['experiment_id'][name].copy()
+        # view(entry)
+        # view(r.to_json())
+
+        entry['activity_id'] = ['LESFMIP']
+        entry['tier'] = int(r.Tier)
+        entry['start'] = int(r['Start year'])
+        entry['end'] = int(r['End year'])
+
+        experiments[name] = entry
+
+    elif name.replace('fut', 'hist') in damip['experiment_id']:
+        entry = damip['experiment_id'][name.replace('fut', 'hist')].copy()
+        entry['experiment'] = entry['experiment'].replace(
+            'historical', 'future')
+
+        entry['activity_id'] = ['LESFMIP']
+        entry['experiment_id'] = name
+        entry['tier'] = int(r.Tier)
+        entry['start'] = (r['Start year'])
+        entry['end'] = (r['End year'])
+
+        experiments[name] = entry
+
+    else:
+        view(r.to_dict())
+        print('^^^ missing')
+
+        entry = {}
+        entry['experiment'] = r.Experiment
+
+        entry['activity_id'] = ['LESFMIP']
+        entry['experiment_id'] = name
+        entry['tier'] = int(r.Tier)
+        entry['start'] = (r['Start year'])
+        entry['end'] = (r['End year'])
+
+
+# pdb.set_trace()
+
+data = {
+    'globals': {
+        'institution': "myInstitution"
+    },
+    'mip_era': {
+        'create': {
+            'mipera': prefix,
+            'institution': 'testipo'
+        },
+        'update': {
+            'updatedadd': 'topleveltest'
+        }
+    },
+    "activity_id": {
+        'create': {
+            "activity_id": deck.get('activity_id')
+        },
+        'update': {
+            "activity_id": {
+                'LESFMIP': 'The Large Ensemble Single Forcing Model Intercomparison Project'
+            }
+        }
+    },
+    'experiment_id': {
+        'update': {
+            'experiment_id': experiments
+        }
+    }
+}
 
 
 handler.update_all(data)
 
 
-
-
-
-
-def lesf_parse():
-
-
-    import pandas as pd
-    df = pd.read_csv('./data/exp_in.csv')
-
-    optional = {'activity_id':'LESF'}
-
-    experiments = {}
-    for i,row in df.iterrows():
-        experiments[row.get('Name')] = get_experiment(row)
-
-
-
-def get_experiment(edata,optional):
-    
-    return  {
-      "activity_id": [
-        optional.get('activity_id')
-      ],
-      "additional_allowed_model_components": [
-        # "AER",
-        # "CHEM",
-        # "BGC"
-
-        # existing cvs:most experiments require - either AGCM(atmos) AOGCM(coupled)
-        # BGC biogeochem (additional to mips. looking at specific models etc. 
-        #)
-        # copy from existing - taking DAMIP -> reqired and allowed are the same . 
-        # in the source_type/? json file. 
-
-      ],
-      "description": edata.get('Description'),
-      "end_year": edata.get('End Year'),
-      "experiment": "1 percent per year increase in CO2",
-
-      "experiment_id": edata.get('Name'),
-      "min_number_yrs_per_sim": "150",
-      "parent_activity_id": [
-        optional.get('activity_id')
-      ],
-      "parent_experiment_id": [
-        # "piControl"
-
-        # existing experiemtns and new hist are all children of the PI control. 
-
-        # future experiments - a continuation of historical 
-        # e.g. futureghg has parent hist ghg
-
-
-
-      ],
-      "required_model_components": [
-        # "AOGCM"
-
-        # 
-
-      ],
-      "start_year": edata.get('Start Year'),
-      "sub_experiment_id": [
-          
-        #    *currently - list as 'none'
-        #  if repeated at a lalter point with different/updated forcing this can be used to distinguish these. 
-      ],
-      "tier": edata.get('Tier')
-    }
-
-
-
-# CMOR 
+# CMOR
 #  produce amon taz for a range of the experiments. (a representatice variable
 
 # apmontas
 
-# check that this works with an older version of CMOR? not versions. 
+# check that this works with an older version of CMOR? not versions.
 # MM 3.7.1
 
-# Set of tables - Put them on Jasmin. 
-# System that wraps around CMOR... 
+# Set of tables - Put them on Jasmin.
+# System that wraps around CMOR...
 
 
 # activity id - cmip lesfmip
-# the rest shoudl remain mainly the same . 
+# the rest shoudl remain mainly the same .
 
 # grid the same
-#  list of tables is in the CVS file 
+#  list of tables is in the CVS file
 
 
 #  generic CV needs to be kept consistant with table_id
-#  might potentially break this down into single file field - in the same format as the CVS repo 
-# /Users/daniel.ellis/WIPwork/mip-cmor-tables/Tables/generic_CV.json 
+#  might potentially break this down into single file field - in the same format as the CVS repo
+# /Users/daniel.ellis/WIPwork/mip-cmor-tables/Tables/generic_CV.json
 
-# esm- => emission driven versions 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# esm- => emission driven versions
 
 
 '''
