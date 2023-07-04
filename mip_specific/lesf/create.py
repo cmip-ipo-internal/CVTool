@@ -42,9 +42,11 @@ df = df[~df['Name'].str.contains('abo')]
 
 experiments = {}
 
+damip_names = map(lambda x: x.lower(), damip['experiment_id'])
+
 for _, r in df.iterrows():
     name = r.Name
-    if name in damip['experiment_id']:
+    if name.lower() in damip_names:
         #  existing historical
         entry = damip['experiment_id'][name].copy()
         # view(entry)
@@ -52,17 +54,19 @@ for _, r in df.iterrows():
 
         entry['activity_id'] = ['LESFMIP']
         entry['tier'] = int(r.Tier)
+        entry['description'] = r.Description
         entry['start'] = int(r['Start year'])
         entry['end'] = int(r['End year'])
 
         experiments[name] = entry
 
-    elif name.replace('fut', 'hist') in damip['experiment_id']:
+    elif name.lower().replace('fut', 'hist') in damip_names:
         entry = damip['experiment_id'][name.replace('fut', 'hist')].copy()
         entry['experiment'] = entry['experiment'].replace(
             'historical', 'future')
 
         entry['activity_id'] = ['LESFMIP']
+        entry['description'] = r.Description
         entry['experiment_id'] = name
         entry['tier'] = int(r.Tier)
         entry['start'] = (r['Start year'])
@@ -76,7 +80,7 @@ for _, r in df.iterrows():
 
         entry = {}
         entry['experiment'] = r.Experiment
-
+        entry['description'] = r.Description
         entry['activity_id'] = ['LESFMIP']
         entry['experiment_id'] = name
         entry['tier'] = int(r.Tier)
