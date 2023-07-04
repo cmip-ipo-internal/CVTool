@@ -53,8 +53,8 @@ for _, r in df.iterrows():
         # view(r.to_json())
 
         entry['activity_id'] = ['LESFMIP']
+        entry['description'] = entry.get('description') or r.Description
         entry['tier'] = int(r.Tier)
-        entry['description'] = r.Description
         entry['start'] = int(r['Start year'])
         entry['end'] = int(r['End year'])
 
@@ -66,7 +66,7 @@ for _, r in df.iterrows():
             'historical', 'future')
 
         entry['activity_id'] = ['LESFMIP']
-        entry['description'] = r.Description
+        entry['description'] = entry.get('description') or r.Description
         entry['experiment_id'] = name
         entry['tier'] = int(r.Tier)
         entry['start'] = (r['Start year'])
@@ -80,7 +80,7 @@ for _, r in df.iterrows():
 
         entry = {}
         entry['experiment'] = r.Experiment
-        entry['description'] = r.Description
+        entry['description'] = entry.get('description') or r.Description
         entry['activity_id'] = ['LESFMIP']
         entry['experiment_id'] = name
         entry['tier'] = int(r.Tier)

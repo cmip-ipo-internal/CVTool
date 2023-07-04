@@ -32,8 +32,8 @@
             "sub_experiment_id": [
                 "none"
             ],
-            "tier": 1,
             "description": "Well-mixed greenhouse-gas-only historical simulations",
+            "tier": 1,
             "start": 1850,
             "end": 2020
         },
@@ -60,8 +60,8 @@
             "sub_experiment_id": [
                 "none"
             ],
-            "tier": 1,
             "description": "Anthropogenic-aerosol-only historical simulations",
+            "tier": 1,
             "start": 1850,
             "end": 2020
         },
@@ -88,8 +88,8 @@
             "sub_experiment_id": [
                 "none"
             ],
-            "tier": 1,
             "description": "Solar-only historical simulations",
+            "tier": 1,
             "start": 1850,
             "end": 2020
         },
@@ -116,8 +116,8 @@
             "sub_experiment_id": [
                 "none"
             ],
-            "tier": 1,
             "description": "Volcanic-only historical simulations",
+            "tier": 1,
             "start": 1850,
             "end": 2020
         },

@@ -296,7 +296,7 @@ class ProjectCreator:
 
                     if callable(opt_func):
                         with open(file_path, 'w') as file:
-                            json.dump(opt_func(), file)
+                            json.dump(opt_func(), file, sort_keys=True)
                     else:
                         print(
                             f"Create function not implemented for {file_name}")
