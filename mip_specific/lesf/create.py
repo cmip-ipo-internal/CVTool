@@ -116,6 +116,9 @@ data = {
         }
     },
     'experiment_id': {
+        'create': {
+            'experiment_id': deck['experiment_id']
+        }, 
         'update': {
             'experiment_id': experiments
         }
