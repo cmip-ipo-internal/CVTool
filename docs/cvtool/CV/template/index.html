@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>cvtool API documentation</title>
+<title>cvtool.CV.template API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
@@ -19,38 +19,189 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Package <code>cvtool</code></h1>
+<h1 class="title">Module <code>cvtool.CV.template</code></h1>
 </header>
 <section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import sys
+import os
+import json
+
+# Importing &#39;cvtool.core&#39; and &#39;cvtool.CV.meta&#39; modules
+core = sys.modules.get(&#39;cvtool.core&#39;)
+meta = sys.modules.get(&#39;cvtool.CV.meta&#39;)
+
+# Extracting the parent directory name from the current file path
+whoami = __file__.split(&#39;/&#39;)[-2]
+
+# Logging &#39;info&#39; level message using &#39;core.stdout.log&#39; function
+logger = core.stdout.log(whoami, level=&#39;info&#39;)
+
+default = None
+
+    # default_content = json.load(open(f&#34;{DRSpath}_CV.json&#34;,&#39;r&#39;))[whoami]
+
+def create(optdata):
+    &#34;&#34;&#34;
+    Create a dictionary representing the header and content of a CV collection.
+
+    Args:
+        optdata (dict): Optional data dictionary.
+
+    Returns:
+        dict: A dictionary representing the header and content of the CV collection.
+
+    &#34;&#34;&#34;
+    this = core.io.get_current_function_name()
+
+    # get the globals before overwriting
+    institution = optdata[&#39;globals&#39;][&#39;institution&#39;]
+    optdata = optdata.get(this) or {}
+
+    content = optdata.get(whoami) # this may be different if the varaible does not reflect the file name (e.g. mip_era and mipera)
+    institution = optdata.get(&#39;institution&#39;)
+
+    header = meta.create(institution)
+    header[whoami] = content or default
+
+    return header
+
+
+def update(jsn, optdata):
+    &#34;&#34;&#34;
+    Update the metadata of a CV collection.
+
+    Args:
+        jsn (dict): The existing CV collection dictionary.
+        optdata (dict): Optional data dictionary.
+
+    Returns:
+        dict: The updated CV collection dictionary.
+
+    &#34;&#34;&#34;
+    this = core.io.get_current_function_name()
+    optdata = optdata.get(this)
+    if not optdata:
+        logger.info(&#39;nothing to update&#39;)
+        return jsn
+
+    # Check if there is something to update
+    assert len(jsn) &gt;= 0
+
+    # Update some of the metadata
+    overwrite = meta.update()
+
+    optdata = core.io.combine(optdata, overwrite)
+
+    return core.io.combine(jsn, optdata)</code></pre>
+</details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt><code class="name"><a title="cvtool.CMORlib" href="CMORlib/index.html">cvtool.CMORlib</a></code></dt>
+<dt id="cvtool.CV.template.create"><code class="name flex">
+<span>def <span class="ident">create</span></span>(<span>optdata)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>This section contains all the code for creating CMOR compatible files from existing MIP configurations</p></div>
+<div class="desc"><p>Create a dictionary representing the header and content of a CV collection.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>optdata</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Optional data dictionary.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>A dictionary representing the header and content of the CV collection.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create(optdata):
+    &#34;&#34;&#34;
+    Create a dictionary representing the header and content of a CV collection.
+
+    Args:
+        optdata (dict): Optional data dictionary.
+
+    Returns:
+        dict: A dictionary representing the header and content of the CV collection.
+
+    &#34;&#34;&#34;
+    this = core.io.get_current_function_name()
+
+    # get the globals before overwriting
+    institution = optdata[&#39;globals&#39;][&#39;institution&#39;]
+    optdata = optdata.get(this) or {}
+
+    content = optdata.get(whoami) # this may be different if the varaible does not reflect the file name (e.g. mip_era and mipera)
+    institution = optdata.get(&#39;institution&#39;)
+
+    header = meta.create(institution)
+    header[whoami] = content or default
+
+    return header</code></pre>
+</details>
 </dd>
-<dt><code class="name"><a title="cvtool.CV" href="CV/index.html">cvtool.CV</a></code></dt>
+<dt id="cvtool.CV.template.update"><code class="name flex">
+<span>def <span class="ident">update</span></span>(<span>jsn, optdata)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>This is where changes to CV files happen, and consequently the generated CV files (see CV submodule) …</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.ESGF" href="ESGF/index.html">cvtool.ESGF</a></code></dt>
-<dd>
-<div class="desc"><p>Scripts for generating ESGF compliant <code>.ini</code> files.</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.TABLES" href="TABLES/index.html">cvtool.TABLES</a></code></dt>
-<dd>
-<div class="desc"><p>Files for editing various mip tables.</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core" href="core/index.html">cvtool.core</a></code></dt>
-<dd>
-<div class="desc"><p>Core Lib files. These deal with: …</p></div>
+<div class="desc"><p>Update the metadata of a CV collection.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>jsn</code></strong> :&ensp;<code>dict</code></dt>
+<dd>The existing CV collection dictionary.</dd>
+<dt><strong><code>optdata</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Optional data dictionary.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>The updated CV collection dictionary.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update(jsn, optdata):
+    &#34;&#34;&#34;
+    Update the metadata of a CV collection.
+
+    Args:
+        jsn (dict): The existing CV collection dictionary.
+        optdata (dict): Optional data dictionary.
+
+    Returns:
+        dict: The updated CV collection dictionary.
+
+    &#34;&#34;&#34;
+    this = core.io.get_current_function_name()
+    optdata = optdata.get(this)
+    if not optdata:
+        logger.info(&#39;nothing to update&#39;)
+        return jsn
+
+    # Check if there is something to update
+    assert len(jsn) &gt;= 0
+
+    # Update some of the metadata
+    overwrite = meta.update()
+
+    optdata = core.io.combine(optdata, overwrite)
+
+    return core.io.combine(jsn, optdata)</code></pre>
+</details>
 </dd>
 </dl>
-</section>
-<section>
-</section>
-<section>
 </section>
 <section>
 </section>
@@ -61,13 +212,15 @@
 <ul></ul>
 </div>
 <ul id="index">
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<li><h3>Super-module</h3>
 <ul>
-<li><code><a title="cvtool.CMORlib" href="CMORlib/index.html">cvtool.CMORlib</a></code></li>
-<li><code><a title="cvtool.CV" href="CV/index.html">cvtool.CV</a></code></li>
-<li><code><a title="cvtool.ESGF" href="ESGF/index.html">cvtool.ESGF</a></code></li>
-<li><code><a title="cvtool.TABLES" href="TABLES/index.html">cvtool.TABLES</a></code></li>
-<li><code><a title="cvtool.core" href="core/index.html">cvtool.core</a></code></li>
+<li><code><a title="cvtool.CV" href="../index.html">cvtool.CV</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="cvtool.CV.template.create" href="#cvtool.CV.template.create">create</a></code></li>
+<li><code><a title="cvtool.CV.template.update" href="#cvtool.CV.template.update">update</a></code></li>
 </ul>
 </li>
 </ul>

@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>cvtool.core API documentation</title>
-<meta name="description" content="Core Lib files. These deal with: …" />
+<title>cvtool.CV.experiment_idold API documentation</title>
+<meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -19,53 +19,85 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>cvtool.core</code></h1>
+<h1 class="title">Module <code>cvtool.CV.experiment_idold</code></h1>
 </header>
 <section id="section-intro">
-<p>Core Lib files. These deal with:</p>
-<ul>
-<li>curses</li>
-<li>terminal parameters</li>
-<li>file input-output</li>
-<li>print formatting
-etc.</li>
-</ul>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#39;&#39;&#39;
-Core Lib files. These deal with:
+<pre><code class="python">import sys
+import os
 
-- curses
-- terminal parameters
-- file input-output
-- print formatting
-etc.
-&#39;&#39;&#39;
-from . import stdout, io, dynamic_imports, curses_toolbox, checksum</code></pre>
+core = sys.modules.get(&#39;cvtool.core&#39;)
+whoami = __file__.split(&#39;/&#39;)[-2:-1]
+
+#####################
+
+#### Take this out of each 
+def create_meta(whoami, content,institution):
+    current_date = core.stdout.yymmdd()
+    user = core.stdout.get_user()
+
+    return {
+        &#34;Header&#34;: {
+            &#34;CV_collection_modified&#34;: current_date,
+            &#34;CV_collection_version&#34;: core.stdout.get_github_version(&#39;WCRP-CMIP&#39;,&#39;CMIP6Plus_CVs&#39;),
+            &#34;author&#34;: f&#39;{user.get(&#34;user&#34;)} &lt;{user.get(&#34;email&#34;)}&gt;&#39;,
+            &#34;checksum&#34;: &#34;md5: EDITEDITEDITEDITEDITEDITEDITEDIT&#34;,
+            &#34;institution_id&#34;: institution,
+            &#34;previous_commit&#34;: core.stdout.get_github_version(&#39;WCRP-CMIP&#39;,&#39;CMIP6Plus_CVs&#39;),
+            &#34;specs_doc&#34;: &#34;v6.3.0 (link TBC)&#34;
+        },
+        whoami: content
+        }
+
+#####################
+
+
+
+def create(optdata):
+    this = core.io.get_current_function_name()
+    print(whoami,this)
+    optdata = optdata.get(this) or {}
+
+    content = optdata.get(&#39;mipera&#39;)
+    institution = optdata.get(&#39;institution&#39;)
+
+    return create_meta(whoami, content, institution)
+     
+  
+
+
+
+def update(jsn, optdata):
+    this = core.io.get_current_function_name()
+    optdata = optdata.get(this)
+    if not optdata: 
+        print (&#39;nothing to update &#39;, whoami)
+
+    # we need something to update
+    assert len(jsn) &gt;= 0
+
+    # update some of the metadata
+    current_date = core.stdout.yymmdd()
+
+    overwrite={&#34;Header&#34;: {
+        &#39;updatetest&#39;: &#39;Yay!&#39;,
+        &#34;CV_collection_modified&#34;: current_date,
+        &#34;CV_collection_version&#34;: core.stdout.get_github_version(&#39;WCRP-CMIP&#39;, &#39;CMIP6Plus_CVs&#39;),
+        &#34;previous_commit&#34;: core.stdout.get_github_version(&#39;WCRP-CMIP&#39;, &#39;CMIP6Plus_CVs&#39;),
+    }}
+
+    optdata = core.io.combine(optdata,overwrite)
+
+    return core.io.combine(jsn,optdata)</code></pre>
 </details>
 </section>
 <section>
 <h2 class="section-title" id="header-submodules">Sub-modules</h2>
 <dl>
-<dt><code class="name"><a title="cvtool.core.checksum" href="checksum.html">cvtool.core.checksum</a></code></dt>
-<dd>
-<div class="desc"><p>Tools for adding and validating checksums</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.curses_toolbox" href="curses_toolbox.html">cvtool.core.curses_toolbox</a></code></dt>
-<dd>
-<div class="desc"><p>A list editor written in ncurses …</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.dynamic_imports" href="dynamic_imports.html">cvtool.core.dynamic_imports</a></code></dt>
-<dd>
-<div class="desc"><p>Scripts to dynamically import modules …</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.io" href="io.html">cvtool.core.io</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.stdout" href="stdout.html">cvtool.core.stdout</a></code></dt>
+<dt><code class="name"><a title="cvtool.CV.experiment_idold.etest" href="etest.html">cvtool.CV.experiment_idold.etest</a></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -74,6 +106,89 @@ from . import stdout, io, dynamic_imports, curses_toolbox, checksum</code></pre>
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="cvtool.CV.experiment_idold.create"><code class="name flex">
+<span>def <span class="ident">create</span></span>(<span>optdata)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create(optdata):
+    this = core.io.get_current_function_name()
+    print(whoami,this)
+    optdata = optdata.get(this) or {}
+
+    content = optdata.get(&#39;mipera&#39;)
+    institution = optdata.get(&#39;institution&#39;)
+
+    return create_meta(whoami, content, institution)</code></pre>
+</details>
+</dd>
+<dt id="cvtool.CV.experiment_idold.create_meta"><code class="name flex">
+<span>def <span class="ident">create_meta</span></span>(<span>whoami, content, institution)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_meta(whoami, content,institution):
+    current_date = core.stdout.yymmdd()
+    user = core.stdout.get_user()
+
+    return {
+        &#34;Header&#34;: {
+            &#34;CV_collection_modified&#34;: current_date,
+            &#34;CV_collection_version&#34;: core.stdout.get_github_version(&#39;WCRP-CMIP&#39;,&#39;CMIP6Plus_CVs&#39;),
+            &#34;author&#34;: f&#39;{user.get(&#34;user&#34;)} &lt;{user.get(&#34;email&#34;)}&gt;&#39;,
+            &#34;checksum&#34;: &#34;md5: EDITEDITEDITEDITEDITEDITEDITEDIT&#34;,
+            &#34;institution_id&#34;: institution,
+            &#34;previous_commit&#34;: core.stdout.get_github_version(&#39;WCRP-CMIP&#39;,&#39;CMIP6Plus_CVs&#39;),
+            &#34;specs_doc&#34;: &#34;v6.3.0 (link TBC)&#34;
+        },
+        whoami: content
+        }</code></pre>
+</details>
+</dd>
+<dt id="cvtool.CV.experiment_idold.update"><code class="name flex">
+<span>def <span class="ident">update</span></span>(<span>jsn, optdata)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update(jsn, optdata):
+    this = core.io.get_current_function_name()
+    optdata = optdata.get(this)
+    if not optdata: 
+        print (&#39;nothing to update &#39;, whoami)
+
+    # we need something to update
+    assert len(jsn) &gt;= 0
+
+    # update some of the metadata
+    current_date = core.stdout.yymmdd()
+
+    overwrite={&#34;Header&#34;: {
+        &#39;updatetest&#39;: &#39;Yay!&#39;,
+        &#34;CV_collection_modified&#34;: current_date,
+        &#34;CV_collection_version&#34;: core.stdout.get_github_version(&#39;WCRP-CMIP&#39;, &#39;CMIP6Plus_CVs&#39;),
+        &#34;previous_commit&#34;: core.stdout.get_github_version(&#39;WCRP-CMIP&#39;, &#39;CMIP6Plus_CVs&#39;),
+    }}
+
+    optdata = core.io.combine(optdata,overwrite)
+
+    return core.io.combine(jsn,optdata)</code></pre>
+</details>
+</dd>
+</dl>
 </section>
 <section>
 </section>
@@ -86,16 +201,19 @@ from . import stdout, io, dynamic_imports, curses_toolbox, checksum</code></pre>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="cvtool" href="../index.html">cvtool</a></code></li>
+<li><code><a title="cvtool.CV" href="../index.html">cvtool.CV</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
 <ul>
-<li><code><a title="cvtool.core.checksum" href="checksum.html">cvtool.core.checksum</a></code></li>
-<li><code><a title="cvtool.core.curses_toolbox" href="curses_toolbox.html">cvtool.core.curses_toolbox</a></code></li>
-<li><code><a title="cvtool.core.dynamic_imports" href="dynamic_imports.html">cvtool.core.dynamic_imports</a></code></li>
-<li><code><a title="cvtool.core.io" href="io.html">cvtool.core.io</a></code></li>
-<li><code><a title="cvtool.core.stdout" href="stdout.html">cvtool.core.stdout</a></code></li>
+<li><code><a title="cvtool.CV.experiment_idold.etest" href="etest.html">cvtool.CV.experiment_idold.etest</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="cvtool.CV.experiment_idold.create" href="#cvtool.CV.experiment_idold.create">create</a></code></li>
+<li><code><a title="cvtool.CV.experiment_idold.create_meta" href="#cvtool.CV.experiment_idold.create_meta">create_meta</a></code></li>
+<li><code><a title="cvtool.CV.experiment_idold.update" href="#cvtool.CV.experiment_idold.update">update</a></code></li>
 </ul>
 </li>
 </ul>

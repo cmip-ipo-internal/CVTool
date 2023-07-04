@@ -1,0 +1,179 @@
+{
+    "experiments": [
+      {
+        "name": "Single forcing historical simulations",
+        "data": [
+          {
+            "Description": "hist-GHG",
+            "Tier": 1,
+            "Start year": 1850,
+            "End year": 2020,
+            "Notes": "As DAMIP but with larger ensembles (10 members minimum with a target of 50 members). To fully capture the effects of volcanic forcing and solar forcing"
+          },
+          {
+            "Description": "hist-aer",
+            "Tier": 1,
+            "Start year": 1850,
+            "End year": 2020,
+            "Notes": "Anthropogenic-aerosol-only historical simulations. In models with prescribed ozone, ozone changes associated with solar and volcanic forcing should be prescribed in the hist-volc, hist-sol and hist-nat"
+          },
+          {
+            "Description": "hist-sol",
+            "Tier": 1,
+            "Start year": 1850,
+            "End year": 2020,
+            "Notes": "Solar-only historical simulations, as in the DAMIP simulations. Note that ozone changes should not be prescribed in hist-GHG"
+          },
+          {
+            "Description": "hist-volc",
+            "Tier": 1,
+            "Start year": 1850,
+            "End year": 2020,
+            "Notes": "Volcanic-only historical simulations"
+          },
+          {
+            "Description": "hist-totalO3",
+            "Tier": 1,
+            "Start year": 1850,
+            "End year": 2020,
+            "Notes": "Ozone-only historical simulations"
+          },
+          {
+            "Description": "hist-lu",
+            "Tier": 1,
+            "Start year": 1850,
+            "End year": 2020,
+            "Notes": "Historical simulations with only land use changes. New experiment"
+          }
+        ]
+      },
+      {
+        "name": "Single forcing projections",
+        "data": [
+          {
+            "Description": "fut-GHG",
+            "Tier": 2,
+            "Start year": "2015 onwards",
+            "End year": "2024 onwards",
+            "Notes": "Ongoing start dates (yearly max frequency) as updated forcings become available. Each simulation to be 10 years long to enable improved attribution of recent changes and attribution of forecast signals. This will be especially important in the event of a future major volcanic eruption, but will also allow deviations in aerosol and GHG emissions and other forcings from the scenario used in experiment set to be assessed."
+          },
+          {
+            "Description": "fut-Aer",
+            "Tier": 2,
+            "Start year": "2015 onwards",
+            "End year": "2024 onwards"
+          },
+          {
+            "Description": "fut-sol",
+            "Tier": 2,
+            "Start year": "2015 onwards",
+            "End year": "2024 onwards"
+          },
+          {
+            "Description": "fut-volc",
+            "Tier": 2,
+            "Start year": "2015 onwards",
+            "End year": "2024 onwards"
+          },
+          {
+            "Description": "fut-totalO3",
+            "Tier": 2,
+            "Start year": "2015 onwards",
+            "End year": "2024 onwards",
+            "Notes": "Note that ozone changes should not be prescribed in fut-GHG"
+          },
+          {
+            "Description": "fut-lu",
+            "Tier": 2,
+            "Start year": "2015 onwards",
+            "End year": "2024 onwards"
+          }
+        ]
+      },
+      {
+        "name": "Combined forcings simulations",
+        "data": [
+          {
+            "Description": "historical",
+            "Tier": 3,
+            "Start year": 1850,
+            "End year": 2020,
+            "Notes": "All forcings. Standard CMIP6 and DAMIP experiments but with larger ensembles, to allow additivity of forcings to be assessed by comparing with experiment set"
+          },
+          {
+            "Description": "hist-nat",
+            "Tier": 3,
+            "Start year": 1850,
+            "End year": 2020,
+            "Notes": "Natural forcings (solar + volcanic)"
+          },
+          {
+            "Description": "fut-All",
+            "Tier": 3,
+            "Start year": "2015 onwards",
+            "End year": "2024 onwards"
+          }
+        ]
+      },
+      {
+        "name": "All but one historical simulations",
+        "data": [
+          {
+            "Description": "abo-hist-GHG",
+            "Tier": 3,
+            "Start year": 1850,
+            "End year": 2020,
+            "Notes": "To assess influence of background state when compared to experiment set, keeping single forcing constant at 1850 levels"
+          },
+          {
+            "Description": "abo-hist-aer",
+            "Tier": 3,
+            "Start year": 1850,
+            "End year": 2020,
+            "Notes": "To assess influence of background state when compared to experiment set, keeping single forcing constant at 1850 levels"
+          },
+          {
+            "Description": "abo-hist-sol",
+            "Tier": 3,
+            "Start year": 1850,
+            "End year": 2020,
+            "Notes": "To assess influence of background state when compared to experiment set, keeping single forcing constant at 1850 levels"
+          },
+          {
+            "Description": "abo-hist-volc",
+            "Tier": 3,
+            "Start year": 1850,
+            "End year": 2020,
+            "Notes": "To assess influence of background state when compared to experiment set, keeping single forcing constant at 1850 levels"
+          },
+          {
+            "Description": "abo-hist-totalO3",
+            "Tier": 3,
+            "Start year": 1850,
+            "End year": 2020,
+            "Notes": "To assess influence of background state when compared to experiment set, keeping single forcing constant at 1850 levels"
+          },
+          {
+            "Description": "abo-hist-lu",
+            "Tier": 3,
+            "Start year": 1850,
+            "End year": 2020,
+            "Notes": "To assess influence of background state when compared to experiment set, keeping single forcing constant at 1850 levels"
+          }
+        ]
+      },
+      {
+        "name": "All but one projections",
+        "data": [
+          {
+            "Description": "abo-fut-GHG",
+            "Tier": 3,
+            "Start year": "2015 onwards",
+            "End year": "2024 onwards",
+            "Notes": "To assess influence of background state when compared to experiment set, keeping single forcing constant at 1850 levels"
+          },
+          {
+            "Description": "abo-fut-Aer",
+            "Tier": 3,
+            "Start year": "2015 onwards
+  

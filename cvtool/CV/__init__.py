@@ -1,213 +1,317 @@
 '''
-This is where all the scripts for creating the CV files from the CVDIR will go
+This is where changes to CV files happen, and consequently the generated CV files (see CV submodule). 
+
+We have the CVfile module - where the outpu t cv file is created
+This is not that. 
+The CV module manages changes and creation of initial files. 
+
 '''
 
 
 import json
-from typing import List, Optional, Union
-from copy import deepcopy
+import importlib.util
+import os
+import sys
 
 
-
-fields = {
-  'Required Variables': {
-    'mip_era': 'enum',
-    'activity_drs': 'enum',
-    'institution_id': 'enum',
-    'source_id': 'enum',
-    'experiment_id': 'enum',
-    'member_id': 'string',
-    'table_id': 'enum',
-    'variable_id': 'string',
-    'grid_label': 'enum',
-    'model_cohort': 'string'
-  },
-  'Optional Variables': {
-    'frequency': 'string',
-    'realm': 'string',
-    'product': 'string',
-    'nominal_resolution': 'string',
-    'source_type': 'string',
-    'grid': 'string',
-    'creation_date': 'string',
-    'variant_label': 'string',
-    'sub_experiment_id': 'enum',
-    'further_info_url': 'string',
-    'activity_id': 'string',
-    'data_specs_version': 'string',
-    'experiment_title': 'string',
-    'project': 'string',
-    'description': 'text'
-  }
-}
+# print(sys.modules)
+from .. import core
+from ..core.dynamic_imports import load_module
+from . import meta
 
 
-experiment_template = {
-    "activity_id": [],
-    "additional_allowed_model_components": [],
-    "experiment": "",
-    "experiment_id": "",
-    "parent_activity_id": [],
-    "parent_experiment_id": [],
-    "required_model_components": [],
-    "sub_experiment_id": "none",
-}
+try:
+    debug = sys.argv[1]
+except:
+    debug = False
+
+if not debug:
+    class pdbover:
+        def set_trace(self):
+            pass
+    pdb = pdbover()
+else:
+    import pdb
 
 
-class CVClass:
-    """
-    Class for manipulating CV JSON content.
-    """
-    def __init__(self, json_path: str) -> None:
+def basepath(name, basepath=''):
+    return __file__.replace('__init__', f'{basepath}{name}/__init__'), name
+
+
+# mip= load_module(*basepath('mip_era'))
+
+global_keys = ['institution']
+
+
+base = [
+    "DRS",
+    "mip_era",
+    "table_id",
+    "activity_id",
+    "nominal_resolution",
+    "experiment_id",
+    "realm",
+    "_config.yml",
+    "frequency",
+    "required_global_attributes",
+    "grid_label",
+    "source_id",
+    "mip_era",
+    "institution_id",
+    "source_type",
+    "sub_experiment_id"
+]
+
+
+class CVDIR:
+    def __init__(self, prefix='', directory='', base_files=None, tables='', table_prefix=''):
         """
-        Constructor method that reads CV JSON from file path.
+        Initializes the CVDIR class.
 
         Args:
-            json_path: The path to the JSON file.
+            prefix (str): Custom prefix for file names. Default is an empty string.
+            directory (str): Directory where parent modules reside. Default is an empty string.
+            base_files (list): List of base file names. Default is None, which uses the 'base' list.
         """
-        with open(json_path) as f:
-            self.json_content = json.load(f)['CV']
+        self.prefix = prefix
+        if not self.prefix.endswith('_'):
+            self.prefix += '_'
+        self.directory = directory
+        self.file_names = base_files or base
+        self.files = {}
+        self.tables = tables
+        self.table_prefix = table_prefix
 
-    def write_json(self, json_path: str) -> None:
+        # ensure that the tables exist
+        core.io.exists(tables)
+
+        if not core.io.exists(directory, False):
+            self.create_project()
+
+        for file_name in self.file_names:
+            self.files[file_name] = self.read_file(file_name)
+
+    def read_file(self, file_name):
         """
-        Write the CV JSON object to file at specified path.
+        Reads the contents of a file.
 
         Args:
-            json_path: The path to write the JSON file to.
-        """
-        with open(json_path, "w") as f:
-            json.dump(dict(Cv=self.json_content), f)
-
-    def add_activity(self, activity_id: str, experiment_id: Optional[str]=None):
-        """
-        Method to add a new activity (if it doesn't already exist) to the CV JSON content.
-
-        Args:
-            activity_id: The ID of the activity to add.
-            experiment_id: The ID of the experiment to add.
+            file_name (str): Name of the file.
 
         Returns:
-            None
+            dict: Contents of the file as a dictionary, or an empty dictionary if the file is not found.
         """
-        if activity_id not in self.json_content:
-            self.json_content[activity_id] = []
-        
-        if experiment_id and experiment_id not in self.json_content:
-            self.json_content[activity_id].append(experiment_id)
+        file_path = os.path.join(self.directory, self.prefix + file_name)
+        try:
+            with open(file_path) as file:
+                return json.load(file)
+        except FileNotFoundError:
+            return {}
 
-    def add_experiment(self, **kwargs) -> None:
+    def create_project(self, base_files=None):
         """
-        Adding, or modifying an experiment. 
+        Creates the project by calling the ProjectCreator class.
+
+        Returns:
+            ProjectCreator: Instance of the ProjectCreator class.
+        """
+        return ProjectCreator(self.prefix, self.directory, base_files).create()
+
+    def update_file(self, file_name, data, update_func=None):
+        """
+        Updates a file with new data using the specified update function or the corresponding create function
+        from the parent module.
 
         Args:
-            activity_id: List of activity IDs.
-            additional_allowed_model_components: List of additional allowed model components.
-            experiment: Experiment name.
-            experiment_id: Experiment ID.
-            parent_activity_id: List of parent activity IDs.
-            parent_experiment_id: List of parent experiment IDs.
-            required_model_components: List of required model components.
-            sub_experiment_id: Sub-experiment ID.
-
-        Raises:
-            TypeError: If any input has an invalid type.
-
-        Examples:
-            >>> template = populate_template(
-            ...     activity_id=["act1", "act2"],
-            ...     experiment="exp1",
-            ...     experiment_id="exp_id1",
-            ...     required_model_components=["comp1", "comp2"],
-            ... )
-
-            {
-                "activity_id": ["act1", "act2"],
-                "additional_allowed_model_components": [],
-                "experiment": "exp1",
-                "experiment_id": "exp_id1",
-                "parent_activity_id": [],
-                "parent_experiment_id": [],
-                "required_model_components": ["comp1", "comp2"],
-                "sub_experiment_id": "none",
-            }
+            file_name (str): Name of the file.
+            data (dict): New data to be updated in the file.
+            update_func (callable): Custom update function. If None, uses the create function from the parent module.
         """
-        # Check that the experiment id exists
-        assert 'experiment_id' in kwargs,  'You cannot add an experiment without an experiment id'
 
-        if kwargs['experiment_id'] not in self.json_content:
-            # This is a new entry, so we check we have the minimum required information to add an entry 
-            required = {'activity_id', 'experiment', 'required_model_components'}
-            missing = required - set(kwargs.keys())
-            if not len(missing):
-                KeyError(f'You need to supply a dictionary with the following items: {missing}')
-            
-            # Create the base template
-            self.json_content[kwargs['experiment_id']] = deepcopy(experiment_template)
-            
-        experiment_entry = self.json_content[kwargs['experiment_id']]
+        # pdb.set_trace()
+
+        output_name = file_name.split('.')[0]
+        output_path = os.path.join(self.directory, output_name+'.json')
+
+        module = load_module(*basepath(file_name))
+        # print(module,[*basepath(file_name)])
+
+        # preparse the data
+        update_func = update_func or getattr(module, "preparse", None)
+        if callable(update_func):
+            preprocessed_data = self.pre_parse_update(file_name, data)
+            data = update_func(self.files[file_name], preprocessed_data)
+
+            # self.files[file_name] = updated_data
+            # file_path = os.path.join(self.directory, self.prefix + file_name)
+            # with open(file_path, 'w') as file:
+            #     json.dump(updated_data, file)
+
+        if module:
+            # processing functions need a create and an update.
+            if not core.io.exists(output_path, error=False):
+                pdb.set_trace()
+                jsn_data = module.create(data)
+            else:
+                jsn_data = json.load(open(output_path, 'r'))
+                if not jsn_data:
+                    # empty files?
+                    print('empty:', file_name)
+                    jsn_data = module.create(data)
+                print(jsn_data)
+
+            # update
+            jsn_data = module.update(jsn_data, data)
+
+        else:
+            # the user wants to do something special.
+            # code needs to be formatted within their update function.
+
+            jsn_data = data
+
+        # make a backup here!?
+        core.io.jsonwrite(jsn_data, output_path)
+
+    def update_all(self, data, opt_func=None):
+        """
+        Creates all files with new data using the specified update function or the corresponding create functions
+        from the parent modules.
+
+        Args:
+            data (dict): New data to be updated in the files.
+            opt_func (callable): Custom update function.
+        """
+
+        #  ensure that the mandatory keys are contained.
+        for key in global_keys:
+            assert data.get('globals').get(
+                key), f'Please provide {key} in the globals element'
+
+        data['globals']['tables'] = self.tables
+        data['globals']['table_prefix'] = self.table_prefix
+
+        # if data == None:
+        #     data = {}
+
+        if opt_func is not None:
+            if not isinstance(opt_func, dict):
+                print(
+                    "Warning: opt_func must be a dictionary of keys with corresponding values as functions or None.")
+                opt_func = None
+            else:
+                for file_name, func in opt_func.items():
+                    if not callable(func) and func is not None:
+                        print(
+                            f"Warning: value of key {file_name} must be a function or None. Changing this to None.")
+                        opt_func[file_name] = None
+
+        # we are doing a multi operation.
+        if opt_func == None:
+            opt_func = {}
+
+        for file_name in self.file_names:
+            # print(file_name, data.get(file_name) or None, opt_func.get(file_name) or None)
+
+            subdict = data.get(file_name) or dict()
+            subdict['globals'] = data.get('globals')
+
+            self.update_file(file_name,  subdict,
+                             opt_func.get(file_name) or None)
+
+    def pre_parse_update(self, file_name, data):
+        """
+        Pre-parses the update data before applying the update.
+
+        Args:
+            file_name (str): Name of the file.
+            data (dict): New data to be updated in the file.
+
+        Returns:
+            dict: Pre-processed update data.
+        """
+        # Add any pre-parsing logic here
+        # Example: Prefixing keys with the custom prefix
+        preprocessed_data = {}
+        for key, value in data.items():
+            preprocessed_data[f"{self.prefix}{key}"] = value
+        return preprocessed_data
+
+    def get_activity(self, activity='CMIP'):
+
+        #  default = cmip deck 
+        path = self.tables + self.table_prefix
+        tabledata = json.load(open(f"{path}_CV.json", 'r'))
+
+        deck = {}
+        deck['activity_id'] = {activity : tabledata['activity_id'][activity]}
+
+        def filter_dict(data):
+            if data:
+                if isinstance(data, list):
+                    return activity in data
+
+                return {key: value for key, value in data.items() if
+                    (isinstance(value, dict) and filter_dict(value.get('activity_id',''))) or
+                    (isinstance(value, str) and value == activity)} 
         
-        # Add activity if it does not already exist
-        self.add_activity(kwargs['activity_id'], kwargs['experiment_id'])
 
-        # Required, non-list variables
-        str_vars = ('experiment', 'experiment_id')
-        for name in str_vars:
-            experiment_entry[name] = kwargs[name]
+        experiments = tabledata['experiment_id']
+        deck['experiment_id'] = filter_dict(experiments)
 
-        for entry in kwargs:
-            if entry in str_vars:
-                continue
+    
+        return deck
 
-            if not isinstance(kwargs[entry], list):
-                kwargs[entry] = [kwargs[entry]]
+class ProjectCreator:
+    def __init__(self, prefix='', directory='', base_files=None):
+        """
+        Initializes the ProjectCreator class.
 
-            experiment_entry[entry].extend(kwargs[entry])
-        
-            # Check that sources are correct
-            if 'components' in entry:
-               assert all(cmp in self.json_content.get('source_type') for cmp in kwargs[entry]), f"Invalid components from source_type. Please check these against: {kwargs['entry']}"
-   
+        Args:
+            prefix (str): Custom prefix for file names. Default is an empty string.
+            directory (str): Directory where parent modules reside. Default is an empty string.
+        """
+        self.prefix = prefix
+        if not self.prefix.endswith('_'):
+            self.prefix += '_'
+        self.directory = directory
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        self.files = base_files or base
+
+    def create(self):
+        """
+        Creates the project by running the 'create' function from the parent module for each file.
+        """
+        for file_name in self.files:
+
+            output_name = file_name.split('.')[0]
+            output_path = os.path.join(self.directory, output_name)
+            module_path = os.path.join(os.path.dirname(__file__), output_name)
+            file_path = os.path.join(self.directory, self.prefix + file_name)
+
+            if not os.path.exists(file_path):
+                if os.path.exists(output_path):
+                    module = importlib.import_module(module_path, output_name)
+                    opt_func = opt_func or getattr(module, "create", None)
+
+                    if callable(opt_func):
+                        with open(file_path, 'w') as file:
+                            json.dump(opt_func(), file)
+                    else:
+                        print(
+                            f"Create function not implemented for {file_name}")
+            else:
+                print(
+                    f"ERROR: No function provided for processing. Writing an empty file at {file_name}")
 
 
-if __name__ == '__main__':
-        
-    cv = CVTool("/Users/daniel.ellis/WIPwork/mip-cmor-tables/mip_cmor_tables/out/CMIP6Plus_CV.json")
+# # Example usage
+# handler = CVDIR(prefix='MY_PREFIX', directory='path/to/modules', base_files=[
+#     "DRS.json",
+#     "mip_era.json",
+#     "table_id.json"
+# ])
 
-
-
-
-def test_add_activity():
-    tool = CVTool('path/to/json')
-    tool.json_content = {}
-    tool.add_activity('a1')
-    assert 'a1' in tool.json_content.keys() 
-
-def test_add_experiment():
-    tool = CVTool('path/to/json')
-    tool.json_content = {}
-    activity_id = ['act1', 'act2']
-    entry = {'activity_id': activity_id, 'experiment': 'exp1', 'experiment_id': 'exp_id1', 'required_model_components': ['comp1', 'comp2']}
-    tool.add_experiment(**entry)
-    assert 'exp_id1' in tool.json_content.keys()
-    for act_id in activity_id:
-        assert 'exp_id1' in tool.json_content[act_id]
-
-def test_add_experiment_missing_required():
-    tool = CVTool('path/to/json')
-    tool.json_content = {}
-    activity_id = ['act1', 'act2']
-    entry = {'activity_id': activity_id, 'experiment': 'exp1', 'experiment_id': 'exp_id1'}
-    try:
-        tool.add_experiment(**entry)
-    except KeyError as e:
-        assert 'required_model_components' in str(e)
-
-def test_add_experiment_wrong_source_type():
-    tool = CVTool('path/to/json')
-    tool.json_content = {'source_type': ['comp1']}
-    activity_id = ['act1', 'act2']
-    entry = {'activity_id': activity_id, 'experiment': 'exp1', 'experiment_id': 'exp_id1', 'components': ['comp1', 'comp2']}
-    try:
-        tool.add_experiment(**entry)
-    except AssertionError as e:
-        assert 'comp2' in str(e)
+# # Update all files with data using the example update function
+# data = {}
+# handler.update_all_files(data)
