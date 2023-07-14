@@ -50,7 +50,7 @@ def combine(new, old):
     return merged_dict
 
 
-def jsonwrite(jsndata, filename, mode='w'):
+def json_write(jsndata, filename, mode='w',sort=False):
     """
     Write JSON data to a file.
 
@@ -66,7 +66,10 @@ def jsonwrite(jsndata, filename, mode='w'):
         filename += '.json'
         
     with open(filename, mode) as file:
-        json.dump(jsndata, file, indent=4)
+        json.dump(jsndata, file, indent=4,sort_keys=sort)
+
+def json_read(file,mode='r'):
+    return json.load(open(file,mode))
 
 
 

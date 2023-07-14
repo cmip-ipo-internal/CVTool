@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>cvtool.CV.compileCV.variables API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>cvtool.CV.compileCV.variables</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">structure = [&#39;required_global_attributes&#39;,
+ &#39;version_metadata&#39;,
+ &#39;license&#39;,
+ &#39;activity_id&#39;,
+ &#39;institution_id&#39;,
+ &#39;source_id&#39;,
+ &#39;source_type&#39;,
+ &#39;frequency&#39;,
+ &#39;grid_label&#39;,
+ &#39;nominal_resolution&#39;,
+ &#39;realm&#39;,
+ &#39;table_id&#39;,
+ &#39;DRS&#39;,
+ &#39;mip_era&#39;,
+ &#39;sub_experiment_id&#39;,
+ &#39;experiment_id&#39;,
+ &#39;product&#39;,
+ &#39;tracking_id&#39;,
+ &#39;further_info_url&#39;,
+ &#39;realization_index&#39;,
+ &#39;variant_label&#39;,
+ &#39;data_specs_version&#39;,
+ &#39;Conventions&#39;,
+ &#39;forcing_index&#39;,
+ &#39;initialization_index&#39;,
+ &#39;physics_index&#39;]
+
+structure.sort()
+
+
+
+source_type =  {
+            &#34;AER&#34;:&#34;aerosol treatment in an atmospheric model where concentrations are calculated based on emissions, transformation, and removal processes (rather than being prescribed or omitted entirely)&#34;,
+            &#34;AGCM&#34;:&#34;atmospheric general circulation model run with prescribed ocean surface conditions and usually a model of the land surface&#34;,
+            &#34;AOGCM&#34;:&#34;coupled atmosphere-ocean global climate model, additionally including explicit representation of at least the land and sea ice&#34;,
+            &#34;BGC&#34;:&#34;biogeochemistry model component that at the very least accounts for carbon reservoirs and fluxes in the atmosphere, terrestrial biosphere, and ocean&#34;,
+            &#34;CHEM&#34;:&#34;chemistry treatment in an atmospheric model that calculates atmospheric oxidant concentrations (including at least ozone), rather than prescribing them&#34;,
+            &#34;ISM&#34;:&#34;ice-sheet model that includes ice-flow&#34;,
+            &#34;LAND&#34;:&#34;land model run uncoupled from the atmosphere&#34;,
+            &#34;OGCM&#34;:&#34;ocean general circulation model run uncoupled from an AGCM but, usually including a sea-ice model&#34;,
+            &#34;RAD&#34;:&#34;radiation component of an atmospheric model run &#39;offline&#39;&#34;,
+            &#34;SLAB&#34;:&#34;slab-ocean used with an AGCM in representing the atmosphere-ocean coupled system&#34;
+        }
+
+
+frequency = {
+            &#34;1hr&#34;:&#34;sampled hourly&#34;,
+            &#34;1hrCM&#34;:&#34;monthly-mean diurnal cycle resolving each day into 1-hour means&#34;,
+            &#34;1hrPt&#34;:&#34;sampled hourly, at specified time point within an hour&#34;,
+            &#34;3hr&#34;:&#34;3 hourly mean samples&#34;,
+            &#34;3hrPt&#34;:&#34;sampled 3 hourly, at specified time point within the time period&#34;,
+            &#34;6hr&#34;:&#34;6 hourly mean samples&#34;,
+            &#34;6hrPt&#34;:&#34;sampled 6 hourly, at specified time point within the time period&#34;,
+            &#34;day&#34;:&#34;daily mean samples&#34;,
+            &#34;dec&#34;:&#34;decadal mean samples&#34;,
+            &#34;fx&#34;:&#34;fixed (time invariant) field&#34;,
+            &#34;mon&#34;:&#34;monthly mean samples&#34;,
+            &#34;monC&#34;:&#34;monthly climatology computed from monthly mean samples&#34;,
+            &#34;monPt&#34;:&#34;sampled monthly, at specified time point within the time period&#34;,
+            &#34;subhrPt&#34;:&#34;sampled sub-hourly, at specified time point within an hour&#34;,
+            &#34;yr&#34;:&#34;annual mean samples&#34;,
+            &#34;yrPt&#34;:&#34;sampled yearly, at specified time point within the time period&#34;
+        }
+
+frequencykeys = list(frequency.keys())
+frequencypattern = &#34;|&#34;.join(frequencykeys)
+
+
+template = {&#34;product&#34;:[
+            &#34;model-output&#34;
+        ],
+        &#34;tracking_id&#34;:[
+            &#34;hdl:21.14100/.*&#34;
+        ],
+
+        &#34;realization_index&#34;:[
+            &#34;^\\[\\{0,\\}[[:digit:]]\\{1,\\}\\]\\{0,\\}$&#34;
+        ],
+        &#34;variant_label&#34;:[
+            &#34;r[[:digit:]]\\{1,\\}i[[:digit:]]\\{1,\\}p[[:digit:]]\\{1,\\}f[[:digit:]]\\{1,\\}$&#34;
+        ],
+        &#34;data_specs_version&#34;:[
+            &#34;^[[:digit:]]\\{1,2\\}\\.[[:digit:]]\\{1,2\\}\\.[[:digit:]]\\{1,3\\}\\.[[:digit:]]\\{1,3\\}$&#34;
+        ],
+        &#34;Conventions&#34;:[
+            &#34;^CF-1.7 CMIP-6.[0-3]\\( UGRID-1.0\\)\\{0,\\}$&#34;
+        ],
+        &#34;forcing_index&#34;:[
+            &#34;^\\[\\{0,\\}[[:digit:]]\\{1,\\}\\]\\{0,\\}$&#34;
+        ],
+        &#34;initialization_index&#34;:[
+            &#34;^\\[\\{0,\\}[[:digit:]]\\{1,\\}\\]\\{0,\\}$&#34;
+        ],
+        &#34;physics_index&#34;:[
+            &#34;^\\[\\{0,\\}[[:digit:]]\\{1,\\}\\]\\{0,\\}$&#34;
+        ],
+        
+        &#34;frequency&#34;:frequency,
+        &#34;grid_label&#34;:{
+            &#34;gm&#34;:&#34;global mean data&#34;,
+            &#34;gn&#34;:&#34;data reported on a model&#39;s native grid&#34;,
+            &#34;gna&#34;:&#34;data reported on a native grid in the region of Antarctica&#34;,
+            &#34;gng&#34;:&#34;data reported on a native grid in the region of Greenland&#34;,
+            &#34;gnz&#34;:&#34;zonal mean data reported on a model&#39;s native latitude grid&#34;,
+            &#34;gr&#34;:&#34;regridded data reported on the data provider&#39;s preferred target grid&#34;,
+            &#34;gr1&#34;:&#34;regridded data reported on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr1a&#34;:&#34;regridded data reported in the region of Antarctica on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr1g&#34;:&#34;regridded data reported in the region of Greenland on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr1z&#34;:&#34;regridded zonal mean data reported on a grid other than the native latitude grid and other than the preferred latitude target grid&#34;,
+            &#34;gr2&#34;:&#34;regridded data reported on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr2a&#34;:&#34;regridded data reported in the region of Antarctica on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr2g&#34;:&#34;regridded data reported in the region of Greenland on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr2z&#34;:&#34;regridded zonal mean data reported on a grid other than the native latitude grid and other than the preferred latitude target grid&#34;,
+            &#34;gr3&#34;:&#34;regridded data reported on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr3a&#34;:&#34;regridded data reported in the region of Antarctica on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr3g&#34;:&#34;regridded data reported in the region of Greenland on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr3z&#34;:&#34;regridded zonal mean data reported on a grid other than the native latitude grid and other than the preferred latitude target grid&#34;,
+            &#34;gr4&#34;:&#34;regridded data reported on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr4a&#34;:&#34;regridded data reported in the region of Antarctica on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr4g&#34;:&#34;regridded data reported in the region of Greenland on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr4z&#34;:&#34;regridded zonal mean data reported on a grid other than the native latitude grid and other than the preferred latitude target grid&#34;,
+            &#34;gr5&#34;:&#34;regridded data reported on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr5a&#34;:&#34;regridded data reported in the region of Antarctica on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr5g&#34;:&#34;regridded data reported in the region of Greenland on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr5z&#34;:&#34;regridded zonal mean data reported on a grid other than the native latitude grid and other than the preferred latitude target grid&#34;,
+            &#34;gr6&#34;:&#34;regridded data reported on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr6a&#34;:&#34;regridded data reported in the region of Antarctica on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr6g&#34;:&#34;regridded data reported in the region of Greenland on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr6z&#34;:&#34;regridded zonal mean data reported on a grid other than the native latitude grid and other than the preferred latitude target grid&#34;,
+            &#34;gr7&#34;:&#34;regridded data reported on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr7a&#34;:&#34;regridded data reported in the region of Antarctica on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr7g&#34;:&#34;regridded data reported in the region of Greenland on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr7z&#34;:&#34;regridded zonal mean data reported on a grid other than the native latitude grid and other than the preferred latitude target grid&#34;,
+            &#34;gr8&#34;:&#34;regridded data reported on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr8a&#34;:&#34;regridded data reported in the region of Antarctica on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr8g&#34;:&#34;regridded data reported in the region of Greenland on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr8z&#34;:&#34;regridded zonal mean data reported on a grid other than the native latitude grid and other than the preferred latitude target grid&#34;,
+            &#34;gr9&#34;:&#34;regridded data reported on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr9a&#34;:&#34;regridded data reported in the region of Antarctica on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr9g&#34;:&#34;regridded data reported in the region of Greenland on a grid other than the native grid and other than the preferred target grid&#34;,
+            &#34;gr9z&#34;:&#34;regridded zonal mean data reported on a grid other than the native latitude grid and other than the preferred latitude target grid&#34;,
+            &#34;gra&#34;:&#34;regridded data in the region of Antarctica reported on the data provider&#39;s preferred target grid&#34;,
+            &#34;grg&#34;:&#34;regridded data in the region of Greenland reported on the data provider&#39;s preferred target grid&#34;,
+            &#34;grz&#34;:&#34;regridded zonal mean data reported on the data provider&#39;s preferred latitude target grid&#34;
+        },
+        &#34;nominal_resolution&#34;:[
+            &#34;0.5 km&#34;,
+            &#34;1 km&#34;,
+            &#34;10 km&#34;,
+            &#34;100 km&#34;,
+            &#34;1000 km&#34;,
+            &#34;10000 km&#34;,
+            &#34;1x1 degree&#34;,
+            &#34;2.5 km&#34;,
+            &#34;25 km&#34;,
+            &#34;250 km&#34;,
+            &#34;2500 km&#34;,
+            &#34;5 km&#34;,
+            &#34;50 km&#34;,
+            &#34;500 km&#34;,
+            &#34;5000 km&#34;
+        ],
+        &#34;realm&#34;:{
+            &#34;aerosol&#34;:&#34;Aerosol&#34;,
+            &#34;atmos&#34;:&#34;Atmosphere&#34;,
+            &#34;atmosChem&#34;:&#34;Atmospheric Chemistry&#34;,
+            &#34;land&#34;:&#34;Land Surface&#34;,
+            &#34;landIce&#34;:&#34;Land Ice&#34;,
+            &#34;ocean&#34;:&#34;Ocean&#34;,
+            &#34;ocnBgchem&#34;:&#34;Ocean Biogeochemistry&#34;,
+            &#34;seaIce&#34;:&#34;Sea Ice&#34;
+        },
+
+        &#34;version_metadata&#34;:{
+            &#34;CV_collection_version&#34;:&#34;0.0.1&#34;
+        }
+        
+        }
+
+
+
+institutions = {
+        &#34;AER&#34;:&#34;Research and Climate Group, Atmospheric and Environmental Research, 131 Hartwell Avenue, Lexington, MA 02421, USA&#34;,
+        &#34;AS-RCEC&#34;:&#34;Research Center for Environmental Changes, Academia Sinica, Nankang, Taipei 11529, Taiwan&#34;,
+        &#34;AWI&#34;:&#34;Alfred Wegener Institute, Helmholtz Centre for Polar and Marine Research, Am Handelshafen 12, 27570 Bremerhaven, Germany&#34;,
+        &#34;BCC&#34;:&#34;Beijing Climate Center, Beijing 100081, China&#34;,
+        &#34;CAMS&#34;:&#34;Chinese Academy of Meteorological Sciences, Beijing 100081, China&#34;,
+        &#34;CAS&#34;:&#34;Chinese Academy of Sciences, Beijing 100029, China&#34;,
+        &#34;CCCR-IITM&#34;:&#34;Centre for Climate Change Research, Indian Institute of Tropical Meteorology Pune, Maharashtra 411 008, India&#34;,
+        &#34;CCCma&#34;:&#34;Canadian Centre for Climate Modelling and Analysis, Environment and Climate Change Canada, Victoria, BC V8P 5C2, Canada&#34;,
+        &#34;CMCC&#34;:&#34;Fondazione Centro Euro-Mediterraneo sui Cambiamenti Climatici, Lecce 73100, Italy&#34;,
+        &#34;CNRM-CERFACS&#34;:&#34;CNRM (Centre National de Recherches Meteorologiques, Toulouse 31057, France), CERFACS (Centre Europeen de Recherche et de Formation Avancee en Calcul Scientifique, Toulouse 31057, France)&#34;,
+        &#34;CSIRO&#34;:&#34;Commonwealth Scientific and Industrial Research Organisation, Aspendale, Victoria 3195, Australia&#34;,
+        &#34;CSIRO-ARCCSS&#34;:&#34;CSIRO (Commonwealth Scientific and Industrial Research Organisation, Aspendale, Victoria 3195, Australia), ARCCSS (Australian Research Council Centre of Excellence for Climate System Science). Mailing address: CSIRO, c/o Simon J. Marsland, 107-121 Station Street, Aspendale, Victoria 3195, Australia&#34;,
+        &#34;CSIRO-COSIMA&#34;:&#34;CSIRO (Commonwealth Scientific and Industrial Research Organisation, Australia), COSIMA (Consortium for Ocean-Sea Ice Modelling in Australia). Mailing address: CSIRO, c/o Simon J. Marsland, 107-121 Station Street, Aspendale, Victoria 3195, Australia&#34;,
+        &#34;DKRZ&#34;:&#34;Deutsches Klimarechenzentrum, Hamburg 20146, Germany&#34;,
+        &#34;DWD&#34;:&#34;Deutscher Wetterdienst, Offenbach am Main 63067, Germany&#34;,
+        &#34;E3SM-Project&#34;:&#34;LLNL (Lawrence Livermore National Laboratory, Livermore, CA 94550, USA); ANL (Argonne National Laboratory, Argonne, IL 60439, USA); BNL (Brookhaven National Laboratory, Upton, NY 11973, USA); LANL (Los Alamos National Laboratory, Los Alamos, NM 87545, USA); LBNL (Lawrence Berkeley National Laboratory, Berkeley, CA 94720, USA); ORNL (Oak Ridge National Laboratory, Oak Ridge, TN 37831, USA); PNNL (Pacific Northwest National Laboratory, Richland, WA 99352, USA); SNL (Sandia National Laboratories, Albuquerque, NM 87185, USA). Mailing address: LLNL Climate Program, c/o David C. Bader, Principal Investigator, L-103, 7000 East Avenue, Livermore, CA 94550, USA&#34;,
+        &#34;EC-Earth-Consortium&#34;:&#34;AEMET, Spain; BSC, Spain; CNR-ISAC, Italy; DMI, Denmark; ENEA, Italy; FMI, Finland; Geomar, Germany; ICHEC, Ireland; ICTP, Italy; IDL, Portugal; IMAU, The Netherlands; IPMA, Portugal; KIT, Karlsruhe, Germany; KNMI, The Netherlands; Lund University, Sweden; Met Eireann, Ireland; NLeSC, The Netherlands; NTNU, Norway; Oxford University, UK; surfSARA, The Netherlands; SMHI, Sweden; Stockholm University, Sweden; Unite ASTR, Belgium; University College Dublin, Ireland; University of Bergen, Norway; University of Copenhagen, Denmark; University of Helsinki, Finland; University of Santiago de Compostela, Spain; Uppsala University, Sweden; Utrecht University, The Netherlands; Vrije Universiteit Amsterdam, the Netherlands; Wageningen University, The Netherlands. Mailing address: EC-Earth consortium, Rossby Center, Swedish Meteorological and Hydrological Institute/SMHI, SE-601 76 Norrkoping, Sweden&#34;,
+        &#34;ECMWF&#34;:&#34;European Centre for Medium-Range Weather Forecasts, Reading RG2 9AX, UK&#34;,
+        &#34;FIO-QLNM&#34;:&#34;FIO (First Institute of Oceanography, Ministry of Natural Resources, Qingdao 266061, China), QNLM (Qingdao National Laboratory for Marine Science and Technology, Qingdao 266237, China)&#34;,
+        &#34;HAMMOZ-Consortium&#34;:&#34;ETH Zurich, Switzerland; Max Planck Institut fur Meteorologie, Germany; Forschungszentrum Julich, Germany; University of Oxford, UK; Finnish Meteorological Institute, Finland; Leibniz Institute for Tropospheric Research, Germany; Center for Climate Systems Modeling (C2SM) at ETH Zurich, Switzerland&#34;,
+        &#34;INM&#34;:&#34;Institute for Numerical Mathematics, Russian Academy of Science, Moscow 119991, Russia&#34;,
+        &#34;IPSL&#34;:&#34;Institut Pierre Simon Laplace, Paris 75252, France&#34;,
+        &#34;KIOST&#34;:&#34;Korea Institute of Ocean Science and Technology, Busan 49111, Republic of Korea&#34;,
+        &#34;LLNL&#34;:&#34;Lawrence Livermore National Laboratory, Livermore, CA 94550, USA. Mailing address: LLNL Climate Program, c/o Stephen A. Klein, Principal Investigator, L-103, 7000 East Avenue, Livermore, CA 94550, USA&#34;,
+        &#34;MESSy-Consortium&#34;:&#34;The Modular Earth Submodel System (MESSy) Consortium, represented by the Institute for Physics of the Atmosphere, Deutsches Zentrum fur Luft- und Raumfahrt (DLR), Wessling, Bavaria 82234, Germany&#34;,
+        &#34;MIROC&#34;:&#34;JAMSTEC (Japan Agency for Marine-Earth Science and Technology, Kanagawa 236-0001, Japan), AORI (Atmosphere and Ocean Research Institute, The University of Tokyo, Chiba 277-8564, Japan), NIES (National Institute for Environmental Studies, Ibaraki 305-8506, Japan), and R-CCS (RIKEN Center for Computational Science, Hyogo 650-0047, Japan)&#34;,
+        &#34;MOHC&#34;:&#34;Met Office Hadley Centre, Fitzroy Road, Exeter, Devon, EX1 3PB, UK&#34;,
+        &#34;MPI-M&#34;:&#34;Max Planck Institute for Meteorology, Hamburg 20146, Germany&#34;,
+        &#34;MRI&#34;:&#34;Meteorological Research Institute, Tsukuba, Ibaraki 305-0052, Japan&#34;,
+        &#34;NASA-GISS&#34;:&#34;Goddard Institute for Space Studies, New York, NY 10025, USA&#34;,
+        &#34;NASA-GSFC&#34;:&#34;NASA Goddard Space Flight Center, Greenbelt, MD 20771, USA&#34;,
+        &#34;NCAR&#34;:&#34;National Center for Atmospheric Research, Climate and Global Dynamics Laboratory, 1850 Table Mesa Drive, Boulder, CO 80305, USA&#34;,
+        &#34;NCC&#34;:&#34;NorESM Climate modeling Consortium consisting of CICERO (Center for International Climate and Environmental Research, Oslo 0349), MET-Norway (Norwegian Meteorological Institute, Oslo 0313), NERSC (Nansen Environmental and Remote Sensing Center, Bergen 5006), NILU (Norwegian Institute for Air Research, Kjeller 2027), UiB (University of Bergen, Bergen 5007), UiO (University of Oslo, Oslo 0313) and UNI (Uni Research, Bergen 5008), Norway. Mailing address: NCC, c/o MET-Norway, Henrik Mohns plass 1, Oslo 0313, Norway&#34;,
+        &#34;NERC&#34;:&#34;Natural Environment Research Council, STFC-RAL, Harwell, Oxford, OX11 0QX, UK&#34;,
+        &#34;NIMS-KMA&#34;:&#34;National Institute of Meteorological Sciences/Korea Meteorological Administration, Climate Research Division, Seoho-bukro 33, Seogwipo-si, Jejudo 63568, Republic of Korea&#34;,
+        &#34;NIWA&#34;:&#34;National Institute of Water and Atmospheric Research, Hataitai, Wellington 6021, New Zealand&#34;,
+        &#34;NOAA-GFDL&#34;:&#34;National Oceanic and Atmospheric Administration, Geophysical Fluid Dynamics Laboratory, Princeton, NJ 08540, USA&#34;,
+        &#34;NTU&#34;:&#34;National Taiwan University, Taipei 10650, Taiwan&#34;,
+        &#34;NUIST&#34;:&#34;Nanjing University of Information Science and Technology, Nanjing, 210044, China&#34;,
+        &#34;PCMDI&#34;:&#34;Program for Climate Model Diagnosis and Intercomparison, Lawrence Livermore National Laboratory, Livermore, CA 94550, USA&#34;,
+        &#34;PNNL-WACCEM&#34;:&#34;PNNL (Pacific Northwest National Laboratory), Richland, WA 99352, USA&#34;,
+        &#34;RTE-RRTMGP-Consortium&#34;:&#34;AER (Atmospheric and Environmental Research, Lexington, MA 02421, USA); UColorado (University of Colorado, Boulder, CO 80309, USA). Mailing address: AER c/o Eli Mlawer, 131 Hartwell Avenue, Lexington, MA 02421, USA&#34;,
+        &#34;RUBISCO&#34;:&#34;ORNL (Oak Ridge National Laboratory, Oak Ridge, TN 37831, USA); ANL (Argonne National Laboratory, Argonne, IL 60439, USA); BNL (Brookhaven National Laboratory, Upton, NY 11973, USA); LANL (Los Alamos National Laboratory, Los Alamos, NM 87545); LBNL (Lawrence Berkeley National Laboratory, Berkeley, CA 94720, USA); NAU (Northern Arizona University, Flagstaff, AZ 86011, USA); NCAR (National Center for Atmospheric Research, Boulder, CO 80305, USA); UCI (University of California Irvine, Irvine, CA 92697, USA); UM (University of Michigan, Ann Arbor, MI 48109, USA). Mailing address: ORNL Climate Change Science Institute, c/o Forrest M. Hoffman, Laboratory Research Manager, Building 4500N Room F106, 1 Bethel Valley Road, Oak Ridge, TN 37831-6301, USA&#34;,
+        &#34;SNU&#34;:&#34;Seoul National University, Seoul 08826, Republic of Korea&#34;,
+        &#34;THU&#34;:&#34;Department of Earth System Science, Tsinghua University, Beijing 100084, China&#34;,
+        &#34;UA&#34;:&#34;Department of Geosciences, University of Arizona, Tucson, AZ 85721, USA&#34;,
+        &#34;UCI&#34;:&#34;Department of Earth System Science, University of California Irvine, Irvine, CA 92697, USA&#34;,
+        &#34;UCSB&#34;:&#34;Bren School of Environmental Science and Management, University of California, Santa Barbara. Mailing address: c/o Samantha Stevenson, 2400 Bren Hall, University of California Santa Barbara, Santa Barbara, CA 93106, USA&#34;,
+        &#34;UHH&#34;:&#34;Universitat Hamburg, Hamburg 20148, Germany&#34;
+    }</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="cvtool.CV.compileCV" href="index.html">cvtool.CV.compileCV</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

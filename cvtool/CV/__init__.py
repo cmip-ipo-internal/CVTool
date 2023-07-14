@@ -37,6 +37,11 @@ else:
 def basepath(name, basepath=''):
     return __file__.replace('__init__', f'{basepath}{name}/__init__'), name
 
+def ensure_suffix(var,end):
+    if not var.endswith(end):
+            var += end
+    return var
+
 
 # mip= load_module(*basepath('mip_era'))
 
@@ -63,6 +68,9 @@ base = [
 ]
 
 
+
+
+
 class CVDIR:
     def __init__(self, prefix='', directory='', base_files=None, tables='', table_prefix=''):
         """
@@ -73,10 +81,8 @@ class CVDIR:
             directory (str): Directory where parent modules reside. Default is an empty string.
             base_files (list): List of base file names. Default is None, which uses the 'base' list.
         """
-        self.prefix = prefix
-        if not self.prefix.endswith('_'):
-            self.prefix += '_'
-        self.directory = directory
+        self.prefix = ensure_suffix(prefix,'_')
+        self.directory = ensure_suffix(directory,'/')
         self.file_names = base_files or base
         self.files = {}
         self.tables = tables
@@ -170,7 +176,7 @@ class CVDIR:
             jsn_data = data
 
         # make a backup here!?
-        core.io.jsonwrite(jsn_data, output_path)
+        core.io.json_write(jsn_data, output_path)
 
     def update_all(self, data, opt_func=None):
         """
@@ -261,6 +267,12 @@ class CVDIR:
     
         return deck
 
+
+    def createCV(self):
+        from . import compileCV
+        # print(dir(compileCV))
+        compileCV.create(self.directory, self.prefix, self.tables)
+
 class ProjectCreator:
     def __init__(self, prefix='', directory='', base_files=None):
         """
@@ -296,7 +308,7 @@ class ProjectCreator:
 
                     if callable(opt_func):
                         with open(file_path, 'w') as file:
-                            json.dump(opt_func(), file)
+                            json.dump(opt_func(), file, sort_keys=True)
                     else:
                         print(
                             f"Create function not implemented for {file_name}")

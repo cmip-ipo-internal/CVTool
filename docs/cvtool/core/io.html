@@ -78,7 +78,7 @@ def combine(new, old):
     return merged_dict
 
 
-def jsonwrite(jsndata, filename, mode=&#39;w&#39;):
+def json_write(jsndata, filename, mode=&#39;w&#39;,sort=False):
     &#34;&#34;&#34;
     Write JSON data to a file.
 
@@ -94,7 +94,10 @@ def jsonwrite(jsndata, filename, mode=&#39;w&#39;):
         filename += &#39;.json&#39;
         
     with open(filename, mode) as file:
-        json.dump(jsndata, file, indent=4)
+        json.dump(jsndata, file, indent=4,sort_keys=sort)
+
+def json_read(file,mode=&#39;r&#39;):
+    return json.load(open(file,mode))
 
 
 
@@ -225,8 +228,21 @@ def get_current_function_name():
     return function_name</code></pre>
 </details>
 </dd>
-<dt id="cvtool.core.io.jsonwrite"><code class="name flex">
-<span>def <span class="ident">jsonwrite</span></span>(<span>jsndata, filename, mode='w')</span>
+<dt id="cvtool.core.io.json_read"><code class="name flex">
+<span>def <span class="ident">json_read</span></span>(<span>file, mode='r')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def json_read(file,mode=&#39;r&#39;):
+    return json.load(open(file,mode))</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.io.json_write"><code class="name flex">
+<span>def <span class="ident">json_write</span></span>(<span>jsndata, filename, mode='w', sort=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Write JSON data to a file.</p>
@@ -248,7 +264,7 @@ def get_current_function_name():
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def jsonwrite(jsndata, filename, mode=&#39;w&#39;):
+<pre><code class="python">def json_write(jsndata, filename, mode=&#39;w&#39;,sort=False):
     &#34;&#34;&#34;
     Write JSON data to a file.
 
@@ -264,7 +280,7 @@ def get_current_function_name():
         filename += &#39;.json&#39;
         
     with open(filename, mode) as file:
-        json.dump(jsndata, file, indent=4)</code></pre>
+        json.dump(jsndata, file, indent=4,sort_keys=sort)</code></pre>
 </details>
 </dd>
 </dl>
@@ -288,7 +304,8 @@ def get_current_function_name():
 <li><code><a title="cvtool.core.io.combine" href="#cvtool.core.io.combine">combine</a></code></li>
 <li><code><a title="cvtool.core.io.exists" href="#cvtool.core.io.exists">exists</a></code></li>
 <li><code><a title="cvtool.core.io.get_current_function_name" href="#cvtool.core.io.get_current_function_name">get_current_function_name</a></code></li>
-<li><code><a title="cvtool.core.io.jsonwrite" href="#cvtool.core.io.jsonwrite">jsonwrite</a></code></li>
+<li><code><a title="cvtool.core.io.json_read" href="#cvtool.core.io.json_read">json_read</a></code></li>
+<li><code><a title="cvtool.core.io.json_write" href="#cvtool.core.io.json_write">json_write</a></code></li>
 </ul>
 </li>
 </ul>
