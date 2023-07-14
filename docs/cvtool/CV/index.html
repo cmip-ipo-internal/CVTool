@@ -69,6 +69,11 @@ else:
 def basepath(name, basepath=&#39;&#39;):
     return __file__.replace(&#39;__init__&#39;, f&#39;{basepath}{name}/__init__&#39;), name
 
+def ensure_suffix(var,end):
+    if not var.endswith(end):
+            var += end
+    return var
+
 
 # mip= load_module(*basepath(&#39;mip_era&#39;))
 
@@ -95,6 +100,9 @@ base = [
 ]
 
 
+
+
+
 class CVDIR:
     def __init__(self, prefix=&#39;&#39;, directory=&#39;&#39;, base_files=None, tables=&#39;&#39;, table_prefix=&#39;&#39;):
         &#34;&#34;&#34;
@@ -105,10 +113,8 @@ class CVDIR:
             directory (str): Directory where parent modules reside. Default is an empty string.
             base_files (list): List of base file names. Default is None, which uses the &#39;base&#39; list.
         &#34;&#34;&#34;
-        self.prefix = prefix
-        if not self.prefix.endswith(&#39;_&#39;):
-            self.prefix += &#39;_&#39;
-        self.directory = directory
+        self.prefix = ensure_suffix(prefix,&#39;_&#39;)
+        self.directory = ensure_suffix(directory,&#39;/&#39;)
         self.file_names = base_files or base
         self.files = {}
         self.tables = tables
@@ -202,7 +208,7 @@ class CVDIR:
             jsn_data = data
 
         # make a backup here!?
-        core.io.jsonwrite(jsn_data, output_path)
+        core.io.json_write(jsn_data, output_path)
 
     def update_all(self, data, opt_func=None):
         &#34;&#34;&#34;
@@ -293,6 +299,12 @@ class CVDIR:
     
         return deck
 
+
+    def createCV(self):
+        from . import compileCV
+        # print(dir(compileCV))
+        compileCV.create(self.directory, self.prefix, self.tables)
+
 class ProjectCreator:
     def __init__(self, prefix=&#39;&#39;, directory=&#39;&#39;, base_files=None):
         &#34;&#34;&#34;
@@ -328,7 +340,7 @@ class ProjectCreator:
 
                     if callable(opt_func):
                         with open(file_path, &#39;w&#39;) as file:
-                            json.dump(opt_func(), file)
+                            json.dump(opt_func(), file, sort_keys=True)
                     else:
                         print(
                             f&#34;Create function not implemented for {file_name}&#34;)
@@ -364,6 +376,10 @@ class ProjectCreator:
 <dd>
 <div class="desc"></div>
 </dd>
+<dt><code class="name"><a title="cvtool.CV.compileCV" href="compileCV/index.html">cvtool.CV.compileCV</a></code></dt>
+<dd>
+<div class="desc"><p>Script to merge all the respective components of the CV directory.</p></div>
+</dd>
 <dt><code class="name"><a title="cvtool.CV.experiment_checks" href="experiment_checks.html">cvtool.CV.experiment_checks</a></code></dt>
 <dd>
 <div class="desc"></div>
@@ -373,6 +389,10 @@ class ProjectCreator:
 <div class="desc"></div>
 </dd>
 <dt><code class="name"><a title="cvtool.CV.experiment_idold" href="experiment_idold/index.html">cvtool.CV.experiment_idold</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="cvtool.CV.further_info_url" href="further_info_url/index.html">cvtool.CV.further_info_url</a></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -389,6 +409,14 @@ class ProjectCreator:
 <div class="desc"></div>
 </dd>
 <dt><code class="name"><a title="cvtool.CV.required_global_attributes" href="required_global_attributes/index.html">cvtool.CV.required_global_attributes</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="cvtool.CV.source_id" href="source_id/index.html">cvtool.CV.source_id</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="cvtool.CV.sub_experiment_id" href="sub_experiment_id/index.html">cvtool.CV.sub_experiment_id</a></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -414,6 +442,21 @@ class ProjectCreator:
 </summary>
 <pre><code class="python">def basepath(name, basepath=&#39;&#39;):
     return __file__.replace(&#39;__init__&#39;, f&#39;{basepath}{name}/__init__&#39;), name</code></pre>
+</details>
+</dd>
+<dt id="cvtool.CV.ensure_suffix"><code class="name flex">
+<span>def <span class="ident">ensure_suffix</span></span>(<span>var, end)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ensure_suffix(var,end):
+    if not var.endswith(end):
+            var += end
+    return var</code></pre>
 </details>
 </dd>
 </dl>
@@ -450,10 +493,8 @@ class ProjectCreator:
             directory (str): Directory where parent modules reside. Default is an empty string.
             base_files (list): List of base file names. Default is None, which uses the &#39;base&#39; list.
         &#34;&#34;&#34;
-        self.prefix = prefix
-        if not self.prefix.endswith(&#39;_&#39;):
-            self.prefix += &#39;_&#39;
-        self.directory = directory
+        self.prefix = ensure_suffix(prefix,&#39;_&#39;)
+        self.directory = ensure_suffix(directory,&#39;/&#39;)
         self.file_names = base_files or base
         self.files = {}
         self.tables = tables
@@ -547,7 +588,7 @@ class ProjectCreator:
             jsn_data = data
 
         # make a backup here!?
-        core.io.jsonwrite(jsn_data, output_path)
+        core.io.json_write(jsn_data, output_path)
 
     def update_all(self, data, opt_func=None):
         &#34;&#34;&#34;
@@ -636,10 +677,31 @@ class ProjectCreator:
         deck[&#39;experiment_id&#39;] = filter_dict(experiments)
 
     
-        return deck</code></pre>
+        return deck
+
+
+    def createCV(self):
+        from . import compileCV
+        # print(dir(compileCV))
+        compileCV.create(self.directory, self.prefix, self.tables)</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
+<dt id="cvtool.CV.CVDIR.createCV"><code class="name flex">
+<span>def <span class="ident">createCV</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def createCV(self):
+    from . import compileCV
+    # print(dir(compileCV))
+    compileCV.create(self.directory, self.prefix, self.tables)</code></pre>
+</details>
+</dd>
 <dt id="cvtool.CV.CVDIR.create_project"><code class="name flex">
 <span>def <span class="ident">create_project</span></span>(<span>self, base_files=None)</span>
 </code></dt>
@@ -912,7 +974,7 @@ from the parent module.</p>
         jsn_data = data
 
     # make a backup here!?
-    core.io.jsonwrite(jsn_data, output_path)</code></pre>
+    core.io.json_write(jsn_data, output_path)</code></pre>
 </details>
 </dd>
 </dl>
@@ -969,7 +1031,7 @@ from the parent module.</p>
 
                     if callable(opt_func):
                         with open(file_path, &#39;w&#39;) as file:
-                            json.dump(opt_func(), file)
+                            json.dump(opt_func(), file, sort_keys=True)
                     else:
                         print(
                             f&#34;Create function not implemented for {file_name}&#34;)
@@ -1006,7 +1068,7 @@ from the parent module.</p>
 
                 if callable(opt_func):
                     with open(file_path, &#39;w&#39;) as file:
-                        json.dump(opt_func(), file)
+                        json.dump(opt_func(), file, sort_keys=True)
                 else:
                     print(
                         f&#34;Create function not implemented for {file_name}&#34;)
@@ -1036,19 +1098,24 @@ from the parent module.</p>
 <li><code><a title="cvtool.CV.DRS" href="DRS/index.html">cvtool.CV.DRS</a></code></li>
 <li><code><a title="cvtool.CV.activity" href="activity.html">cvtool.CV.activity</a></code></li>
 <li><code><a title="cvtool.CV.activity_id" href="activity_id/index.html">cvtool.CV.activity_id</a></code></li>
+<li><code><a title="cvtool.CV.compileCV" href="compileCV/index.html">cvtool.CV.compileCV</a></code></li>
 <li><code><a title="cvtool.CV.experiment_checks" href="experiment_checks.html">cvtool.CV.experiment_checks</a></code></li>
 <li><code><a title="cvtool.CV.experiment_id" href="experiment_id/index.html">cvtool.CV.experiment_id</a></code></li>
 <li><code><a title="cvtool.CV.experiment_idold" href="experiment_idold/index.html">cvtool.CV.experiment_idold</a></code></li>
+<li><code><a title="cvtool.CV.further_info_url" href="further_info_url/index.html">cvtool.CV.further_info_url</a></code></li>
 <li><code><a title="cvtool.CV.license" href="license/index.html">cvtool.CV.license</a></code></li>
 <li><code><a title="cvtool.CV.meta" href="meta/index.html">cvtool.CV.meta</a></code></li>
 <li><code><a title="cvtool.CV.mip_era" href="mip_era/index.html">cvtool.CV.mip_era</a></code></li>
 <li><code><a title="cvtool.CV.required_global_attributes" href="required_global_attributes/index.html">cvtool.CV.required_global_attributes</a></code></li>
+<li><code><a title="cvtool.CV.source_id" href="source_id/index.html">cvtool.CV.source_id</a></code></li>
+<li><code><a title="cvtool.CV.sub_experiment_id" href="sub_experiment_id/index.html">cvtool.CV.sub_experiment_id</a></code></li>
 <li><code><a title="cvtool.CV.template" href="template/index.html">cvtool.CV.template</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="cvtool.CV.basepath" href="#cvtool.CV.basepath">basepath</a></code></li>
+<li><code><a title="cvtool.CV.ensure_suffix" href="#cvtool.CV.ensure_suffix">ensure_suffix</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
@@ -1056,6 +1123,7 @@ from the parent module.</p>
 <li>
 <h4><code><a title="cvtool.CV.CVDIR" href="#cvtool.CV.CVDIR">CVDIR</a></code></h4>
 <ul class="two-column">
+<li><code><a title="cvtool.CV.CVDIR.createCV" href="#cvtool.CV.CVDIR.createCV">createCV</a></code></li>
 <li><code><a title="cvtool.CV.CVDIR.create_project" href="#cvtool.CV.CVDIR.create_project">create_project</a></code></li>
 <li><code><a title="cvtool.CV.CVDIR.get_activity" href="#cvtool.CV.CVDIR.get_activity">get_activity</a></code></li>
 <li><code><a title="cvtool.CV.CVDIR.pre_parse_update" href="#cvtool.CV.CVDIR.pre_parse_update">pre_parse_update</a></code></li>

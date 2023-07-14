@@ -4,6 +4,11 @@ import subprocess
 import json
 
 
+
+class MissingValueError(Exception):
+    pass
+# usage: raise MissingValueError("The required value is missing.")
+
 def view(x):
     '''
     temporary json viewer

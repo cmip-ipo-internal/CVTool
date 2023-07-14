@@ -32,6 +32,11 @@ import subprocess
 import json
 
 
+
+class MissingValueError(Exception):
+    pass
+# usage: raise MissingValueError(&#34;The required value is missing.&#34;)
+
 def view(x):
     &#39;&#39;&#39;
     temporary json viewer
@@ -411,6 +416,28 @@ def get_commit_hashes(owner, repo ,latest = True):
 </dl>
 </section>
 <section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="cvtool.core.stdout.MissingValueError"><code class="flex name class">
+<span>class <span class="ident">MissingValueError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MissingValueError(Exception):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -433,6 +460,13 @@ def get_commit_hashes(owner, repo ,latest = True):
 <li><code><a title="cvtool.core.stdout.log" href="#cvtool.core.stdout.log">log</a></code></li>
 <li><code><a title="cvtool.core.stdout.view" href="#cvtool.core.stdout.view">view</a></code></li>
 <li><code><a title="cvtool.core.stdout.yymmdd" href="#cvtool.core.stdout.yymmdd">yymmdd</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="cvtool.core.stdout.MissingValueError" href="#cvtool.core.stdout.MissingValueError">MissingValueError</a></code></h4>
+</li>
 </ul>
 </li>
 </ul>

@@ -27,25 +27,28 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">import json
+from .. import core
 
-def create(MIPname,sourceId,experimentId,activityId,region, baseLocation,writeLocation):
+key2str = lambda x : &#39; &#39;.join(list(x.keys()))
 
-    assert baseLocation[-1] == &#39;/&#39;
+def create(cvfile, institution, baseLocation, writeLocation, region=&#39;moon&#39;, history= None, comment = None,references = None ):
+        
+
     assert writeLocation[-1] == &#39;/&#39;
 
-    CVs = json.load(open(f&#39;{baseLocation}{MIPname}_CV.json&#39;))[&#39;CV&#39;]
+    CVs = json.load(open(cvfile))[&#39;CV&#39;]
                      
-    assert sourceId in CVs[&#39;source_id&#39;]
-    assert activityId in CVs[&#39;activity_id&#39;]
+    sourceid = list(CVs.keys())[0]
+    print(&#39;warn - sourceid [0] only&#39;)
 
 
     template = {
         &#34;#note&#34;:           &#34;explanation of what source_type is goes here&#34;,
-        &#34;source_type&#34;:            &#34;AOGCM AER&#34;,
+        &#34;source_type&#34;:            key2str(CVs[&#39;source_type&#39;]),
     
         &#34;#note&#34;:                  &#34;CMIP6 valid experiment_ids are found in CMIP6_CV.json&#34;,
-        &#34;activity_id&#34;:            f&#34;{activityId}&#34;,
-        &#34;region&#34;:                 f&#34;{region}&#34;,
+        &#34;activity_id&#34;:            CVs[&#39;activity_id&#39;],
+        &#34;region&#34;:                 region,
         &#34;realization_index&#34;:      &#34;3&#34;,
         &#34;initialization_index&#34;:   &#34;1&#34;,
         &#34;physics_index&#34;:          &#34;1&#34;,
@@ -55,7 +58,7 @@ def create(MIPname,sourceId,experimentId,activityId,region, baseLocation,writeLo
         &#34;run_variant&#34;:            &#34;3rd realization&#34;,
 
         &#34;parent_activity_id&#34;:     &#34;CMIP&#34;,
-        &#34;parent_source_id&#34;:       f&#34;{sourceId}&#34;,
+        &#34;parent_source_id&#34;:       sourceid,
         &#34;parent_variant_label&#34;:   &#34;r3i1p1f1&#34;,
     
         &#34;parent_time_units&#34;:      &#34;days since 1850-01-01&#34;,
@@ -64,10 +67,10 @@ def create(MIPname,sourceId,experimentId,activityId,region, baseLocation,writeLo
         &#34;branch_time_in_parent&#34;:  59400.0,
     
         &#34;#note&#34;:                  &#34;institution_id must be registered at https://github.com/WCRP-CMIP/CMIP6_CVs/issues/new &#34;,
-        &#34;institution_id&#34;:         &#34;MOHC&#34;,
+        &#34;institution_id&#34;:         key2str(CVs[&#39;institution_ids&#39;]),
     
         &#34;#note&#34;:                  &#34;source_id (model name) must be registered at https://github.com/WCRP-CMIP/CMIP6_CVs/issues/new &#34;,
-        &#34;source_id&#34;:              f&#34;{sourceId}&#34;,
+        &#34;source_id&#34;:              source_id,
     
         &#34;calendar&#34;:               &#34;360_day&#34;,
     
@@ -75,32 +78,32 @@ def create(MIPname,sourceId,experimentId,activityId,region, baseLocation,writeLo
         &#34;grid_label&#34;:             &#34;gn&#34;,
         &#34;nominal_resolution&#34;:     &#34;10000 km&#34;,
     
-        &#34;license&#34;: &#34;CMIP6Plus model data produced by MOHC is licensed under a Creative Commons  License (https://creativecommons.org/). Consult https://pcmdi.llnl.gov/CMIP6Plus/TermsOfUse for terms of use governing CMIP6Plus output, including citation requirements and proper acknowledgment. Further information about this data, including some limitations, can be found via the further_info_url (recorded as a global attribute in this file). The data producers and data providers make no warranty, either express or implied, including, but not limited to, warranties of merchantability and fitness for a particular purpose. All liabilities arising from the supply of the information (including any liability arising in negligence) are excluded to the fullest extent permitted by law.&#34;,
+        &#34;license&#34;: CVs[&#39;lisence&#39;],
     
         &#34;#output&#34;:                &#34;Root directory for output (can be either a relative or full path)&#34;,
         &#34;outpath&#34;:                &#34;.&#34;,
     
         &#34;#note&#34;:                  &#34; **** The following descriptors are optional and may be set to an empty string &#34;,  
     
-        &#34;contact &#34;:               &#34;Python Coder (coder@a.b.c.com)&#34;,
-        &#34;history&#34;:                &#34;Output from archivcl_A1.nce/giccm_03_std_2xCO2_2256.&#34;,
-        &#34;comment&#34;:                &#34;&#34;,
-        &#34;references&#34;:             &#34;Model described by Koder and Tolkien (J. Geophys. Res., 2001, 576-591).  Also see http://www.GICC.su/giccm/doc/index.html.  The ssp245 simulation is described in Dorkey et al. &#39;(Clim. Dyn., 2003, 323-357.)&#39;&#34;,
+        &#34;contact &#34;:               core.stdout.get_user()[&#39;user&#39;],
+        &#34;history&#34;:                history or &#34;&#34;,
+        &#34;comment&#34;:                comment or &#34;&#34;,
+        &#34;references&#34;:             references or &#34;&#34;,
     
         &#34;#note&#34;:                  &#34; **** The following will be obtained from the CV and do not need to be defined here&#34;, 
     
-        &#34;institution&#34;:            &#34;&#34;,
+        &#34;institution&#34;:            institution,
         &#34;source&#34;:                 &#34;PCMDI-test 1.0 (1989)&#34;,
     
         &#34;#note&#34;:                  &#34; **** The following are set correctly for CMIP6 and should not normally need editing&#34;,  
     
-        &#34;_controlled_vocabulary_file&#34;:f&#34;{baseLocation}{MIPname}_CV.json&#34;,
+        &#34;_controlled_vocabulary_file&#34;:cvfile,
         &#34;_AXIS_ENTRY_FILE&#34;:         f&#34;{baseLocation}{MIPname}_coordinate.json&#34;,
         &#34;_FORMULA_VAR_FILE&#34;:        f&#34;{baseLocation}{MIPname}_formula_terms.json&#34;,
         &#34;_cmip6_option&#34;:           &#34;CMIP6&#34;,
     
-        &#34;mip_era&#34;:                &#34;CMIP6Plus&#34;,
-        &#34;parent_mip_era&#34;:         &#34;CMIP6Plus&#34;,
+        &#34;mip_era&#34;:                CVs[&#39;mip_era&#39;],
+        &#34;parent_mip_era&#34;:         CVs[&#39;mip_era&#39;],
     
         &#34;tracking_prefix&#34;:        &#34;hdl:21.14100&#34;,
         &#34;_history_template&#34;:       &#34;%s ;rewrote data to be consistent with &lt;activity_id&gt; for variable &lt;variable_id&gt; found in table &lt;table_id&gt;.&#34;,
@@ -113,7 +116,7 @@ def create(MIPname,sourceId,experimentId,activityId,region, baseLocation,writeLo
 
 
 
-    filename = f&#34;{writeLocation}{MIPname}_input.json&#34;
+    filename = f&#34;{writeLocation}input.json&#34;
 
     # Writing JSON data with indentation and colons aligned
     with open(filename, &#34;w&#34;) as outfile:
@@ -130,7 +133,7 @@ def create(MIPname,sourceId,experimentId,activityId,region, baseLocation,writeLo
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="cvtool.CMORlib.new_input.create"><code class="name flex">
-<span>def <span class="ident">create</span></span>(<span>MIPname, sourceId, experimentId, activityId, region, baseLocation, writeLocation)</span>
+<span>def <span class="ident">create</span></span>(<span>cvfile, institution, baseLocation, writeLocation, region='moon', history=None, comment=None, references=None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -138,24 +141,24 @@ def create(MIPname,sourceId,experimentId,activityId,region, baseLocation,writeLo
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def create(MIPname,sourceId,experimentId,activityId,region, baseLocation,writeLocation):
+<pre><code class="python">def create(cvfile, institution, baseLocation, writeLocation, region=&#39;moon&#39;, history= None, comment = None,references = None ):
+        
 
-    assert baseLocation[-1] == &#39;/&#39;
     assert writeLocation[-1] == &#39;/&#39;
 
-    CVs = json.load(open(f&#39;{baseLocation}{MIPname}_CV.json&#39;))[&#39;CV&#39;]
+    CVs = json.load(open(cvfile))[&#39;CV&#39;]
                      
-    assert sourceId in CVs[&#39;source_id&#39;]
-    assert activityId in CVs[&#39;activity_id&#39;]
+    sourceid = list(CVs.keys())[0]
+    print(&#39;warn - sourceid [0] only&#39;)
 
 
     template = {
         &#34;#note&#34;:           &#34;explanation of what source_type is goes here&#34;,
-        &#34;source_type&#34;:            &#34;AOGCM AER&#34;,
+        &#34;source_type&#34;:            key2str(CVs[&#39;source_type&#39;]),
     
         &#34;#note&#34;:                  &#34;CMIP6 valid experiment_ids are found in CMIP6_CV.json&#34;,
-        &#34;activity_id&#34;:            f&#34;{activityId}&#34;,
-        &#34;region&#34;:                 f&#34;{region}&#34;,
+        &#34;activity_id&#34;:            CVs[&#39;activity_id&#39;],
+        &#34;region&#34;:                 region,
         &#34;realization_index&#34;:      &#34;3&#34;,
         &#34;initialization_index&#34;:   &#34;1&#34;,
         &#34;physics_index&#34;:          &#34;1&#34;,
@@ -165,7 +168,7 @@ def create(MIPname,sourceId,experimentId,activityId,region, baseLocation,writeLo
         &#34;run_variant&#34;:            &#34;3rd realization&#34;,
 
         &#34;parent_activity_id&#34;:     &#34;CMIP&#34;,
-        &#34;parent_source_id&#34;:       f&#34;{sourceId}&#34;,
+        &#34;parent_source_id&#34;:       sourceid,
         &#34;parent_variant_label&#34;:   &#34;r3i1p1f1&#34;,
     
         &#34;parent_time_units&#34;:      &#34;days since 1850-01-01&#34;,
@@ -174,10 +177,10 @@ def create(MIPname,sourceId,experimentId,activityId,region, baseLocation,writeLo
         &#34;branch_time_in_parent&#34;:  59400.0,
     
         &#34;#note&#34;:                  &#34;institution_id must be registered at https://github.com/WCRP-CMIP/CMIP6_CVs/issues/new &#34;,
-        &#34;institution_id&#34;:         &#34;MOHC&#34;,
+        &#34;institution_id&#34;:         key2str(CVs[&#39;institution_ids&#39;]),
     
         &#34;#note&#34;:                  &#34;source_id (model name) must be registered at https://github.com/WCRP-CMIP/CMIP6_CVs/issues/new &#34;,
-        &#34;source_id&#34;:              f&#34;{sourceId}&#34;,
+        &#34;source_id&#34;:              source_id,
     
         &#34;calendar&#34;:               &#34;360_day&#34;,
     
@@ -185,32 +188,32 @@ def create(MIPname,sourceId,experimentId,activityId,region, baseLocation,writeLo
         &#34;grid_label&#34;:             &#34;gn&#34;,
         &#34;nominal_resolution&#34;:     &#34;10000 km&#34;,
     
-        &#34;license&#34;: &#34;CMIP6Plus model data produced by MOHC is licensed under a Creative Commons  License (https://creativecommons.org/). Consult https://pcmdi.llnl.gov/CMIP6Plus/TermsOfUse for terms of use governing CMIP6Plus output, including citation requirements and proper acknowledgment. Further information about this data, including some limitations, can be found via the further_info_url (recorded as a global attribute in this file). The data producers and data providers make no warranty, either express or implied, including, but not limited to, warranties of merchantability and fitness for a particular purpose. All liabilities arising from the supply of the information (including any liability arising in negligence) are excluded to the fullest extent permitted by law.&#34;,
+        &#34;license&#34;: CVs[&#39;lisence&#39;],
     
         &#34;#output&#34;:                &#34;Root directory for output (can be either a relative or full path)&#34;,
         &#34;outpath&#34;:                &#34;.&#34;,
     
         &#34;#note&#34;:                  &#34; **** The following descriptors are optional and may be set to an empty string &#34;,  
     
-        &#34;contact &#34;:               &#34;Python Coder (coder@a.b.c.com)&#34;,
-        &#34;history&#34;:                &#34;Output from archivcl_A1.nce/giccm_03_std_2xCO2_2256.&#34;,
-        &#34;comment&#34;:                &#34;&#34;,
-        &#34;references&#34;:             &#34;Model described by Koder and Tolkien (J. Geophys. Res., 2001, 576-591).  Also see http://www.GICC.su/giccm/doc/index.html.  The ssp245 simulation is described in Dorkey et al. &#39;(Clim. Dyn., 2003, 323-357.)&#39;&#34;,
+        &#34;contact &#34;:               core.stdout.get_user()[&#39;user&#39;],
+        &#34;history&#34;:                history or &#34;&#34;,
+        &#34;comment&#34;:                comment or &#34;&#34;,
+        &#34;references&#34;:             references or &#34;&#34;,
     
         &#34;#note&#34;:                  &#34; **** The following will be obtained from the CV and do not need to be defined here&#34;, 
     
-        &#34;institution&#34;:            &#34;&#34;,
+        &#34;institution&#34;:            institution,
         &#34;source&#34;:                 &#34;PCMDI-test 1.0 (1989)&#34;,
     
         &#34;#note&#34;:                  &#34; **** The following are set correctly for CMIP6 and should not normally need editing&#34;,  
     
-        &#34;_controlled_vocabulary_file&#34;:f&#34;{baseLocation}{MIPname}_CV.json&#34;,
+        &#34;_controlled_vocabulary_file&#34;:cvfile,
         &#34;_AXIS_ENTRY_FILE&#34;:         f&#34;{baseLocation}{MIPname}_coordinate.json&#34;,
         &#34;_FORMULA_VAR_FILE&#34;:        f&#34;{baseLocation}{MIPname}_formula_terms.json&#34;,
         &#34;_cmip6_option&#34;:           &#34;CMIP6&#34;,
     
-        &#34;mip_era&#34;:                &#34;CMIP6Plus&#34;,
-        &#34;parent_mip_era&#34;:         &#34;CMIP6Plus&#34;,
+        &#34;mip_era&#34;:                CVs[&#39;mip_era&#39;],
+        &#34;parent_mip_era&#34;:         CVs[&#39;mip_era&#39;],
     
         &#34;tracking_prefix&#34;:        &#34;hdl:21.14100&#34;,
         &#34;_history_template&#34;:       &#34;%s ;rewrote data to be consistent with &lt;activity_id&gt; for variable &lt;variable_id&gt; found in table &lt;table_id&gt;.&#34;,
@@ -223,13 +226,25 @@ def create(MIPname,sourceId,experimentId,activityId,region, baseLocation,writeLo
 
 
 
-    filename = f&#34;{writeLocation}{MIPname}_input.json&#34;
+    filename = f&#34;{writeLocation}input.json&#34;
 
     # Writing JSON data with indentation and colons aligned
     with open(filename, &#34;w&#34;) as outfile:
         json.dump(template, outfile, indent=&#34;\t&#34;, separators=(&#34;,&#34;,&#34;: &#34; ))
 
     return filename</code></pre>
+</details>
+</dd>
+<dt id="cvtool.CMORlib.new_input.key2str"><code class="name flex">
+<span>def <span class="ident">key2str</span></span>(<span>x)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">key2str = lambda x : &#39; &#39;.join(list(x.keys()))</code></pre>
 </details>
 </dd>
 </dl>
@@ -251,6 +266,7 @@ def create(MIPname,sourceId,experimentId,activityId,region, baseLocation,writeLo
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="cvtool.CMORlib.new_input.create" href="#cvtool.CMORlib.new_input.create">create</a></code></li>
+<li><code><a title="cvtool.CMORlib.new_input.key2str" href="#cvtool.CMORlib.new_input.key2str">key2str</a></code></li>
 </ul>
 </li>
 </ul>
