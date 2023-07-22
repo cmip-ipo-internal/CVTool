@@ -18,11 +18,13 @@ core = sys.modules.get('cvtool.core')
 
 # print(dir(variables))
 
-def create(directory,prefix,tables,outloc='cv_cmor'):
+def create(directory,prefix,tables,outloc=None):
     
+    outloc = outloc or 'cv_cmor'
     cvdict = {'source_type':set()}
     missing = []
 
+    
 
     if core.io.exists(f'{directory}{outloc}', False):
         # Delete the directory
@@ -77,8 +79,10 @@ def create(directory,prefix,tables,outloc='cv_cmor'):
     cvdict['source_type'] = dict([[s,source_type[s]] for s in cvdict['source_type']])
 
 
+    CVfile = f"{directory}{outloc}/{core.io.ensure_suffix(prefix,'_')}CV.json"
+    core.io.json_write(dict(CV = cvdict), CVfile ,sort=True)
 
-    core.io.json_write(cvdict, f"{directory}{outloc}/CV.json",sort=True)
+    return CVfile
 
 
 
