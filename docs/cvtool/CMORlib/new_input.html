@@ -26,29 +26,40 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import json
+<pre><code class="python">import json,os
 from .. import core
 
+keys = lambda x: list(x.keys())
 key2str = lambda x : &#39; &#39;.join(list(x.keys()))
+getfirst= lambda cv,key: list(cv[key].keys())[0]
 
-def create(cvfile, institution, baseLocation, writeLocation, region=&#39;moon&#39;, history= None, comment = None,references = None ):
+
+
+def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, region=&#39;moon&#39;, history= None, comment = None,references = None ):
         
-
-    assert writeLocation[-1] == &#39;/&#39;
-
-    CVs = json.load(open(cvfile))[&#39;CV&#39;]
+    prefix = core.io.ensure_suffix(prefix,&#39;_&#39;)
+    table_prefix = core.io.ensure_suffix(table_prefix,&#39;_&#39;)
+    writeLocation = core.io.ensure_suffix(writeLocation,&#39;/&#39;)
+    CVs = core.io.json_read(cvfile,&#39;r&#39;)[&#39;CV&#39;]
                      
-    sourceid = list(CVs.keys())[0]
+    sourceid = getfirst(CVs,&#39;source_id&#39;)
+    print(sourceid)
     print(&#39;warn - sourceid [0] only&#39;)
 
+
+    &#39;&#39;&#39;
+    
+    &#34;region&#34;:                 region,
+    
+    &#39;&#39;&#39;
 
     template = {
         &#34;#note&#34;:           &#34;explanation of what source_type is goes here&#34;,
         &#34;source_type&#34;:            key2str(CVs[&#39;source_type&#39;]),
     
         &#34;#note&#34;:                  &#34;CMIP6 valid experiment_ids are found in CMIP6_CV.json&#34;,
-        &#34;activity_id&#34;:            CVs[&#39;activity_id&#39;],
-        &#34;region&#34;:                 region,
+        &#34;activity_id&#34;:            key2str(CVs[&#39;activity_id&#39;]),
+        
         &#34;realization_index&#34;:      &#34;3&#34;,
         &#34;initialization_index&#34;:   &#34;1&#34;,
         &#34;physics_index&#34;:          &#34;1&#34;,
@@ -57,8 +68,8 @@ def create(cvfile, institution, baseLocation, writeLocation, region=&#39;moon&#3
         &#34;#note&#34;:                  &#34;Text stored in attribute variant_info (recommended, not required description of run variant)&#34;,
         &#34;run_variant&#34;:            &#34;3rd realization&#34;,
 
-        &#34;parent_activity_id&#34;:     &#34;CMIP&#34;,
-        &#34;parent_source_id&#34;:       sourceid,
+        &#34;parent_activity_id&#34;:     &#34;CMIP&#34;, 
+        &#34;parent_source_id&#34;:      sourceid,
         &#34;parent_variant_label&#34;:   &#34;r3i1p1f1&#34;,
     
         &#34;parent_time_units&#34;:      &#34;days since 1850-01-01&#34;,
@@ -66,11 +77,12 @@ def create(cvfile, institution, baseLocation, writeLocation, region=&#39;moon&#3
         &#34;branch_time_in_child&#34;:   59400.0,
         &#34;branch_time_in_parent&#34;:  59400.0,
     
-        &#34;#note&#34;:                  &#34;institution_id must be registered at https://github.com/WCRP-CMIP/CMIP6_CVs/issues/new &#34;,
-        &#34;institution_id&#34;:         key2str(CVs[&#39;institution_ids&#39;]),
+        &#34;#note&#34;:                  &#34;institution_id must be registered at https://github.com/WCRP-CMIP/CMIP6_CVs/issues/new **currently only selecting the first &#34;,
+        &#34;institution_id&#34;:         keys(CVs[&#39;institution_id&#39;])[0],
+
     
         &#34;#note&#34;:                  &#34;source_id (model name) must be registered at https://github.com/WCRP-CMIP/CMIP6_CVs/issues/new &#34;,
-        &#34;source_id&#34;:              source_id,
+        &#34;source_id&#34;:              sourceid,
     
         &#34;calendar&#34;:               &#34;360_day&#34;,
     
@@ -78,17 +90,17 @@ def create(cvfile, institution, baseLocation, writeLocation, region=&#39;moon&#3
         &#34;grid_label&#34;:             &#34;gn&#34;,
         &#34;nominal_resolution&#34;:     &#34;10000 km&#34;,
     
-        &#34;license&#34;: CVs[&#39;lisence&#39;],
+        &#34;license&#34;:               CVs[&#39;license&#39;],
     
         &#34;#output&#34;:                &#34;Root directory for output (can be either a relative or full path)&#34;,
         &#34;outpath&#34;:                &#34;.&#34;,
     
         &#34;#note&#34;:                  &#34; **** The following descriptors are optional and may be set to an empty string &#34;,  
     
-        &#34;contact &#34;:               core.stdout.get_user()[&#39;user&#39;],
-        &#34;history&#34;:                history or &#34;&#34;,
+        # &#34;contact &#34;:               core.stdout.get_user()[&#39;user&#39;],
+        # &#34;history&#34;:                history or &#34;&#34;,
         &#34;comment&#34;:                comment or &#34;&#34;,
-        &#34;references&#34;:             references or &#34;&#34;,
+        # &#34;references&#34;:             references or &#34;&#34;,
     
         &#34;#note&#34;:                  &#34; **** The following will be obtained from the CV and do not need to be defined here&#34;, 
     
@@ -98,8 +110,8 @@ def create(cvfile, institution, baseLocation, writeLocation, region=&#39;moon&#3
         &#34;#note&#34;:                  &#34; **** The following are set correctly for CMIP6 and should not normally need editing&#34;,  
     
         &#34;_controlled_vocabulary_file&#34;:cvfile,
-        &#34;_AXIS_ENTRY_FILE&#34;:         f&#34;{baseLocation}{MIPname}_coordinate.json&#34;,
-        &#34;_FORMULA_VAR_FILE&#34;:        f&#34;{baseLocation}{MIPname}_formula_terms.json&#34;,
+        &#34;_AXIS_ENTRY_FILE&#34;:         core.io.relpath(f&#34;{tables}{table_prefix}coordinate.json&#34;),
+        &#34;_FORMULA_VAR_FILE&#34;:        core.io.relpath(f&#34;{tables}{table_prefix}formula_terms.json&#34;),
         &#34;_cmip6_option&#34;:           &#34;CMIP6&#34;,
     
         &#34;mip_era&#34;:                CVs[&#39;mip_era&#39;],
@@ -116,13 +128,14 @@ def create(cvfile, institution, baseLocation, writeLocation, region=&#39;moon&#3
 
 
 
-    filename = f&#34;{writeLocation}input.json&#34;
+    filename = f&#34;{writeLocation}{prefix}input.json&#34;
 
     # Writing JSON data with indentation and colons aligned
     with open(filename, &#34;w&#34;) as outfile:
         json.dump(template, outfile, indent=&#34;\t&#34;, separators=(&#34;,&#34;,&#34;: &#34; ))
 
-    return filename</code></pre>
+    return os.path.abspath(filename)
+                        </code></pre>
 </details>
 </section>
 <section>
@@ -133,7 +146,7 @@ def create(cvfile, institution, baseLocation, writeLocation, region=&#39;moon&#3
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="cvtool.CMORlib.new_input.create"><code class="name flex">
-<span>def <span class="ident">create</span></span>(<span>cvfile, institution, baseLocation, writeLocation, region='moon', history=None, comment=None, references=None)</span>
+<span>def <span class="ident">create</span></span>(<span>cvfile, prefix, institution, tables, table_prefix, writeLocation, region='moon', history=None, comment=None, references=None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -141,24 +154,31 @@ def create(cvfile, institution, baseLocation, writeLocation, region=&#39;moon&#3
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def create(cvfile, institution, baseLocation, writeLocation, region=&#39;moon&#39;, history= None, comment = None,references = None ):
+<pre><code class="python">def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, region=&#39;moon&#39;, history= None, comment = None,references = None ):
         
-
-    assert writeLocation[-1] == &#39;/&#39;
-
-    CVs = json.load(open(cvfile))[&#39;CV&#39;]
+    prefix = core.io.ensure_suffix(prefix,&#39;_&#39;)
+    table_prefix = core.io.ensure_suffix(table_prefix,&#39;_&#39;)
+    writeLocation = core.io.ensure_suffix(writeLocation,&#39;/&#39;)
+    CVs = core.io.json_read(cvfile,&#39;r&#39;)[&#39;CV&#39;]
                      
-    sourceid = list(CVs.keys())[0]
+    sourceid = getfirst(CVs,&#39;source_id&#39;)
+    print(sourceid)
     print(&#39;warn - sourceid [0] only&#39;)
 
+
+    &#39;&#39;&#39;
+    
+    &#34;region&#34;:                 region,
+    
+    &#39;&#39;&#39;
 
     template = {
         &#34;#note&#34;:           &#34;explanation of what source_type is goes here&#34;,
         &#34;source_type&#34;:            key2str(CVs[&#39;source_type&#39;]),
     
         &#34;#note&#34;:                  &#34;CMIP6 valid experiment_ids are found in CMIP6_CV.json&#34;,
-        &#34;activity_id&#34;:            CVs[&#39;activity_id&#39;],
-        &#34;region&#34;:                 region,
+        &#34;activity_id&#34;:            key2str(CVs[&#39;activity_id&#39;]),
+        
         &#34;realization_index&#34;:      &#34;3&#34;,
         &#34;initialization_index&#34;:   &#34;1&#34;,
         &#34;physics_index&#34;:          &#34;1&#34;,
@@ -167,8 +187,8 @@ def create(cvfile, institution, baseLocation, writeLocation, region=&#39;moon&#3
         &#34;#note&#34;:                  &#34;Text stored in attribute variant_info (recommended, not required description of run variant)&#34;,
         &#34;run_variant&#34;:            &#34;3rd realization&#34;,
 
-        &#34;parent_activity_id&#34;:     &#34;CMIP&#34;,
-        &#34;parent_source_id&#34;:       sourceid,
+        &#34;parent_activity_id&#34;:     &#34;CMIP&#34;, 
+        &#34;parent_source_id&#34;:      sourceid,
         &#34;parent_variant_label&#34;:   &#34;r3i1p1f1&#34;,
     
         &#34;parent_time_units&#34;:      &#34;days since 1850-01-01&#34;,
@@ -176,11 +196,12 @@ def create(cvfile, institution, baseLocation, writeLocation, region=&#39;moon&#3
         &#34;branch_time_in_child&#34;:   59400.0,
         &#34;branch_time_in_parent&#34;:  59400.0,
     
-        &#34;#note&#34;:                  &#34;institution_id must be registered at https://github.com/WCRP-CMIP/CMIP6_CVs/issues/new &#34;,
-        &#34;institution_id&#34;:         key2str(CVs[&#39;institution_ids&#39;]),
+        &#34;#note&#34;:                  &#34;institution_id must be registered at https://github.com/WCRP-CMIP/CMIP6_CVs/issues/new **currently only selecting the first &#34;,
+        &#34;institution_id&#34;:         keys(CVs[&#39;institution_id&#39;])[0],
+
     
         &#34;#note&#34;:                  &#34;source_id (model name) must be registered at https://github.com/WCRP-CMIP/CMIP6_CVs/issues/new &#34;,
-        &#34;source_id&#34;:              source_id,
+        &#34;source_id&#34;:              sourceid,
     
         &#34;calendar&#34;:               &#34;360_day&#34;,
     
@@ -188,17 +209,17 @@ def create(cvfile, institution, baseLocation, writeLocation, region=&#39;moon&#3
         &#34;grid_label&#34;:             &#34;gn&#34;,
         &#34;nominal_resolution&#34;:     &#34;10000 km&#34;,
     
-        &#34;license&#34;: CVs[&#39;lisence&#39;],
+        &#34;license&#34;:               CVs[&#39;license&#39;],
     
         &#34;#output&#34;:                &#34;Root directory for output (can be either a relative or full path)&#34;,
         &#34;outpath&#34;:                &#34;.&#34;,
     
         &#34;#note&#34;:                  &#34; **** The following descriptors are optional and may be set to an empty string &#34;,  
     
-        &#34;contact &#34;:               core.stdout.get_user()[&#39;user&#39;],
-        &#34;history&#34;:                history or &#34;&#34;,
+        # &#34;contact &#34;:               core.stdout.get_user()[&#39;user&#39;],
+        # &#34;history&#34;:                history or &#34;&#34;,
         &#34;comment&#34;:                comment or &#34;&#34;,
-        &#34;references&#34;:             references or &#34;&#34;,
+        # &#34;references&#34;:             references or &#34;&#34;,
     
         &#34;#note&#34;:                  &#34; **** The following will be obtained from the CV and do not need to be defined here&#34;, 
     
@@ -208,8 +229,8 @@ def create(cvfile, institution, baseLocation, writeLocation, region=&#39;moon&#3
         &#34;#note&#34;:                  &#34; **** The following are set correctly for CMIP6 and should not normally need editing&#34;,  
     
         &#34;_controlled_vocabulary_file&#34;:cvfile,
-        &#34;_AXIS_ENTRY_FILE&#34;:         f&#34;{baseLocation}{MIPname}_coordinate.json&#34;,
-        &#34;_FORMULA_VAR_FILE&#34;:        f&#34;{baseLocation}{MIPname}_formula_terms.json&#34;,
+        &#34;_AXIS_ENTRY_FILE&#34;:         core.io.relpath(f&#34;{tables}{table_prefix}coordinate.json&#34;),
+        &#34;_FORMULA_VAR_FILE&#34;:        core.io.relpath(f&#34;{tables}{table_prefix}formula_terms.json&#34;),
         &#34;_cmip6_option&#34;:           &#34;CMIP6&#34;,
     
         &#34;mip_era&#34;:                CVs[&#39;mip_era&#39;],
@@ -226,13 +247,25 @@ def create(cvfile, institution, baseLocation, writeLocation, region=&#39;moon&#3
 
 
 
-    filename = f&#34;{writeLocation}input.json&#34;
+    filename = f&#34;{writeLocation}{prefix}input.json&#34;
 
     # Writing JSON data with indentation and colons aligned
     with open(filename, &#34;w&#34;) as outfile:
         json.dump(template, outfile, indent=&#34;\t&#34;, separators=(&#34;,&#34;,&#34;: &#34; ))
 
-    return filename</code></pre>
+    return os.path.abspath(filename)</code></pre>
+</details>
+</dd>
+<dt id="cvtool.CMORlib.new_input.getfirst"><code class="name flex">
+<span>def <span class="ident">getfirst</span></span>(<span>cv, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">getfirst= lambda cv,key: list(cv[key].keys())[0]</code></pre>
 </details>
 </dd>
 <dt id="cvtool.CMORlib.new_input.key2str"><code class="name flex">
@@ -245,6 +278,18 @@ def create(cvfile, institution, baseLocation, writeLocation, region=&#39;moon&#3
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">key2str = lambda x : &#39; &#39;.join(list(x.keys()))</code></pre>
+</details>
+</dd>
+<dt id="cvtool.CMORlib.new_input.keys"><code class="name flex">
+<span>def <span class="ident">keys</span></span>(<span>x)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">keys = lambda x: list(x.keys())</code></pre>
 </details>
 </dd>
 </dl>
@@ -266,7 +311,9 @@ def create(cvfile, institution, baseLocation, writeLocation, region=&#39;moon&#3
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="cvtool.CMORlib.new_input.create" href="#cvtool.CMORlib.new_input.create">create</a></code></li>
+<li><code><a title="cvtool.CMORlib.new_input.getfirst" href="#cvtool.CMORlib.new_input.getfirst">getfirst</a></code></li>
 <li><code><a title="cvtool.CMORlib.new_input.key2str" href="#cvtool.CMORlib.new_input.key2str">key2str</a></code></li>
+<li><code><a title="cvtool.CMORlib.new_input.keys" href="#cvtool.CMORlib.new_input.keys">keys</a></code></li>
 </ul>
 </li>
 </ul>

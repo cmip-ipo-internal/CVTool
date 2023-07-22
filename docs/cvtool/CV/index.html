@@ -39,7 +39,6 @@ The CV module manages changes and creation of initial files.
 
 &#39;&#39;&#39;
 
-
 import json
 import importlib.util
 import os
@@ -50,7 +49,6 @@ import sys
 from .. import core
 from ..core.dynamic_imports import load_module
 from . import meta
-
 
 try:
     debug = sys.argv[1]
@@ -69,16 +67,10 @@ else:
 def basepath(name, basepath=&#39;&#39;):
     return __file__.replace(&#39;__init__&#39;, f&#39;{basepath}{name}/__init__&#39;), name
 
-def ensure_suffix(var,end):
-    if not var.endswith(end):
-            var += end
-    return var
 
-
-# mip= load_module(*basepath(&#39;mip_era&#39;))
+# mip = load_module(*basepath(&#39;mip_era&#39;))
 
 global_keys = [&#39;institution&#39;]
-
 
 base = [
     &#34;DRS&#34;,
@@ -100,11 +92,8 @@ base = [
 ]
 
 
-
-
-
 class CVDIR:
-    def __init__(self, prefix=&#39;&#39;, directory=&#39;&#39;, base_files=None, tables=&#39;&#39;, table_prefix=&#39;&#39;):
+    def __init__(self, prefix=&#39;&#39;, directory=&#39;&#39;, base_files=None, tables=&#39;&#39;, table_prefix=&#39;&#39;, cvout=None):
         &#34;&#34;&#34;
         Initializes the CVDIR class.
 
@@ -113,12 +102,13 @@ class CVDIR:
             directory (str): Directory where parent modules reside. Default is an empty string.
             base_files (list): List of base file names. Default is None, which uses the &#39;base&#39; list.
         &#34;&#34;&#34;
-        self.prefix = ensure_suffix(prefix,&#39;_&#39;)
-        self.directory = ensure_suffix(directory,&#39;/&#39;)
+        self.prefix = core.io.ensure_suffix(prefix, &#39;_&#39;)
+        self.directory = core.io.ensure_suffix(directory, &#39;/&#39;)
         self.file_names = base_files or base
         self.files = {}
         self.tables = tables
         self.table_prefix = table_prefix
+        self.cvout = cvout or &#39;cv_cmor&#39;
 
         # ensure that the tables exist
         core.io.exists(tables)
@@ -127,24 +117,7 @@ class CVDIR:
             self.create_project()
 
         for file_name in self.file_names:
-            self.files[file_name] = self.read_file(file_name)
-
-    def read_file(self, file_name):
-        &#34;&#34;&#34;
-        Reads the contents of a file.
-
-        Args:
-            file_name (str): Name of the file.
-
-        Returns:
-            dict: Contents of the file as a dictionary, or an empty dictionary if the file is not found.
-        &#34;&#34;&#34;
-        file_path = os.path.join(self.directory, self.prefix + file_name)
-        try:
-            with open(file_path) as file:
-                return json.load(file)
-        except FileNotFoundError:
-            return {}
+            self.files[file_name] = core.io.json_read(os.path.join(self.directory, self.prefix + file_name))
 
     def create_project(self, base_files=None):
         &#34;&#34;&#34;
@@ -196,7 +169,7 @@ class CVDIR:
                     # empty files?
                     print(&#39;empty:&#39;, file_name)
                     jsn_data = module.create(data)
-                print(jsn_data)
+                # print(jsn_data)
 
             # update
             jsn_data = module.update(jsn_data, data)
@@ -278,10 +251,10 @@ class CVDIR:
 
         #  default = cmip deck 
         path = self.tables + self.table_prefix
-        tabledata = json.load(open(f&#34;{path}_CV.json&#34;, &#39;r&#39;))
+        tabledata = core.io.json_read(f&#34;{path}_CV.json&#34;, &#39;r&#39;)[&#39;CV&#39;]
 
         deck = {}
-        deck[&#39;activity_id&#39;] = {activity : tabledata[&#39;activity_id&#39;][activity]}
+        deck[&#39;activity_id&#39;] = {activity: tabledata[&#39;activity_id&#39;][activity]}
 
         def filter_dict(data):
             if data:
@@ -289,21 +262,33 @@ class CVDIR:
                     return activity in data
 
                 return {key: value for key, value in data.items() if
-                    (isinstance(value, dict) and filter_dict(value.get(&#39;activity_id&#39;,&#39;&#39;))) or
+                    (isinstance(value, dict) and filter_dict(value.get(&#39;activity_id&#39;, &#39;&#39;))) or
                     (isinstance(value, str) and value == activity)} 
         
-
         experiments = tabledata[&#39;experiment_id&#39;]
         deck[&#39;experiment_id&#39;] = filter_dict(experiments)
 
-    
         return deck
 
-
-    def createCV(self):
+    def createCV(self, institution):
         from . import compileCV
         # print(dir(compileCV))
-        compileCV.create(self.directory, self.prefix, self.tables)
+
+        CVloc = f&#34;{self.directory}&#34;
+        cvfile = compileCV.create(self.directory, self.prefix, self.tables, outloc=self.cvout)
+
+        self.checkCV(cvfile, institution)
+
+    def checkCV(self, cvfile, institution):
+        from .. import CMORlib
+        cmor_input = CMORlib.new_input.create(cvfile, self.prefix, institution, tables=self.tables, table_prefix=self.table_prefix, writeLocation=cvfile.split(self.prefix)[0])
+
+        # test the output 
+        cmorclass = CMORlib.CMORise(self.tables, cmor_input)
+        cmorclass.process_data()
+
+        print(cmor_input)
+
 
 class ProjectCreator:
     def __init__(self, prefix=&#39;&#39;, directory=&#39;&#39;, base_files=None):
@@ -444,21 +429,6 @@ class ProjectCreator:
     return __file__.replace(&#39;__init__&#39;, f&#39;{basepath}{name}/__init__&#39;), name</code></pre>
 </details>
 </dd>
-<dt id="cvtool.CV.ensure_suffix"><code class="name flex">
-<span>def <span class="ident">ensure_suffix</span></span>(<span>var, end)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def ensure_suffix(var,end):
-    if not var.endswith(end):
-            var += end
-    return var</code></pre>
-</details>
-</dd>
 </dl>
 </section>
 <section>
@@ -466,7 +436,7 @@ class ProjectCreator:
 <dl>
 <dt id="cvtool.CV.CVDIR"><code class="flex name class">
 <span>class <span class="ident">CVDIR</span></span>
-<span>(</span><span>prefix='', directory='', base_files=None, tables='', table_prefix='')</span>
+<span>(</span><span>prefix='', directory='', base_files=None, tables='', table_prefix='', cvout=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Initializes the CVDIR class.</p>
@@ -484,7 +454,7 @@ class ProjectCreator:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class CVDIR:
-    def __init__(self, prefix=&#39;&#39;, directory=&#39;&#39;, base_files=None, tables=&#39;&#39;, table_prefix=&#39;&#39;):
+    def __init__(self, prefix=&#39;&#39;, directory=&#39;&#39;, base_files=None, tables=&#39;&#39;, table_prefix=&#39;&#39;, cvout=None):
         &#34;&#34;&#34;
         Initializes the CVDIR class.
 
@@ -493,12 +463,13 @@ class ProjectCreator:
             directory (str): Directory where parent modules reside. Default is an empty string.
             base_files (list): List of base file names. Default is None, which uses the &#39;base&#39; list.
         &#34;&#34;&#34;
-        self.prefix = ensure_suffix(prefix,&#39;_&#39;)
-        self.directory = ensure_suffix(directory,&#39;/&#39;)
+        self.prefix = core.io.ensure_suffix(prefix, &#39;_&#39;)
+        self.directory = core.io.ensure_suffix(directory, &#39;/&#39;)
         self.file_names = base_files or base
         self.files = {}
         self.tables = tables
         self.table_prefix = table_prefix
+        self.cvout = cvout or &#39;cv_cmor&#39;
 
         # ensure that the tables exist
         core.io.exists(tables)
@@ -507,24 +478,7 @@ class ProjectCreator:
             self.create_project()
 
         for file_name in self.file_names:
-            self.files[file_name] = self.read_file(file_name)
-
-    def read_file(self, file_name):
-        &#34;&#34;&#34;
-        Reads the contents of a file.
-
-        Args:
-            file_name (str): Name of the file.
-
-        Returns:
-            dict: Contents of the file as a dictionary, or an empty dictionary if the file is not found.
-        &#34;&#34;&#34;
-        file_path = os.path.join(self.directory, self.prefix + file_name)
-        try:
-            with open(file_path) as file:
-                return json.load(file)
-        except FileNotFoundError:
-            return {}
+            self.files[file_name] = core.io.json_read(os.path.join(self.directory, self.prefix + file_name))
 
     def create_project(self, base_files=None):
         &#34;&#34;&#34;
@@ -576,7 +530,7 @@ class ProjectCreator:
                     # empty files?
                     print(&#39;empty:&#39;, file_name)
                     jsn_data = module.create(data)
-                print(jsn_data)
+                # print(jsn_data)
 
             # update
             jsn_data = module.update(jsn_data, data)
@@ -658,10 +612,10 @@ class ProjectCreator:
 
         #  default = cmip deck 
         path = self.tables + self.table_prefix
-        tabledata = json.load(open(f&#34;{path}_CV.json&#34;, &#39;r&#39;))
+        tabledata = core.io.json_read(f&#34;{path}_CV.json&#34;, &#39;r&#39;)[&#39;CV&#39;]
 
         deck = {}
-        deck[&#39;activity_id&#39;] = {activity : tabledata[&#39;activity_id&#39;][activity]}
+        deck[&#39;activity_id&#39;] = {activity: tabledata[&#39;activity_id&#39;][activity]}
 
         def filter_dict(data):
             if data:
@@ -669,26 +623,37 @@ class ProjectCreator:
                     return activity in data
 
                 return {key: value for key, value in data.items() if
-                    (isinstance(value, dict) and filter_dict(value.get(&#39;activity_id&#39;,&#39;&#39;))) or
+                    (isinstance(value, dict) and filter_dict(value.get(&#39;activity_id&#39;, &#39;&#39;))) or
                     (isinstance(value, str) and value == activity)} 
         
-
         experiments = tabledata[&#39;experiment_id&#39;]
         deck[&#39;experiment_id&#39;] = filter_dict(experiments)
 
-    
         return deck
 
-
-    def createCV(self):
+    def createCV(self, institution):
         from . import compileCV
         # print(dir(compileCV))
-        compileCV.create(self.directory, self.prefix, self.tables)</code></pre>
+
+        CVloc = f&#34;{self.directory}&#34;
+        cvfile = compileCV.create(self.directory, self.prefix, self.tables, outloc=self.cvout)
+
+        self.checkCV(cvfile, institution)
+
+    def checkCV(self, cvfile, institution):
+        from .. import CMORlib
+        cmor_input = CMORlib.new_input.create(cvfile, self.prefix, institution, tables=self.tables, table_prefix=self.table_prefix, writeLocation=cvfile.split(self.prefix)[0])
+
+        # test the output 
+        cmorclass = CMORlib.CMORise(self.tables, cmor_input)
+        cmorclass.process_data()
+
+        print(cmor_input)</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
-<dt id="cvtool.CV.CVDIR.createCV"><code class="name flex">
-<span>def <span class="ident">createCV</span></span>(<span>self)</span>
+<dt id="cvtool.CV.CVDIR.checkCV"><code class="name flex">
+<span>def <span class="ident">checkCV</span></span>(<span>self, cvfile, institution)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -696,10 +661,34 @@ class ProjectCreator:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def createCV(self):
+<pre><code class="python">def checkCV(self, cvfile, institution):
+    from .. import CMORlib
+    cmor_input = CMORlib.new_input.create(cvfile, self.prefix, institution, tables=self.tables, table_prefix=self.table_prefix, writeLocation=cvfile.split(self.prefix)[0])
+
+    # test the output 
+    cmorclass = CMORlib.CMORise(self.tables, cmor_input)
+    cmorclass.process_data()
+
+    print(cmor_input)</code></pre>
+</details>
+</dd>
+<dt id="cvtool.CV.CVDIR.createCV"><code class="name flex">
+<span>def <span class="ident">createCV</span></span>(<span>self, institution)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def createCV(self, institution):
     from . import compileCV
     # print(dir(compileCV))
-    compileCV.create(self.directory, self.prefix, self.tables)</code></pre>
+
+    CVloc = f&#34;{self.directory}&#34;
+    cvfile = compileCV.create(self.directory, self.prefix, self.tables, outloc=self.cvout)
+
+    self.checkCV(cvfile, institution)</code></pre>
 </details>
 </dd>
 <dt id="cvtool.CV.CVDIR.create_project"><code class="name flex">
@@ -739,10 +728,10 @@ class ProjectCreator:
 
     #  default = cmip deck 
     path = self.tables + self.table_prefix
-    tabledata = json.load(open(f&#34;{path}_CV.json&#34;, &#39;r&#39;))
+    tabledata = core.io.json_read(f&#34;{path}_CV.json&#34;, &#39;r&#39;)[&#39;CV&#39;]
 
     deck = {}
-    deck[&#39;activity_id&#39;] = {activity : tabledata[&#39;activity_id&#39;][activity]}
+    deck[&#39;activity_id&#39;] = {activity: tabledata[&#39;activity_id&#39;][activity]}
 
     def filter_dict(data):
         if data:
@@ -750,13 +739,11 @@ class ProjectCreator:
                 return activity in data
 
             return {key: value for key, value in data.items() if
-                (isinstance(value, dict) and filter_dict(value.get(&#39;activity_id&#39;,&#39;&#39;))) or
+                (isinstance(value, dict) and filter_dict(value.get(&#39;activity_id&#39;, &#39;&#39;))) or
                 (isinstance(value, str) and value == activity)} 
     
-
     experiments = tabledata[&#39;experiment_id&#39;]
     deck[&#39;experiment_id&#39;] = filter_dict(experiments)
-
 
     return deck</code></pre>
 </details>
@@ -799,43 +786,6 @@ class ProjectCreator:
     for key, value in data.items():
         preprocessed_data[f&#34;{self.prefix}{key}&#34;] = value
     return preprocessed_data</code></pre>
-</details>
-</dd>
-<dt id="cvtool.CV.CVDIR.read_file"><code class="name flex">
-<span>def <span class="ident">read_file</span></span>(<span>self, file_name)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Reads the contents of a file.</p>
-<h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>file_name</code></strong> :&ensp;<code>str</code></dt>
-<dd>Name of the file.</dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code>dict</code></dt>
-<dd>Contents of the file as a dictionary, or an empty dictionary if the file is not found.</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def read_file(self, file_name):
-    &#34;&#34;&#34;
-    Reads the contents of a file.
-
-    Args:
-        file_name (str): Name of the file.
-
-    Returns:
-        dict: Contents of the file as a dictionary, or an empty dictionary if the file is not found.
-    &#34;&#34;&#34;
-    file_path = os.path.join(self.directory, self.prefix + file_name)
-    try:
-        with open(file_path) as file:
-            return json.load(file)
-    except FileNotFoundError:
-        return {}</code></pre>
 </details>
 </dd>
 <dt id="cvtool.CV.CVDIR.update_all"><code class="name flex">
@@ -962,7 +912,7 @@ from the parent module.</p>
                 # empty files?
                 print(&#39;empty:&#39;, file_name)
                 jsn_data = module.create(data)
-            print(jsn_data)
+            # print(jsn_data)
 
         # update
         jsn_data = module.update(jsn_data, data)
@@ -1115,7 +1065,6 @@ from the parent module.</p>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="cvtool.CV.basepath" href="#cvtool.CV.basepath">basepath</a></code></li>
-<li><code><a title="cvtool.CV.ensure_suffix" href="#cvtool.CV.ensure_suffix">ensure_suffix</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
@@ -1123,11 +1072,11 @@ from the parent module.</p>
 <li>
 <h4><code><a title="cvtool.CV.CVDIR" href="#cvtool.CV.CVDIR">CVDIR</a></code></h4>
 <ul class="two-column">
+<li><code><a title="cvtool.CV.CVDIR.checkCV" href="#cvtool.CV.CVDIR.checkCV">checkCV</a></code></li>
 <li><code><a title="cvtool.CV.CVDIR.createCV" href="#cvtool.CV.CVDIR.createCV">createCV</a></code></li>
 <li><code><a title="cvtool.CV.CVDIR.create_project" href="#cvtool.CV.CVDIR.create_project">create_project</a></code></li>
 <li><code><a title="cvtool.CV.CVDIR.get_activity" href="#cvtool.CV.CVDIR.get_activity">get_activity</a></code></li>
 <li><code><a title="cvtool.CV.CVDIR.pre_parse_update" href="#cvtool.CV.CVDIR.pre_parse_update">pre_parse_update</a></code></li>
-<li><code><a title="cvtool.CV.CVDIR.read_file" href="#cvtool.CV.CVDIR.read_file">read_file</a></code></li>
 <li><code><a title="cvtool.CV.CVDIR.update_all" href="#cvtool.CV.CVDIR.update_all">update_all</a></code></li>
 <li><code><a title="cvtool.CV.CVDIR.update_file" href="#cvtool.CV.CVDIR.update_file">update_file</a></code></li>
 </ul>

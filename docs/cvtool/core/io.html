@@ -96,8 +96,23 @@ def json_write(jsndata, filename, mode=&#39;w&#39;,sort=False):
     with open(filename, mode) as file:
         json.dump(jsndata, file, indent=4,sort_keys=sort)
 
-def json_read(file,mode=&#39;r&#39;):
-    return json.load(open(file,mode))
+
+def json_read(file_path,mode=&#39;r&#39;):
+    &#34;&#34;&#34;
+    Reads the contents of a file.
+
+    Args:
+        file_name (str): Name of the file.
+
+    Returns:
+        dict: Contents of the file as a dictionary, or an empty dictionary if the file is not found.
+    &#34;&#34;&#34;
+
+    try:
+        with open(file_path,mode) as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
 
 
 
@@ -106,7 +121,18 @@ def get_current_function_name():
     current_frame = inspect.currentframe()
     caller_frame = inspect.getouterframes(current_frame)[1]
     function_name = caller_frame.function
-    return function_name</code></pre>
+    return function_name
+
+def ensure_suffix(var,end):
+    if not var.endswith(end):
+            var += end
+    return var
+
+def relpath(path,relto=None):
+   
+    abs_path = os.path.abspath(path)
+    current_dir = relto or os.getcwd()
+    return os.path.relpath(abs_path,current_dir)</code></pre>
 </details>
 </section>
 <section>
@@ -159,6 +185,21 @@ def get_current_function_name():
         else:
             merged_dict[key] = value
     return merged_dict</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.io.ensure_suffix"><code class="name flex">
+<span>def <span class="ident">ensure_suffix</span></span>(<span>var, end)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ensure_suffix(var,end):
+    if not var.endswith(end):
+            var += end
+    return var</code></pre>
 </details>
 </dd>
 <dt id="cvtool.core.io.exists"><code class="name flex">
@@ -229,16 +270,40 @@ def get_current_function_name():
 </details>
 </dd>
 <dt id="cvtool.core.io.json_read"><code class="name flex">
-<span>def <span class="ident">json_read</span></span>(<span>file, mode='r')</span>
+<span>def <span class="ident">json_read</span></span>(<span>file_path, mode='r')</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Reads the contents of a file.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>file_name</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name of the file.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>Contents of the file as a dictionary, or an empty dictionary if the file is not found.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def json_read(file,mode=&#39;r&#39;):
-    return json.load(open(file,mode))</code></pre>
+<pre><code class="python">def json_read(file_path,mode=&#39;r&#39;):
+    &#34;&#34;&#34;
+    Reads the contents of a file.
+
+    Args:
+        file_name (str): Name of the file.
+
+    Returns:
+        dict: Contents of the file as a dictionary, or an empty dictionary if the file is not found.
+    &#34;&#34;&#34;
+
+    try:
+        with open(file_path,mode) as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}</code></pre>
 </details>
 </dd>
 <dt id="cvtool.core.io.json_write"><code class="name flex">
@@ -283,6 +348,22 @@ def get_current_function_name():
         json.dump(jsndata, file, indent=4,sort_keys=sort)</code></pre>
 </details>
 </dd>
+<dt id="cvtool.core.io.relpath"><code class="name flex">
+<span>def <span class="ident">relpath</span></span>(<span>path, relto=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def relpath(path,relto=None):
+   
+    abs_path = os.path.abspath(path)
+    current_dir = relto or os.getcwd()
+    return os.path.relpath(abs_path,current_dir)</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -302,10 +383,12 @@ def get_current_function_name():
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="cvtool.core.io.combine" href="#cvtool.core.io.combine">combine</a></code></li>
+<li><code><a title="cvtool.core.io.ensure_suffix" href="#cvtool.core.io.ensure_suffix">ensure_suffix</a></code></li>
 <li><code><a title="cvtool.core.io.exists" href="#cvtool.core.io.exists">exists</a></code></li>
 <li><code><a title="cvtool.core.io.get_current_function_name" href="#cvtool.core.io.get_current_function_name">get_current_function_name</a></code></li>
 <li><code><a title="cvtool.core.io.json_read" href="#cvtool.core.io.json_read">json_read</a></code></li>
 <li><code><a title="cvtool.core.io.json_write" href="#cvtool.core.io.json_write">json_write</a></code></li>
+<li><code><a title="cvtool.core.io.relpath" href="#cvtool.core.io.relpath">relpath</a></code></li>
 </ul>
 </li>
 </ul>

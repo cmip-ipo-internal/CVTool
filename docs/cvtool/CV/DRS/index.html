@@ -75,7 +75,7 @@ def create(optdata):
     ]
 
 
-    default_content = json.load(open(f&#34;{DRSpath}_CV.json&#34;,&#39;r&#39;))[whoami]
+    default_content = core.io.json_read(f&#34;{DRSpath}_CV.json&#34;,&#39;r&#39;)[&#39;CV&#39;][whoami]
 
     content = optdata.get(&#39;content&#39;) or default_content
     for k in keys: 
@@ -181,7 +181,7 @@ def update(jsn, optdata):
     ]
 
 
-    default_content = json.load(open(f&#34;{DRSpath}_CV.json&#34;,&#39;r&#39;))[whoami]
+    default_content = core.io.json_read(f&#34;{DRSpath}_CV.json&#34;,&#39;r&#39;)[&#39;CV&#39;][whoami]
 
     content = optdata.get(&#39;content&#39;) or default_content
     for k in keys: 
