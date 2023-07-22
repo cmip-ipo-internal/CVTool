@@ -68,8 +68,23 @@ def json_write(jsndata, filename, mode='w',sort=False):
     with open(filename, mode) as file:
         json.dump(jsndata, file, indent=4,sort_keys=sort)
 
-def json_read(file,mode='r'):
-    return json.load(open(file,mode))
+
+def json_read(file_path,mode='r'):
+    """
+    Reads the contents of a file.
+
+    Args:
+        file_name (str): Name of the file.
+
+    Returns:
+        dict: Contents of the file as a dictionary, or an empty dictionary if the file is not found.
+    """
+
+    try:
+        with open(file_path,mode) as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
 
 
 
@@ -79,3 +94,15 @@ def get_current_function_name():
     caller_frame = inspect.getouterframes(current_frame)[1]
     function_name = caller_frame.function
     return function_name
+
+def ensure_suffix(var,end):
+    if not var.endswith(end):
+            var += end
+    return var
+
+def relpath(path,relto=None):
+   
+    abs_path = os.path.abspath(path)
+    current_dir = relto or os.getcwd()
+    return os.path.relpath(abs_path,current_dir)
+

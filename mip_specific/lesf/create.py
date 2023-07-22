@@ -1,48 +1,49 @@
 import sys
 sys.path.append('../../')
 #  keep this 
+import sys
 import pdb
 import cvtool
-# and then this 
 from cvtool import CV
 from cvtool.core.stdout import view
-
 import pandas as pd
 
-# from mymodule import myfunction
-
+sys.path.append('../../')
 
 prefix = 'CMIP6Plus'
 UPDATE_CVS = True
 
 
 # Example usage
-handler = CV.CVDIR(prefix=prefix, directory='testdirLESF', base_files=[
-    "mip_era",
-    "DRS",
-    "required_global_attributes",
-    "license",
-    "activity_id",
-    "experiment_id",
-    "source_id", 
-    "sub_experiment_id",
-    "further_info_url",
-
-], tables='/Users/daniel.ellis/WIPwork/mip-cmor-tables/Tables/', table_prefix='CMIP6Plus')
+handler = CV.CVDIR(
+    prefix=prefix,
+    directory='testdirLESF',
+    base_files=[
+        "mip_era",
+        "DRS",
+        "required_global_attributes",
+        "license",
+        "activity_id",
+        "experiment_id",
+        "source_id",
+        "sub_experiment_id",
+        "further_info_url",
+    ],
+    tables='/Users/daniel.ellis/WIPwork/cmip6-cmor-tables/Tables/',
+    table_prefix='CMIP6',
+)
 
 # # Update all files with data using the example update function
-
 if UPDATE_CVS:
     deck = handler.get_activity()
     damip = handler.get_activity(activity='DAMIP')
-
 
     '''
     Lets extract the names 
     '''
 
     df = pd.read_csv('./data/exp_in.csv')
-    # omit the simarly named all but one experiments.
+    # omit the similarly named all but one experiments.
     df = df[~df['Name'].str.contains('abo')]
 
     experiments = {}
@@ -54,9 +55,6 @@ if UPDATE_CVS:
         if name.lower() in damip_names:
             #  existing historical
             entry = damip['experiment_id'][name].copy()
-            # view(entry)
-            # view(r.to_json())
-
             entry['activity_id'] = ['LESFMIP']
             entry['description'] = entry.get('description') or r.Description
             entry['tier'] = int(r.Tier)
@@ -94,9 +92,6 @@ if UPDATE_CVS:
 
             experiments[name] = entry
 
-
-    # pdb.set_trace()
-
     data = {
         'globals': {
             'institution': "myInstitution"
@@ -123,69 +118,14 @@ if UPDATE_CVS:
         'experiment_id': {
             'create': {
                 'experiment_id': deck['experiment_id']
-            }, 
+            },
             'update': {
                 'experiment_id': experiments
             }
         }
     }
 
-
     handler.update_all(data)
 
-
-# create the CV.json file in an out directory 
-handler.createCV()
-
-
-
-
-
-# CMOR
-#  produce amon taz for a range of the experiments. (a representatice variable
-
-# apmontas
-
-# check that this works with an older version of CMOR? not versions.
-# MM 3.7.1
-
-# Set of tables - Put them on Jasmin.
-# System that wraps around CMOR...
-
-
-# activity id - cmip lesfmip
-# the rest shoudl remain mainly the same .
-
-# grid the same
-#  list of tables is in the CVS file
-
-
-#  generic CV needs to be kept consistant with table_id
-#  might potentially break this down into single file field - in the same format as the CVS repo
-# /Users/daniel.ellis/WIPwork/mip-cmor-tables/Tables/generic_CV.json
-
-# esm- => emission driven versions
-
-
-'''
-sub experiement id 
- lesef mip future 
-  
- subexp  start daate
- dcpp start date- run forwards, differet start = run forwards . 
-
-
- cmip , prublish as amip in subespeirment 
- seriesmp-r1-p1-f1
-
- make it work for cmor 
-
-providence entry in the experiemtn - e.g. cmip 6 cmip ... historically x and y 
-
-input 4 mips 
-
- 
-
- only takes the 5 experimetns from CMIP 6 by DAMIP and own them. and adds the extra 7 experiment s
-
-'''
+# create the CV.json file in an out directory
+handler.createCV('testinstitution')
