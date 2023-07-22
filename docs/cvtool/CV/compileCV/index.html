@@ -47,11 +47,13 @@ core = sys.modules.get(&#39;cvtool.core&#39;)
 
 # print(dir(variables))
 
-def create(directory,prefix,tables,outloc=&#39;cv_cmor&#39;):
+def create(directory,prefix,tables,outloc=None):
     
+    outloc = outloc or &#39;cv_cmor&#39;
     cvdict = {&#39;source_type&#39;:set()}
     missing = []
 
+    
 
     if core.io.exists(f&#39;{directory}{outloc}&#39;, False):
         # Delete the directory
@@ -106,8 +108,10 @@ def create(directory,prefix,tables,outloc=&#39;cv_cmor&#39;):
     cvdict[&#39;source_type&#39;] = dict([[s,source_type[s]] for s in cvdict[&#39;source_type&#39;]])
 
 
+    CVfile = f&#34;{directory}{outloc}/{core.io.ensure_suffix(prefix,&#39;_&#39;)}CV.json&#34;
+    core.io.json_write(dict(CV = cvdict), CVfile ,sort=True)
 
-    core.io.json_write(cvdict, f&#34;{directory}{outloc}/CV.json&#34;,sort=True)
+    return CVfile
 
 
 
@@ -129,7 +133,7 @@ def create(directory,prefix,tables,outloc=&#39;cv_cmor&#39;):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="cvtool.CV.compileCV.create"><code class="name flex">
-<span>def <span class="ident">create</span></span>(<span>directory, prefix, tables, outloc='cv_cmor')</span>
+<span>def <span class="ident">create</span></span>(<span>directory, prefix, tables, outloc=None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -137,11 +141,13 @@ def create(directory,prefix,tables,outloc=&#39;cv_cmor&#39;):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def create(directory,prefix,tables,outloc=&#39;cv_cmor&#39;):
+<pre><code class="python">def create(directory,prefix,tables,outloc=None):
     
+    outloc = outloc or &#39;cv_cmor&#39;
     cvdict = {&#39;source_type&#39;:set()}
     missing = []
 
+    
 
     if core.io.exists(f&#39;{directory}{outloc}&#39;, False):
         # Delete the directory
@@ -196,8 +202,10 @@ def create(directory,prefix,tables,outloc=&#39;cv_cmor&#39;):
     cvdict[&#39;source_type&#39;] = dict([[s,source_type[s]] for s in cvdict[&#39;source_type&#39;]])
 
 
+    CVfile = f&#34;{directory}{outloc}/{core.io.ensure_suffix(prefix,&#39;_&#39;)}CV.json&#34;
+    core.io.json_write(dict(CV = cvdict), CVfile ,sort=True)
 
-    core.io.json_write(cvdict, f&#34;{directory}{outloc}/CV.json&#34;,sort=True)</code></pre>
+    return CVfile</code></pre>
 </details>
 </dd>
 </dl>

@@ -29,22 +29,27 @@
 <pre><code class="python">import logging
 import requests
 import subprocess
-import json
-
+import os
+from datetime import date
 
 
 class MissingValueError(Exception):
+    &#34;&#34;&#34;
+    Exception raised when a required value is missing.
+    &#34;&#34;&#34;
     pass
-# usage: raise MissingValueError(&#34;The required value is missing.&#34;)
+
 
 def view(x):
     &#39;&#39;&#39;
-    temporary json viewer
+    Temporary JSON viewer.
     &#39;&#39;&#39;
     import pprint
     pprint.pprint(x)
 
-def log(name, level=&#39;info&#39;):
+
+def log(name: str, level: str = &#39;info&#39;) -&gt; logging.Logger:
+    # rename to configure_logger
     &#34;&#34;&#34;
     Configure a logger with a console handler.
 
@@ -64,7 +69,7 @@ def log(name, level=&#39;info&#39;):
     console_handler.setLevel(getattr(logging, level.upper()))  # Set the logging level for the console handler
 
     # Create a formatter and add it to the console handler
-    formatter = logging.Formatter(name + &#39;: %(levelname)s - %(message)s&#39;)
+    formatter = logging.Formatter(f&#34;{name}: %(levelname)s - %(message)s&#34;)
     console_handler.setFormatter(formatter)
 
     # Add the console handler to the logger
@@ -72,33 +77,49 @@ def log(name, level=&#39;info&#39;):
 
     return logger
 
+def yymmdd(delimiter=&#39;-&#39;):
+    &#34;&#34;&#34;
+    Get the current date in the format &#34;YY-MM-DD&#34; with a specified delimiter.
+
+    Args:
+        delimiter (str): Delimiter to separate the date components (default: &#39;-&#39;).
+
+    Returns:
+        str: Current date in the format &#34;YY-MM-DD&#34;.
+    &#34;&#34;&#34;
+    current_date = date.today()
+    formatted_date = current_date.strftime(f&#34;%Y{delimiter}%m{delimiter}%d&#34;)
+    return formatted_date
 
 
-
-
-
-def get_user(shell=False):
+def get_user(shell: bool = False) -&gt; dict:
     &#34;&#34;&#34;
     Retrieve the Git username and email.
-    
+
     Args:
         shell (bool): Flag indicating whether to use shell execution for the subprocess command.
-    
+
     Returns:
         dict: Dictionary containing &#39;user&#39; and &#39;email&#39; keys with the corresponding values.
     &#34;&#34;&#34;
-    # Command to retrieve the Git username
-    username_command = [&#39;git&#39;, &#39;config&#39;, &#39;--global&#39;, &#39;user.name&#39;]
-    username = subprocess.check_output(username_command, shell=shell, text=True).strip()
+    try:
+        username = os.environ[&#39;cmor_username&#39;]
+    except KeyError:
+        username_command = [&#39;git&#39;, &#39;config&#39;, &#39;--global&#39;, &#39;user.name&#39;]
+        username = subprocess.check_output(username_command, shell=shell, text=True).strip()
+        os.environ[&#39;cmor_username&#39;] = username
 
-    # Command to retrieve the Git email
-    email_command = [&#39;git&#39;, &#39;config&#39;, &#39;--global&#39;, &#39;user.email&#39;]
-    email = subprocess.check_output(email_command, shell=shell, text=True).strip()
+    try:
+        email = os.environ[&#39;cmor_email&#39;]
+    except KeyError:
+        email_command = [&#39;git&#39;, &#39;config&#39;, &#39;--global&#39;, &#39;user.email&#39;]
+        email = subprocess.check_output(email_command, shell=shell, text=True).strip()
+        os.environ[&#39;cmor_email&#39;] = email
 
     return {&#39;user&#39;: username, &#39;email&#39;: email}
 
 
-def git_user():
+def git_user() -&gt; dict:
     &#34;&#34;&#34;
     Retrieve the Git username and email, handling subprocess errors.
 
@@ -111,39 +132,37 @@ def git_user():
         return get_user(shell=True)
 
 
-def yymmdd(delimiter=&#39;-&#39;):
+def get_github_version(owner: str = &#39;&#39;, repo: str = &#39;&#39;) -&gt; str:
     &#34;&#34;&#34;
-    Get the current date in the format &#34;YY-MM-DD&#34; with a specified delimiter.
+    Get the latest release version from GitHub API.
 
     Args:
-        delimiter (str): Delimiter to separate the date components (default: &#39;-&#39;).
+        owner (str): Owner of the repository.
+        repo (str): Repository name.
 
     Returns:
-        str: Current date in the format &#34;YY-MM-DD&#34;.
+        str: Latest release version or &#39;-0.0.0&#39; if not available.
     &#34;&#34;&#34;
-    from datetime import date
-    current_date = date.today()
-    formatted_date = current_date.strftime(f&#34;%Y{delimiter}%m{delimiter}%d&#34;)
-    return formatted_date
-
-
-
-
-
-def get_github_version(owner,repo):
-    try:
-        
-
-        if not owner and not repo:
+    if not owner and not repo:
+        # Check if GitHub information is already stored in environment variables
+        if &#39;cmor_github_owner&#39; in os.environ and &#39;cmor_github_repo&#39; in os.environ:
+            owner = os.environ[&#39;cmor_github_owner&#39;]
+            repo = os.environ[&#39;cmor_github_repo&#39;]
+        else:
             # Get the repository name and owner from the local .git directory
             command = [&#34;git&#34;, &#34;config&#34;, &#34;--get&#34;, &#34;remote.origin.url&#34;]
-            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
             output, _ = process.communicate()
-            if process.returncode != 0:
+            if process.returncode == 0:
+                remote_url = output.strip()
+                owner, repo = remote_url.split(&#34;/&#34;)[-2:]
+                # Store the GitHub information in environment variables for future use
+                os.environ[&#39;cmor_github_owner&#39;] = owner
+                os.environ[&#39;cmor_github_repo&#39;] = repo
+            else:
                 raise RuntimeError(&#34;Failed to get repository information.&#34;)
-            remote_url = output.strip().decode(&#34;utf-8&#34;)
-            owner, repo = remote_url.split(&#34;/&#34;)[-2:]
 
+    try:
         # Make a request to the GitHub API for the latest release
         api_url = f&#34;https://api.github.com/repos/{owner}/{repo}/releases/latest&#34;
         response = requests.get(api_url)
@@ -151,28 +170,44 @@ def get_github_version(owner,repo):
         json_data = response.json()
         version = json_data.get(&#34;tag_name&#34;)
         return version if version else &#34;-0.0.0&#34;
-    except (subprocess.CalledProcessError, requests.RequestException, ValueError, IndexError) as e:
-            print(f&#34;Error: {str(e)}&#34;)
-            return None
-
-
-
-def get_commit_hashes(owner, repo ,latest = True):
-    try:
-        # Make a request to the GitHub API for the repository information
-        api_url = f&#34;https://api.github.com/repos/{owner}/{repo}/commits&#34;
-        response = requests.get(api_url)
-        response.raise_for_status()
-        json_data = response.json()
-
-        # Extract the latest and previous commit hashes
-        latest_commit = json_data[0][&#34;sha&#34;]
-        previous_commit = json_data[1][&#34;sha&#34;]
-
-        return  [previous_commit,latest_commit][latest]
     except (requests.RequestException, ValueError, IndexError) as e:
         print(f&#34;Error: {str(e)}&#34;)
-        return None</code></pre>
+        return &#34;-0.0.0&#34;
+
+
+def get_commit_hashes(owner: str, repo: str, latest: bool = True) -&gt; str:
+    &#34;&#34;&#34;
+    Get the latest or previous commit hash from GitHub API.
+
+    Args:
+        owner (str): Owner of the repository.
+        repo (str): Repository name.
+        latest (bool): True to get the latest commit hash, False to get the previous commit hash.
+
+    Returns:
+        str: Commit hash or None if failed to retrieve.
+    &#34;&#34;&#34;
+    # Check if GitHub information is already stored in environment variables
+    if &#39;cmor_github_hashes&#39; in os.environ:
+        return os.environ[&#39;cmor_github_hashes&#39;].split(&#39;~&#39;)[&#39;latest&#39;]
+    else:
+        try:
+            # Make a request to the GitHub API for the repository information
+            api_url = f&#34;https://api.github.com/repos/{owner}/{repo}/commits&#34;
+            response = requests.get(api_url)
+            response.raise_for_status()
+            json_data = response.json()
+
+            # Extract the latest and previous commit hashes
+            latest_commit = json_data[0][&#34;sha&#34;]
+            previous_commit = json_data[1][&#34;sha&#34;]
+
+            os.environ[&#39;cmor_github_hashes&#39;] = f&#34;{previous_commit}~{latest_commit}&#34;
+
+            return latest_commit if latest else previous_commit
+        except (requests.RequestException, ValueError, IndexError) as e:
+            print(f&#34;Error: {str(e)}&#34;)
+            return None</code></pre>
 </details>
 </section>
 <section>
@@ -183,55 +218,115 @@ def get_commit_hashes(owner, repo ,latest = True):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="cvtool.core.stdout.get_commit_hashes"><code class="name flex">
-<span>def <span class="ident">get_commit_hashes</span></span>(<span>owner, repo, latest=True)</span>
+<span>def <span class="ident">get_commit_hashes</span></span>(<span>owner: str, repo: str, latest: bool = True) ‑> str</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Get the latest or previous commit hash from GitHub API.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>owner</code></strong> :&ensp;<code>str</code></dt>
+<dd>Owner of the repository.</dd>
+<dt><strong><code>repo</code></strong> :&ensp;<code>str</code></dt>
+<dd>Repository name.</dd>
+<dt><strong><code>latest</code></strong> :&ensp;<code>bool</code></dt>
+<dd>True to get the latest commit hash, False to get the previous commit hash.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>Commit hash or None if failed to retrieve.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_commit_hashes(owner, repo ,latest = True):
-    try:
-        # Make a request to the GitHub API for the repository information
-        api_url = f&#34;https://api.github.com/repos/{owner}/{repo}/commits&#34;
-        response = requests.get(api_url)
-        response.raise_for_status()
-        json_data = response.json()
+<pre><code class="python">def get_commit_hashes(owner: str, repo: str, latest: bool = True) -&gt; str:
+    &#34;&#34;&#34;
+    Get the latest or previous commit hash from GitHub API.
 
-        # Extract the latest and previous commit hashes
-        latest_commit = json_data[0][&#34;sha&#34;]
-        previous_commit = json_data[1][&#34;sha&#34;]
+    Args:
+        owner (str): Owner of the repository.
+        repo (str): Repository name.
+        latest (bool): True to get the latest commit hash, False to get the previous commit hash.
 
-        return  [previous_commit,latest_commit][latest]
-    except (requests.RequestException, ValueError, IndexError) as e:
-        print(f&#34;Error: {str(e)}&#34;)
-        return None</code></pre>
+    Returns:
+        str: Commit hash or None if failed to retrieve.
+    &#34;&#34;&#34;
+    # Check if GitHub information is already stored in environment variables
+    if &#39;cmor_github_hashes&#39; in os.environ:
+        return os.environ[&#39;cmor_github_hashes&#39;].split(&#39;~&#39;)[&#39;latest&#39;]
+    else:
+        try:
+            # Make a request to the GitHub API for the repository information
+            api_url = f&#34;https://api.github.com/repos/{owner}/{repo}/commits&#34;
+            response = requests.get(api_url)
+            response.raise_for_status()
+            json_data = response.json()
+
+            # Extract the latest and previous commit hashes
+            latest_commit = json_data[0][&#34;sha&#34;]
+            previous_commit = json_data[1][&#34;sha&#34;]
+
+            os.environ[&#39;cmor_github_hashes&#39;] = f&#34;{previous_commit}~{latest_commit}&#34;
+
+            return latest_commit if latest else previous_commit
+        except (requests.RequestException, ValueError, IndexError) as e:
+            print(f&#34;Error: {str(e)}&#34;)
+            return None</code></pre>
 </details>
 </dd>
 <dt id="cvtool.core.stdout.get_github_version"><code class="name flex">
-<span>def <span class="ident">get_github_version</span></span>(<span>owner, repo)</span>
+<span>def <span class="ident">get_github_version</span></span>(<span>owner: str = '', repo: str = '') ‑> str</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Get the latest release version from GitHub API.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>owner</code></strong> :&ensp;<code>str</code></dt>
+<dd>Owner of the repository.</dd>
+<dt><strong><code>repo</code></strong> :&ensp;<code>str</code></dt>
+<dd>Repository name.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>Latest release version or '-0.0.0' if not available.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_github_version(owner,repo):
-    try:
-        
+<pre><code class="python">def get_github_version(owner: str = &#39;&#39;, repo: str = &#39;&#39;) -&gt; str:
+    &#34;&#34;&#34;
+    Get the latest release version from GitHub API.
 
-        if not owner and not repo:
+    Args:
+        owner (str): Owner of the repository.
+        repo (str): Repository name.
+
+    Returns:
+        str: Latest release version or &#39;-0.0.0&#39; if not available.
+    &#34;&#34;&#34;
+    if not owner and not repo:
+        # Check if GitHub information is already stored in environment variables
+        if &#39;cmor_github_owner&#39; in os.environ and &#39;cmor_github_repo&#39; in os.environ:
+            owner = os.environ[&#39;cmor_github_owner&#39;]
+            repo = os.environ[&#39;cmor_github_repo&#39;]
+        else:
             # Get the repository name and owner from the local .git directory
             command = [&#34;git&#34;, &#34;config&#34;, &#34;--get&#34;, &#34;remote.origin.url&#34;]
-            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
             output, _ = process.communicate()
-            if process.returncode != 0:
+            if process.returncode == 0:
+                remote_url = output.strip()
+                owner, repo = remote_url.split(&#34;/&#34;)[-2:]
+                # Store the GitHub information in environment variables for future use
+                os.environ[&#39;cmor_github_owner&#39;] = owner
+                os.environ[&#39;cmor_github_repo&#39;] = repo
+            else:
                 raise RuntimeError(&#34;Failed to get repository information.&#34;)
-            remote_url = output.strip().decode(&#34;utf-8&#34;)
-            owner, repo = remote_url.split(&#34;/&#34;)[-2:]
 
+    try:
         # Make a request to the GitHub API for the latest release
         api_url = f&#34;https://api.github.com/repos/{owner}/{repo}/releases/latest&#34;
         response = requests.get(api_url)
@@ -239,13 +334,13 @@ def get_commit_hashes(owner, repo ,latest = True):
         json_data = response.json()
         version = json_data.get(&#34;tag_name&#34;)
         return version if version else &#34;-0.0.0&#34;
-    except (subprocess.CalledProcessError, requests.RequestException, ValueError, IndexError) as e:
-            print(f&#34;Error: {str(e)}&#34;)
-            return None</code></pre>
+    except (requests.RequestException, ValueError, IndexError) as e:
+        print(f&#34;Error: {str(e)}&#34;)
+        return &#34;-0.0.0&#34;</code></pre>
 </details>
 </dd>
 <dt id="cvtool.core.stdout.get_user"><code class="name flex">
-<span>def <span class="ident">get_user</span></span>(<span>shell=False)</span>
+<span>def <span class="ident">get_user</span></span>(<span>shell: bool = False) ‑> dict</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Retrieve the Git username and email.</p>
@@ -263,29 +358,35 @@ def get_commit_hashes(owner, repo ,latest = True):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_user(shell=False):
+<pre><code class="python">def get_user(shell: bool = False) -&gt; dict:
     &#34;&#34;&#34;
     Retrieve the Git username and email.
-    
+
     Args:
         shell (bool): Flag indicating whether to use shell execution for the subprocess command.
-    
+
     Returns:
         dict: Dictionary containing &#39;user&#39; and &#39;email&#39; keys with the corresponding values.
     &#34;&#34;&#34;
-    # Command to retrieve the Git username
-    username_command = [&#39;git&#39;, &#39;config&#39;, &#39;--global&#39;, &#39;user.name&#39;]
-    username = subprocess.check_output(username_command, shell=shell, text=True).strip()
+    try:
+        username = os.environ[&#39;cmor_username&#39;]
+    except KeyError:
+        username_command = [&#39;git&#39;, &#39;config&#39;, &#39;--global&#39;, &#39;user.name&#39;]
+        username = subprocess.check_output(username_command, shell=shell, text=True).strip()
+        os.environ[&#39;cmor_username&#39;] = username
 
-    # Command to retrieve the Git email
-    email_command = [&#39;git&#39;, &#39;config&#39;, &#39;--global&#39;, &#39;user.email&#39;]
-    email = subprocess.check_output(email_command, shell=shell, text=True).strip()
+    try:
+        email = os.environ[&#39;cmor_email&#39;]
+    except KeyError:
+        email_command = [&#39;git&#39;, &#39;config&#39;, &#39;--global&#39;, &#39;user.email&#39;]
+        email = subprocess.check_output(email_command, shell=shell, text=True).strip()
+        os.environ[&#39;cmor_email&#39;] = email
 
     return {&#39;user&#39;: username, &#39;email&#39;: email}</code></pre>
 </details>
 </dd>
 <dt id="cvtool.core.stdout.git_user"><code class="name flex">
-<span>def <span class="ident">git_user</span></span>(<span>)</span>
+<span>def <span class="ident">git_user</span></span>(<span>) ‑> dict</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Retrieve the Git username and email, handling subprocess errors.</p>
@@ -298,7 +399,7 @@ def get_commit_hashes(owner, repo ,latest = True):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def git_user():
+<pre><code class="python">def git_user() -&gt; dict:
     &#34;&#34;&#34;
     Retrieve the Git username and email, handling subprocess errors.
 
@@ -312,7 +413,7 @@ def get_commit_hashes(owner, repo ,latest = True):
 </details>
 </dd>
 <dt id="cvtool.core.stdout.log"><code class="name flex">
-<span>def <span class="ident">log</span></span>(<span>name, level='info')</span>
+<span>def <span class="ident">log</span></span>(<span>name: str, level: str = 'info') ‑> logging.Logger</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Configure a logger with a console handler.</p>
@@ -332,7 +433,8 @@ def get_commit_hashes(owner, repo ,latest = True):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def log(name, level=&#39;info&#39;):
+<pre><code class="python">def log(name: str, level: str = &#39;info&#39;) -&gt; logging.Logger:
+    # rename to configure_logger
     &#34;&#34;&#34;
     Configure a logger with a console handler.
 
@@ -352,7 +454,7 @@ def get_commit_hashes(owner, repo ,latest = True):
     console_handler.setLevel(getattr(logging, level.upper()))  # Set the logging level for the console handler
 
     # Create a formatter and add it to the console handler
-    formatter = logging.Formatter(name + &#39;: %(levelname)s - %(message)s&#39;)
+    formatter = logging.Formatter(f&#34;{name}: %(levelname)s - %(message)s&#34;)
     console_handler.setFormatter(formatter)
 
     # Add the console handler to the logger
@@ -365,14 +467,14 @@ def get_commit_hashes(owner, repo ,latest = True):
 <span>def <span class="ident">view</span></span>(<span>x)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>temporary json viewer</p></div>
+<div class="desc"><p>Temporary JSON viewer.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def view(x):
     &#39;&#39;&#39;
-    temporary json viewer
+    Temporary JSON viewer.
     &#39;&#39;&#39;
     import pprint
     pprint.pprint(x)</code></pre>
@@ -407,7 +509,6 @@ def get_commit_hashes(owner, repo ,latest = True):
     Returns:
         str: Current date in the format &#34;YY-MM-DD&#34;.
     &#34;&#34;&#34;
-    from datetime import date
     current_date = date.today()
     formatted_date = current_date.strftime(f&#34;%Y{delimiter}%m{delimiter}%d&#34;)
     return formatted_date</code></pre>
@@ -423,12 +524,15 @@ def get_commit_hashes(owner, repo ,latest = True):
 <span>(</span><span>*args, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<div class="desc"><p>Exception raised when a required value is missing.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class MissingValueError(Exception):
+    &#34;&#34;&#34;
+    Exception raised when a required value is missing.
+    &#34;&#34;&#34;
     pass</code></pre>
 </details>
 <h3>Ancestors</h3>
