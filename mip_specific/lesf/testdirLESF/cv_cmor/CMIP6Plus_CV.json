@@ -209,6 +209,29 @@
                 "start": "2015 onwards",
                 "tier": 2
             },
+            "fut-aer": {
+                "activity_id": [
+                    "LESFMIP"
+                ],
+                "description": "As hist-aer but with updated forcings",
+                "end": 2024,
+                "experiment": "Single forcing projections",
+                "experiment_id": "fut-aer",
+                "parent_activity_id": [
+                    "LESFMIP"
+                ],
+                "parent_experiment_id": [
+                    "hist-aer"
+                ],
+                "required_model_components": [
+                    "AOGCM"
+                ],
+                "start": 2015,
+                "sub_experiment_id": [
+                    "none"
+                ],
+                "tier": 2
+            },
             "fut-lu": {
                 "activity_id": [
                     "LESFMIP"
@@ -755,45 +778,7 @@
             "none": "none"
         },
         "table_id": [
-            "CMIP6_3hr",
-            "CMIP6_6hrLev",
-            "CMIP6_6hrPlev",
-            "CMIP6_6hrPlevPt",
-            "CMIP6_AERday",
-            "CMIP6_AERm",
-            "CMIP6_AERmonZ",
-            "CMIP6_Am",
-            "CMIP6_CF3hr",
-            "CMIP6_CFday",
-            "CMIP6_CFm",
-            "CMIP6_E1hr",
-            "CMIP6_E1hrClimM",
-            "CMIP6_E3hr",
-            "CMIP6_E3hrPt",
-            "CMIP6_E6hrZ",
-            "CMIP6_Eday",
-            "CMIP6_EdayZ",
-            "CMIP6_Efx",
-            "CMIP6_Em",
-            "CMIP6_EmonZ",
-            "CMIP6_Eyr",
-            "CMIP6_IfxAnt",
-            "CMIP6_IfxGre",
-            "CMIP6_ImonAnt",
-            "CMIP6_ImonGre",
-            "CMIP6_IyrAnt",
-            "CMIP6_IyrGre",
-            "CMIP6_LIm",
-            "CMIP6_Lm",
-            "CMIP6_Oday",
-            "CMIP6_Odec",
-            "CMIP6_Ofx",
-            "CMIP6_Om",
-            "CMIP6_Oyr",
-            "CMIP6_SIday",
-            "CMIP6_SIm",
-            "CMIP6_day",
-            "CMIP6_fx"
+            "APmon"
         ],
         "tracking_id": [
             "hdl:21.14100/.*"

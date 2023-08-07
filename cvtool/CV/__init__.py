@@ -249,7 +249,20 @@ class CVDIR:
 
     def checkCV(self, cvfile, institution):
         from .. import CMORlib
-        cmor_input = CMORlib.new_input.create(cvfile, self.prefix, institution, tables=self.tables, table_prefix=self.table_prefix, writeLocation=cvfile.split(self.prefix)[0])
+        # MSM: Will need to be modified
+        self.tables = "/net/home/h03/hadmm/CDDS/github/CVTool/mip_specific/lesf/testdirLESF/cv_cmor/"
+        self.table_prefix='CMIP6Plus'
+        cmor_input = CMORlib.new_input.create(
+            cvfile, self.prefix, institution, tables=self.tables, table_prefix=self.table_prefix, 
+            writeLocation=cvfile.split(self.prefix)[0], 
+            # the following override defaults in the template
+            experiment_id='fut-aer',
+            sub_experiment_id='none',
+            source_type='AOGCM',
+            activity_id='LESFMIP',
+            parent_activity_id='LESFMIP',
+            parent_experiment_id='hist-aer'
+            )
 
         # test the output 
         cmorclass = CMORlib.CMORise(self.tables, cmor_input)

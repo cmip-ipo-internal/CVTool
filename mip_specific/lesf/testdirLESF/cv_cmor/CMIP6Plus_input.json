@@ -1,13 +1,13 @@
 {
 	"#note": " **** The following are set correctly for CMIP6 and should not normally need editing",
-	"source_type": "AGCM AOGCM BGC",
-	"activity_id": "CMIP LESFMIP",
+	"source_type": "AOGCM",
+	"activity_id": "LESFMIP",
 	"realization_index": "3",
 	"initialization_index": "1",
 	"physics_index": "1",
 	"forcing_index": "1",
 	"run_variant": "3rd realization",
-	"parent_activity_id": "CMIP",
+	"parent_activity_id": "LESFMIP",
 	"parent_source_id": "HadGEM3-GC31-LL",
 	"parent_variant_label": "r3i1p1f1",
 	"parent_time_units": "days since 1850-01-01",
@@ -27,8 +27,8 @@
 	"institution": "testinstitution",
 	"source": "PCMDI-test 1.0 (1989)",
 	"_controlled_vocabulary_file": "testdirLESF/cv_cmor/CMIP6Plus_CV.json",
-	"_AXIS_ENTRY_FILE": "../../../cmip6-cmor-tables/Tables/CMIP6_coordinate.json",
-	"_FORMULA_VAR_FILE": "../../../cmip6-cmor-tables/Tables/CMIP6_formula_terms.json",
+	"_AXIS_ENTRY_FILE": "testdirLESF/cv_cmor/coordinate.json",
+	"_FORMULA_VAR_FILE": "testdirLESF/cv_cmor/formula_terms.json",
 	"_cmip6_option": "CMIP6",
 	"mip_era": "CMIP6Plus",
 	"parent_mip_era": "CMIP6Plus",
@@ -36,5 +36,8 @@
 	"_history_template": "%s ;rewrote data to be consistent with <activity_id> for variable <variable_id> found in table <table_id>.",
 	"#output_path_template": "Template for output path directory using tables keys or global attributes, these should follow the relevant data reference syntax",
 	"output_path_template": "<mip_era><activity_id><institution_id><source_id><_member_id><table><variable_id><grid_label><version>",
-	"output_file_template": "<variable_id><table><source_id><_member_id><grid_label>"
+	"output_file_template": "<variable_id><table><source_id><_member_id><grid_label>",
+	"experiment_id": "fut-aer",
+	"sub_experiment_id": "none",
+	"parent_experiment_id": "hist-aer"
 }
