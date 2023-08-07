@@ -2,6 +2,7 @@
 A run template for self.CMOR for use with the 
 '''
 from .. import core
+import numpy as np
 # import cmor
 
 class CMORise:
@@ -52,7 +53,7 @@ class CMORise:
         input_dict = core.io.json_read(self.cmor_input)
         cvfile = core.io.json_read(input_dict["_controlled_vocabulary_file"])
         tables = cvfile['CV']['table_id']
-        table = tables[2]
+        table = 'CMIP6Plus_APmon' #tables[2]
 
         self.load_table(table + '.json')
 
@@ -71,7 +72,11 @@ class CMORise:
             # Create a list of dimensions to iterate over
             if isinstance(dimensions, str):
                 dimensions = dimensions.split(' ')
-
+            shape = []
+            axis = []
+            awkward_dims = ['plev', 'tau', 'sza5', 'alt40', 'dbze']
+            if any([d in str(dimensions) for d in awkward_dims]):
+                    continue
             for dim in dimensions:
                 # previous table files had these as a str, so needed .split()
                 print('-', dim, type(vars[v]['dimensions']), '-')
@@ -79,28 +84,39 @@ class CMORise:
                 d = coord_dict[dim]
 
                 if 'time' in dim:
-                    ax = dict(table_entry=dim, units='days since 2000-01-01 00:00:00')
+                    ax = dict(table_entry=dim, units='days since 2000-01-01 00:00:00', 
+                              coord_vals=[30,60], cell_bounds=[15,45,75])
                     print(ax)
                     axis_id = self.cmor.axis(**ax)
                     axis.append(axis_id)
-                    data.append(1.)
+                    shape.append(2)
                 else:
                     try:
-                        bounds = [float(d['valid_min']), float(d['valid_max'])]
-                        data.append(sum(bounds) / 2.)
+                        try:
+                            bounds = [float(d['valid_min']), float(d['valid_max'])]
+                        except:
+                            bounds = [0, 1]
                         ax = dict(table_entry=dim, units=d['units'], cell_bounds=bounds, coord_vals=[sum(bounds) / 2.])
                         print(ax)
                         axis_id = self.cmor.axis(**ax)
                         axis.append(axis_id)
+                        shape.append(1)
                     except Exception as e:
                         print(e)
                         # Handle the exception as needed
 
-            ivar = self.cmor.variable(v, units=vars[v]['units'], axis_ids=axis)
+            ivar = self.cmor.variable(v, units=vars[v]['units'], axis_ids=axis, positive=vars[v]['positive'])
+            data = np.random.random(shape) 
+            if vars[v]['ok_min_mean_abs'] !="":
+                min_v = float(vars[v]['ok_min_mean_abs'])
+                max_v = float(vars[v]['ok_max_mean_abs'])
+                data = min_v + (max_v - min_v) * data
             self.cmor.write(ivar, data)
+            # close each file as you go
+            self.cmor.close(ivar)
             print(axis, data, vars[v]['units'])
 
-        self.cmor.close()
+        #self.cmor.close()
 
 
 # if __name__ == "__main__":

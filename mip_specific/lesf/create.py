@@ -29,7 +29,7 @@ handler = CV.CVDIR(
         "sub_experiment_id",
         "further_info_url",
     ],
-    tables='/Users/daniel.ellis/WIPwork/cmip6-cmor-tables/Tables/',
+    tables='/home/h03/hadmm/CDDS/github/cmip6-cmor-tables/Tables/',
     table_prefix='CMIP6',
 )
 

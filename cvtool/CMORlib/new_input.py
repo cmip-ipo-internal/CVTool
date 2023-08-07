@@ -7,7 +7,7 @@ getfirst= lambda cv,key: list(cv[key].keys())[0]
 
 
 
-def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, region='moon', history= None, comment = None,references = None ):
+def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, region='moon', history= None, comment = None,references = None, **kwargs ):
         
     prefix = core.io.ensure_suffix(prefix,'_')
     table_prefix = core.io.ensure_suffix(table_prefix,'_')
@@ -52,7 +52,7 @@ def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, reg
         "#note":                  "institution_id must be registered at https://github.com/WCRP-CMIP/CMIP6_CVs/issues/new **currently only selecting the first ",
         "institution_id":         keys(CVs['institution_id'])[0],
 
-    
+
         "#note":                  "source_id (model name) must be registered at https://github.com/WCRP-CMIP/CMIP6_CVs/issues/new ",
         "source_id":              sourceid,
     
@@ -82,8 +82,8 @@ def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, reg
         "#note":                  " **** The following are set correctly for CMIP6 and should not normally need editing",  
     
         "_controlled_vocabulary_file":cvfile,
-        "_AXIS_ENTRY_FILE":         core.io.relpath(f"{tables}{table_prefix}coordinate.json"),
-        "_FORMULA_VAR_FILE":        core.io.relpath(f"{tables}{table_prefix}formula_terms.json"),
+        "_AXIS_ENTRY_FILE":         core.io.relpath(f"{tables}coordinate.json"),
+        "_FORMULA_VAR_FILE":        core.io.relpath(f"{tables}formula_terms.json"),
         "_cmip6_option":           "CMIP6",
     
         "mip_era":                CVs['mip_era'],
@@ -97,8 +97,7 @@ def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, reg
 "<mip_era><activity_id><institution_id><source_id><_member_id><table><variable_id><grid_label><version>",
         "output_file_template":    "<variable_id><table><source_id><_member_id><grid_label>"
     }
-
-
+    template.update(kwargs)
 
     filename = f"{writeLocation}{prefix}input.json"
 
