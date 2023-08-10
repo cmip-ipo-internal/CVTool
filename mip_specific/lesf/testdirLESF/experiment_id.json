@@ -1,6 +1,6 @@
 {
     "Header": {
-        "CV_collection_modified": "2023-07-22",
+        "CV_collection_modified": "2023-08-10",
         "CV_collection_version": "0.0.1",
         "previous_commit": "0.0.1",
         "author": "Daniel Ellis <daniel.ellis@ext.esa.int>",
@@ -250,29 +250,6 @@
             "tier": 3,
             "start": "1850",
             "end": "2020"
-        },
-        "fut-aer": {
-            "experiment": "Single forcing projections",
-            "description": "As hist-aer but with updated forcings",
-            "activity_id": [
-                "LESFMIP"
-            ],
-            "experiment_id": "fut-aer",
-            "tier": 2,
-            "start": 2015,
-            "end": 2024,
-            "parent_activity_id": [
-                "LESFMIP"
-            ],
-            "parent_experiment_id": [
-                "hist-aer"
-            ],
-            "required_model_components": [
-                "AOGCM"
-            ],
-            "sub_experiment_id": [
-                "none"
-            ]
         },
         "1pctCO2": {
             "activity_id": [

@@ -8,7 +8,10 @@ import numpy as np
 class CMORise:
     def __init__(self, tables, cmor_input, verbose=False):
         # verbose can also be NORMAL
-        import cmor as cmor_main
+        try:
+            import cmor as cmor_main
+        except ModuleNotFoundError:
+            raise ModuleNotFoundError('We are unable to find the "cmor" library in python. Please check this has been installed and you are using the correct environment')
         self.cmor = cmor_main
         self.tables = tables
         self.cmor_input = cmor_input
@@ -44,6 +47,7 @@ class CMORise:
         """
         Load the self.CMOR table.
         """
+        print(table_id)
         self.cmor.load_table(table_id)
 
     def process_data(self):
@@ -53,13 +57,21 @@ class CMORise:
         input_dict = core.io.json_read(self.cmor_input)
         cvfile = core.io.json_read(input_dict["_controlled_vocabulary_file"])
         tables = cvfile['CV']['table_id']
-        table = 'CMIP6Plus_APmon' #tables[2]
+        table =  tables[0] 
+        # in test case table is apmon as this is the only one suplied. 
+        # table = 'CMIP6_APmon'
+
+        #  APMON IS EVIL - not in cmip 6 and resembles AMON
+
+
+        print('TEST ONE OPTION - SUPPLY TABLE PREFIX')
+
 
         self.load_table(table + '.json')
 
         print('only testing the first table', table)
 
-        coord_dict = core.io.json_read(input_dict["_AXIS_ENTRY_FILE"])["axis_entry"]
+        coord_dict = core.io.json_read(f"{self.tables}{input_dict['_AXIS_ENTRY_FILE']}")["axis_entry"]
         table_dict = core.io.json_read(f'{self.tables}{table}.json')
         vars = table_dict['variable_entry']
 

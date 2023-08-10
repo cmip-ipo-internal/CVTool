@@ -1,24 +1,44 @@
-import sys
+import sys,os
 sys.path.append('../../')
 #  keep this 
-import sys
 import pdb
 import cvtool
 from cvtool import CV
 from cvtool.core.stdout import view
 import pandas as pd
 
-sys.path.append('../../')
+
+##############################################
+# env variables
+##############################################
+
+def create_env():
+    '''
+    This will be replaced by an external specified file. 
+
+    '''
+    # mat
+    # envdict = dict(out_directory='testdirLESF',tables='/home/h03/hadmm/CDDS/github/cmip6-cmor-tables/Tables/',table_prefix='CMIP6')
+
+    # dan
+    envdict = dict(out_directory='testdirLESF',tables=os.environ['HOME']+ '/WIPwork/cmip6-cmor-tables/Tables/', table_prefix='CMIP6')
+
+    # !!!!!!!!!!!!!!!!!!!!!!!!!
+
+    for key,val in envdict.items():
+        print(key)
+        os.environ['cmor_'+key] = val
+
+create_env()
+
+
+
+##############################################
+# set defaults
+##############################################
 
 prefix = 'CMIP6Plus'
-UPDATE_CVS = True
-
-
-# Example usage
-handler = CV.CVDIR(
-    prefix=prefix,
-    directory='testdirLESF',
-    base_files=[
+base_files=[
         "mip_era",
         "DRS",
         "required_global_attributes",
@@ -28,10 +48,28 @@ handler = CV.CVDIR(
         "source_id",
         "sub_experiment_id",
         "further_info_url",
-    ],
-    tables='/home/h03/hadmm/CDDS/github/cmip6-cmor-tables/Tables/',
-    table_prefix='CMIP6',
+    ]
+
+
+UPDATE_CVS = True
+
+
+##############################################
+#  intialise the handler
+##############################################
+
+
+# Example usage
+handler = CV.CVDIR(
+    prefix,
+    base_files,
 )
+
+
+##############################################
+# optional additional updates - e.g. reading DAMIP
+##############################################
+
 
 # # Update all files with data using the example update function
 if UPDATE_CVS:
@@ -91,6 +129,11 @@ if UPDATE_CVS:
             entry['end'] = (r['End year'])
 
             experiments[name] = entry
+
+
+##############################################
+#  start CV updates
+##############################################
 
     data = {
         'globals': {

@@ -24,14 +24,18 @@ def create(directory,prefix,tables,outloc=None):
     cvdict = {'source_type':set()}
     missing = []
 
+
+
     
     # MSM: Comment out for testing purposes
-    # if core.io.exists(f'{directory}{outloc}', False):
+    if core.io.exists(f'{directory}{outloc}', False):
         # Delete the directory
-        # shutil.rmtree(f'{directory}{outloc}/')
+        shutil.rmtree(f'{directory}{outloc}')
     
-    # create an empty directory
-    #os.mkdir(f'{directory}{outloc}/')
+    
+    
+    # WARN! Do not comment this out! 
+    core.io.mkdir(f'{directory}{outloc}')
 
     for entry in structure: 
         file = f"{directory}{entry}.json"

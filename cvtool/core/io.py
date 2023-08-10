@@ -64,7 +64,8 @@ def json_write(jsndata, filename, mode='w',sort=False):
     """
     if filename [-5:] != '.json': 
         filename += '.json'
-        
+
+
     with open(filename, mode) as file:
         json.dump(jsndata, file, indent=4,sort_keys=sort)
 
@@ -106,3 +107,12 @@ def relpath(path,relto=None):
     current_dir = relto or os.getcwd()
     return os.path.relpath(abs_path,current_dir)
 
+def mkdir(directory_path):
+    try:
+        # Create the directory
+        os.mkdir(directory_path)
+        print(f"Directory '{directory_path}' created successfully.")
+    except FileExistsError:
+        print(f"Directory '{directory_path}' already exists.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
