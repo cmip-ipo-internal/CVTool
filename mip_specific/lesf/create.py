@@ -21,8 +21,8 @@ def create_env():
     # envdict = dict(out_directory='testdirLESF',tables='/home/h03/hadmm/CDDS/github/cmip6-cmor-tables/Tables/',table_prefix='CMIP6')
 
     # dan
-    envdict = dict(out_directory='testdirLESF',tables=os.environ['HOME']+ '/WIPwork/cmip6-cmor-tables/Tables/', table_prefix='CMIP6')
-
+    envdict = dict(out_directory='testdirLESF', table_prefix='CMIP6Plus')
+    # tables=os.environ['HOME']+ '/WIPwork/cmip6-cmor-tables/Tables/'
     # !!!!!!!!!!!!!!!!!!!!!!!!!
 
     for key,val in envdict.items():

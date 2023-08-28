@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import shutil
 
 def exists(path, error=True):
     """
@@ -116,3 +117,11 @@ def mkdir(directory_path):
         print(f"Directory '{directory_path}' already exists.")
     except Exception as e:
         print(f"An error occurred: {e}")
+
+def rmdir(directory_path):
+    try:
+        shutil.rmtree(directory_path)
+        print(f"Removed directory: {directory_path}")
+    except Exception as e:
+        print(f"Error deleting directory {directory_path}: {e}")
+

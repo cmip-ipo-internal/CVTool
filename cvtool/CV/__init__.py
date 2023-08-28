@@ -12,8 +12,12 @@ import os
 import sys
 from typing import Optional, Dict, Callable
 
+
 from .. import core
+from ..core import miptables #this will trigger the miptables import.
 from ..core.dynamic_imports import load_module
+from ..core.custom_errors import MipTableError
+
 from . import meta
 
 try:
@@ -91,6 +95,7 @@ class CVDIR:
         self.file_names = base_files
         self.files = {}
         self.tables = config('tables')
+        if not self.tables: MipTableError(f'Table: "{self.tables}" not found in environmental variables "cmor+tables". This is usually generated from cvtool.core.miptables ')
         self.table_prefix = config('table_prefix')
         self.cvout = config('cvout', 'cv_cmor')
 
