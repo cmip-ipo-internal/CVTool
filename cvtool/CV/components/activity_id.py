@@ -3,11 +3,12 @@ import os
 import json
 
 # Importing 'cvtool.core' and 'cvtool.CV.meta' modules
-core = sys.modules.get('cvtool.core')
-meta = sys.modules.get('cvtool.CV.meta')
+# core = sys.modules.get('cvtool.core')
+# meta = sys.modules.get('cvtool.CV.meta')
+import cvtool.core as core
+import cvtool.CV.meta as meta
+whoami = __file__.split('/')[-1].replace('.py','')
 
-# Extracting the parent directory name from the current file path
-whoami = __file__.split('/')[-2]
 
 # Logging 'info' level message using 'core.stdout.log' function
 logger = core.stdout.log(whoami, level='info')

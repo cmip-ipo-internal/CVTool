@@ -31,11 +31,11 @@ def create(institution, gitowner='WCRP-CMIP', gitrepo='CMIP6Plus_CVs', user=None
     return {
         "Header": {
             "CV_collection_modified": current_date,
-            "CV_collection_version": core.stdout.get_github_version(gitowner, gitrepo),
+            "CV_collection_version": core.version_control.get_github_version(gitowner, gitrepo),
             "author": f'{user.get("user")} <{user.get("email")}>',
             "checksum": "md5: EDITEDITEDITEDITEDITEDITEDITEDIT",
             "institution_id": institution,
-            "previous_commit": core.stdout.get_github_version(gitowner, gitrepo),
+            "previous_commit": core.version_control.get_github_version(gitowner, gitrepo),
             "specs_doc": "v6.3.0 (link TBC)"
         }
     }

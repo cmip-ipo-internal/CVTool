@@ -7,6 +7,10 @@ from cvtool import CV
 from cvtool.core.stdout import view
 import pandas as pd
 
+# we need a different table set for DAMIP (only)
+CMIP6Tables4DAMIP = os.environ['HOME']+ '/WIPwork/cmip6-cmor-tables/Tables/CMIP6'
+
+
 
 ##############################################
 # env variables
@@ -74,7 +78,8 @@ handler = CV.CVDIR(
 # # Update all files with data using the example update function
 if UPDATE_CVS:
     deck = handler.get_activity()
-    damip = handler.get_activity(activity='DAMIP')
+    damip = handler.get_activity(activity='DAMIP',external_path=CMIP6Tables4DAMIP)
+
 
     '''
     Lets extract the names 
@@ -116,7 +121,7 @@ if UPDATE_CVS:
             experiments[name] = entry
 
         else:
-            view(r.to_dict())
+            # view(r.to_dict())
             print('^^^ missing')
 
             entry = {}

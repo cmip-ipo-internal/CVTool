@@ -15,9 +15,10 @@ from typing import Optional, Dict, Callable
 
 from .. import core
 from ..core import miptables #this will trigger the miptables import.
-from ..core.dynamic_imports import load_module
+from ..core.dynamic_imports import load_module,import_script,script_path
 from ..core.custom_errors import MipTableError
 
+# from .components import meta
 from . import meta
 
 try:
@@ -34,18 +35,7 @@ else:
     import pdb
 
 
-def basepath(name: str, basepath: str = '') -> tuple:
-    """
-    Generate the base path for a module file.
 
-    Args:
-        name (str): Name of the file/module.
-        basepath (str): Base path to be appended.
-
-    Returns:
-        tuple: Tuple containing the base path and module name.
-    """
-    return __file__.replace('__init__', f'{basepath}{name}/__init__'), name
 
 
 global_keys = ['institution']
@@ -123,12 +113,18 @@ class CVDIR:
 
             output_path = os.path.join(self.directory, output_name)
 
-            module_path = os.path.join(os.path.dirname(__file__), output_name)
+            # module_path = os.path.join(os.path.dirname(__file__), output_name)
+            module_path = os.path.join(os.path.dirname(__file__),'components', output_name+'.py')
+
+
             file_path = os.path.join(self.directory, self.prefix + file_name)
 
             if not core.io.exists(file_path, False):
                 if core.io.exists(output_path, False):
-                    module = importlib.import_module(module_path, output_name)
+                    # module = importlib.import_module(module_path, output_name)
+                        # loader = importlib.machinery.SourceFileLoader(output_name, module_path)
+                        # module = loader.load_module()
+                    import_script(output_name, module_path)
                     opt_func = opt_func or getattr(module, "create", None)
 
                     if callable(opt_func):
@@ -153,15 +149,22 @@ class CVDIR:
         output_name = file_name.split('.')[0]
         output_path = os.path.join(self.directory, output_name + '.json')
 
-        module = load_module(*basepath(file_name))
+        # module = load_module(*basepath(file_name))
+        module = import_script(*script_path(file_name))
+        # import_script(*script_path(file_name))
 
         update_func = update_func or getattr(module, "preparse", None)
         if callable(update_func):
             preprocessed_data = self.pre_parse_update(file_name, data)
             data = update_func(self.files[file_name], preprocessed_data)
 
+        # import inspect
+        # print('**********',module,[member for member in inspect.getmembers(module) if inspect.isfunction(member[1])])
+
+
         if module:
             print(module)
+            
             if not core.io.exists(output_path, error=False):
                 jsn_data = module.create(data)
             else:
@@ -229,17 +232,17 @@ class CVDIR:
             preprocessed_data[f"{self.prefix}{key}"] = value
         return preprocessed_data
 
-    def get_activity(self, activity: str = 'CMIP') -> dict:
+    def get_activity(self, activity: str = 'CMIP', external_path=None) -> dict:
         """
         Get activity data.
 
         Args:
             activity (str, optional): Activity ID. Defaults to 'CMIP'.
-
+            external_path (str, optional) A different table path to that which we are using (e.g. for mining CMIP3/5/6 tables) format: /path/to/tables/<PREFIX>
         Returns:
             dict: Activity data.
         """
-        path = self.tables + self.table_prefix
+        path = external_path or self.tables + self.table_prefix
 
         core.io.exists(f"{path}_CV.json")
 
@@ -272,7 +275,8 @@ class CVDIR:
         Args:
             institution (str): Institution name.
         """
-        from . import compileCV
+        # from .components import compileCV
+        compileCV = import_script(*script_path('compileCV'))
         cvloc = f"{self.directory}"
         cvfile = compileCV.create(
             self.directory, self.prefix, self.tables, outloc=self.cvout)
@@ -321,6 +325,7 @@ class CVDIR:
             parent_experiment_id='hist-aer'
         )
 
+        print('vv',self.tables)
 
         cmorclass = CMORlib.CMORise(self.tables, cmor_input)
         cmorclass.process_data()
@@ -328,51 +333,51 @@ class CVDIR:
         print(cmor_input)
 
 
-class ProjectCreator:
-    """
-    Class for creating a project.
-    """
+# class ProjectCreator:
+#     """
+#     Class for creating a project.
+#     """
 
-    def __init__(self, prefix: str = '', directory: str = '', base_files: Optional[list] = None) -> None:
-        """
-        Initialize the ProjectCreator class.
+#     def __init__(self, prefix: str = '', directory: str = '', base_files: Optional[list] = None) -> None:
+#         """
+#         Initialize the ProjectCreator class.
 
-        Args:
-            prefix (str, optional): Custom prefix for file names. Defaults to an empty string.
-            directory (str, optional): Directory where parent modules reside. Defaults to an empty string.
-            base_files (list, optional): List of base file names. Defaults to None.
-        """
-        self.prefix = prefix
-        if not self.prefix.endswith('_'):
-            self.prefix += '_'
-        self.directory = directory
-        if not core.io.exists(directory, False):
-            os.makedirs(directory)
-        self.files = base_files or base
+#         Args:
+#             prefix (str, optional): Custom prefix for file names. Defaults to an empty string.
+#             directory (str, optional): Directory where parent modules reside. Defaults to an empty string.
+#             base_files (list, optional): List of base file names. Defaults to None.
+#         """
+#         self.prefix = prefix
+#         if not self.prefix.endswith('_'):
+#             self.prefix += '_'
+#         self.directory = directory
+#         if not core.io.exists(directory, False):
+#             os.makedirs(directory)
+#         self.files = base_files or base
 
-    def create(self) -> None:
-        """
-        Create the project by running the 'create' function from the parent module for each file.
-        """
-        for file_name in self.files:
-            output_name = file_name.split('.')[0]
-            output_path = os.path.join(self.directory, output_name)
-            module_path = os.path.join(os.path.dirname(__file__), output_name)
-            file_path = os.path.join(self.directory, self.prefix + file_name)
+#     def create(self) -> None:
+#         """
+#         Create the project by running the 'create' function from the parent module for each file.
+#         """
+#         for file_name in self.files:
+#             output_name = file_name.split('.')[0]
+#             output_path = os.path.join(self.directory, output_name)
+#             module_path = os.path.join(os.path.dirname(__file__), output_name)
+#             file_path = os.path.join(self.directory, self.prefix + file_name)
 
-            if not core.io.exists(file_path, False):
-                if core.io.exists(output_path, False):
-                    module = importlib.import_module(module_path, output_name)
-                    opt_func = opt_func or getattr(module, "create", None)
+#             if not core.io.exists(file_path, False):
+#                 if core.io.exists(output_path, False):
+#                     module = importlib.import_module(module_path, output_name)
+#                     opt_func = opt_func or getattr(module, "create", None)
 
-                    if callable(opt_func):
-                        with open(file_path, 'w') as file:
-                            json.dump(opt_func(), file, sort_keys=True)
-                    else:
-                        print(
-                            f"Create function not implemented for {file_name}")
-            else:
-                print(
-                    f"ERROR: No function provided for processing. Writing an empty file at {file_name}")
+#                     if callable(opt_func):
+#                         with open(file_path, 'w') as file:
+#                             json.dump(opt_func(), file, sort_keys=True)
+#                     else:
+#                         print(
+#                             f"Create function not implemented for {file_name}")
+#             else:
+#                 print(
+#                     f"ERROR: No function provided for processing. Writing an empty file at {file_name}")
 
 # Example usage

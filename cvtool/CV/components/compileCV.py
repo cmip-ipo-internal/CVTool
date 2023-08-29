@@ -6,14 +6,22 @@ import os , re
 from glob import glob
 import shutil
 
-
-from .variables import structure, template, source_type, frequencypattern, institutions
-
-# from . import variables
-# from variables import structure
-
 import sys,os 
-core = sys.modules.get('cvtool.core')
+# core = sys.modules.get('cvtool.core')
+import cvtool.core as core
+
+
+# save eval of the variables files. 
+import ast
+with open(__file__.replace('.py','-variables.py'), "r") as file:
+    script_code = file.read()
+try:
+    parsed_code = ast.parse(script_code, filename="variables.py", mode="exec")
+    exec(compile(parsed_code, filename="variables.py", mode="exec"))
+except Exception as e:
+    print("Error:", e)
+
+
 
 
 # print(dir(variables))

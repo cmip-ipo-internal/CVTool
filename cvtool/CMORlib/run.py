@@ -56,6 +56,8 @@ class CMORise:
         """
         input_dict = core.io.json_read(self.cmor_input)
         cvfile = core.io.json_read(input_dict["_controlled_vocabulary_file"])
+        mipera = cvfile['CV'].get('mip_era','')+'_'
+         
         tables = cvfile['CV']['table_id']
         table =  tables[0] 
         # in test case table is apmon as this is the only one suplied. 
@@ -66,10 +68,10 @@ class CMORise:
 
         print('TEST ONE OPTION - SUPPLY TABLE PREFIX')
 
+        print(tables)
+        self.load_table(f'{mipera}{table}.json')
 
-        self.load_table(table + '.json')
-
-        print('only testing the first table', table)
+        print('only testing the first table',mipera, table)
 
         coord_dict = core.io.json_read(f"{self.tables}{input_dict['_AXIS_ENTRY_FILE']}")["axis_entry"]
         table_dict = core.io.json_read(f'{self.tables}{table}.json')

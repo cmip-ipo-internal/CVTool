@@ -1,55 +1,68 @@
-
+'''
+This file contains all the git, github and versioning functions for the cvtools library. 
+'''
 
 import requests
+import subprocess
+import os
+from typing import Dict
+from .custom_errors import GitAPIError
+from .io import read_temp, write_temp
+from git import Repo
+from datetime import datetime
 
-def last_commit(repo_owner,repo_name):
-    '''
-    Example Usage: 
-        In [6]: last_commit(*repo_url.split('/')[-2:])
-        Out[6]: 
-        {'SHA': '9fa6eda52792b51326dfc77b955c4e46a8334a2c',
-        'Message': 'Merge pull request #17 from PCMDI/issue16_durack1_addAcknowledgements\n\nadding acknowledgements',
-        'Author': 'Paul J. Durack <me@pauldurack.com>',
-        'Committer': 'GitHub <noreply@github.com>',
-        'Date': '2023-07-21T21:37:57Z'}
-    '''
+def last_commit(repo_owner: str, repo_name: str) -> Dict[str, str]:
+    """
+    Retrieve information about the latest commit of a GitHub repository.
 
+    Args:
+        repo_owner (str): Owner of the repository.
+        repo_name (str): Repository name.
+
+    Returns:
+        dict: Dictionary containing details of the latest commit.
+    """
     api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/commits"
+    today_date = datetime.today().strftime("%Y%m%d")
+    envname = f'cmor_miprepo_{today_date}'
+    commit_info = read_temp(envname)
+
+    if commit_info:
+        if commit_info.get('api_url') == api_url:
+            print('Loading saved repo metadata from git.')
+            return commit_info
 
     response = requests.get(api_url)
     if response.status_code == 200:
         commits_data = response.json()
         if commits_data:
             latest_commit = commits_data[0]
-            
-            # Print information about the latest commit
             commit_info = {
+                "api_url": api_url,
                 "SHA": latest_commit["sha"],
                 "Message": latest_commit["commit"]["message"],
-                "Author": latest_commit["commit"]["author"]["name"] + " <" + latest_commit["commit"]["author"]["email"] + ">",
-                "Committer": latest_commit["commit"]["committer"]["name"] + " <" + latest_commit["commit"]["committer"]["email"] + ">",
+                "Author": f"{latest_commit['commit']['author']['name']} <{latest_commit['commit']['author']['email']}>",
+                "Committer": f"{latest_commit['commit']['committer']['name']} <{latest_commit['commit']['committer']['email']}>",
                 "Date": latest_commit["commit"]["author"]["date"]
             }
-
+            write_temp(envname, commit_info)
             return commit_info
         else:
-            print("No commits found in the repository.")
+            raise GitAPIError(f"No commits found in the repository: {api_url}")
     else:
-        print("Failed to fetch commit information from the GitHub API.")
+        raise GitAPIError(f"Failed to fetch commit information from the GitHub API: {api_url}")
 
-
-def git_user() -> dict:
+def git_user() -> Dict[str, str]:
     """
-    Retrieve the Git username and email, handling subprocess errors.
+    Retrieve the Git username and email.
 
     Returns:
-        dict: Dictionary containing 'user' and 'email' keys with the corresponding values.
+        dict: Dictionary containing 'user' and 'email' keys with corresponding values.
     """
     try:
         return get_user()
     except subprocess.CalledProcessError:
         return get_user(shell=True)
-
 
 def get_github_version(owner: str = '', repo: str = '') -> str:
     """
@@ -63,26 +76,22 @@ def get_github_version(owner: str = '', repo: str = '') -> str:
         str: Latest release version or '-0.0.0' if not available.
     """
     if not owner and not repo:
-        # Check if GitHub information is already stored in environment variables
         if 'cmor_github_owner' in os.environ and 'cmor_github_repo' in os.environ:
             owner = os.environ['cmor_github_owner']
             repo = os.environ['cmor_github_repo']
         else:
-            # Get the repository name and owner from the local .git directory
             command = ["git", "config", "--get", "remote.origin.url"]
             process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
             output, _ = process.communicate()
             if process.returncode == 0:
                 remote_url = output.strip()
                 owner, repo = remote_url.split("/")[-2:]
-                # Store the GitHub information in environment variables for future use
                 os.environ['cmor_github_owner'] = owner
                 os.environ['cmor_github_repo'] = repo
             else:
                 raise RuntimeError("Failed to get repository information.")
 
     try:
-        # Make a request to the GitHub API for the latest release
         api_url = f"https://api.github.com/repos/{owner}/{repo}/releases/latest"
         response = requests.get(api_url)
         response.raise_for_status()
@@ -92,7 +101,6 @@ def get_github_version(owner: str = '', repo: str = '') -> str:
     except (requests.RequestException, ValueError, IndexError) as e:
         print(f"Error: {str(e)}")
         return "-0.0.0"
-
 
 def get_commit_hashes(owner: str, repo: str, latest: bool = True) -> str:
     """
@@ -106,18 +114,16 @@ def get_commit_hashes(owner: str, repo: str, latest: bool = True) -> str:
     Returns:
         str: Commit hash or None if failed to retrieve.
     """
-    # Check if GitHub information is already stored in environment variables
     if 'cmor_github_hashes' in os.environ:
-        return os.environ['cmor_github_hashes'].split('~')['latest']
+        hashes = os.environ['cmor_github_hashes'].split('~')
+        return hashes[1 if latest else 0]
     else:
         try:
-            # Make a request to the GitHub API for the repository information
             api_url = f"https://api.github.com/repos/{owner}/{repo}/commits"
             response = requests.get(api_url)
             response.raise_for_status()
             json_data = response.json()
 
-            # Extract the latest and previous commit hashes
             latest_commit = json_data[0]["sha"]
             previous_commit = json_data[1]["sha"]
 
@@ -127,9 +133,14 @@ def get_commit_hashes(owner: str, repo: str, latest: bool = True) -> str:
         except (requests.RequestException, ValueError, IndexError) as e:
             print(f"Error: {str(e)}")
             return None
-        
 
 def repo_commits(repo):
+    """
+    Print information about commits in a Git repository.
+
+    Args:
+        repo: Git repository object.
+    """
     for commit in repo.iter_commits():
         print("Commit SHA:", commit.hexsha)
         print("Author:", commit.author.name, "<" + commit.author.email + ">")
