@@ -24,33 +24,34 @@ def last_commit(repo_owner: str, repo_name: str) -> Dict[str, str]:
     """
     api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/commits"
     today_date = datetime.today().strftime("%Y%m%d")
-    envname = f'cmor_miprepo_{today_date}'
+    envname = f'cvtool.{repo_owner}.{repo_name}.{today_date}'
     commit_info = read_temp(envname)
 
     if commit_info:
+        print(commit_info.get('api_url') , api_url)
         if commit_info.get('api_url') == api_url:
             print('Loading saved repo metadata from git.')
             return commit_info
-
-    response = requests.get(api_url)
-    if response.status_code == 200:
-        commits_data = response.json()
-        if commits_data:
-            latest_commit = commits_data[0]
-            commit_info = {
-                "api_url": api_url,
-                "SHA": latest_commit["sha"],
-                "Message": latest_commit["commit"]["message"],
-                "Author": f"{latest_commit['commit']['author']['name']} <{latest_commit['commit']['author']['email']}>",
-                "Committer": f"{latest_commit['commit']['committer']['name']} <{latest_commit['commit']['committer']['email']}>",
-                "Date": latest_commit["commit"]["author"]["date"]
-            }
-            write_temp(envname, commit_info)
-            return commit_info
-        else:
-            raise GitAPIError(f"No commits found in the repository: {api_url}")
     else:
-        raise GitAPIError(f"Failed to fetch commit information from the GitHub API: {api_url}")
+        response = requests.get(api_url)
+        if response.status_code == 200:
+            commits_data = response.json()
+            if commits_data:
+                latest_commit = commits_data[0]
+                commit_info = {
+                    "api_url": api_url,
+                    "SHA": latest_commit["sha"],
+                    "Message": latest_commit["commit"]["message"],
+                    "Author": f"{latest_commit['commit']['author']['name']} <{latest_commit['commit']['author']['email']}>",
+                    "Committer": f"{latest_commit['commit']['committer']['name']} <{latest_commit['commit']['committer']['email']}>",
+                    "Date": latest_commit["commit"]["author"]["date"]
+                }
+                write_temp(envname, commit_info)
+                return commit_info
+            else:
+                raise GitAPIError(f"No commits found in the repository: {api_url}")
+        else:
+            raise GitAPIError(f"Failed to fetch commit information from the GitHub API: {api_url}")
 
 def git_user() -> Dict[str, str]:
     """
@@ -64,18 +65,18 @@ def git_user() -> Dict[str, str]:
     except subprocess.CalledProcessError:
         return get_user(shell=True)
 
-def get_github_version(owner: str = '', repo: str = '') -> str:
+def get_github_version(repo_owner: str = '', repo_name: str = '') -> str:
     """
     Get the latest release version from GitHub API.
 
     Args:
-        owner (str): Owner of the repository.
-        repo (str): Repository name.
+        repo_owner (str): Owner of the repository.
+        repo_name (str): Repository name.
 
     Returns:
         str: Latest release version or '-0.0.0' if not available.
     """
-    if not owner and not repo:
+    if not repo_owner and not repo_name:
         if 'cmor_github_owner' in os.environ and 'cmor_github_repo' in os.environ:
             owner = os.environ['cmor_github_owner']
             repo = os.environ['cmor_github_repo']
@@ -92,12 +93,25 @@ def get_github_version(owner: str = '', repo: str = '') -> str:
                 raise RuntimeError("Failed to get repository information.")
 
     try:
-        api_url = f"https://api.github.com/repos/{owner}/{repo}/releases/latest"
-        response = requests.get(api_url)
-        response.raise_for_status()
-        json_data = response.json()
+        today_date = datetime.today().strftime("%Y%m%d")
+        envname = f'cvtool.{repo_owner}.{repo_name}.{today_date}'
+        json_data = read_temp(envname)
+
+        if not json_data or "tag_name" not in json_data: 
+            api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/releases/latest"
+            response = requests.get(api_url)
+            response.raise_for_status()
+            # GitAPIError(f"Failed to fetch commit information from the GitHub API: {api_url}")
+            json_data = response.json()
+            write_temp(envname, json_data)
+          
+
         version = json_data.get("tag_name")
         return version if version else "-0.0.0"
+
+        
+
+
     except (requests.RequestException, ValueError, IndexError) as e:
         print(f"Error: {str(e)}")
         return "-0.0.0"

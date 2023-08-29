@@ -74,13 +74,20 @@ class CMORise:
         print('only testing the first table',mipera, table)
 
         coord_dict = core.io.json_read(f"{self.tables}{input_dict['_AXIS_ENTRY_FILE']}")["axis_entry"]
-        table_dict = core.io.json_read(f'{self.tables}{table}.json')
+        table_dict = core.io.json_read(f'{self.tables}{mipera}{table}.json')
+
         vars = table_dict['variable_entry']
 
         data = []
         axis = []
 
         for v in vars:
+
+
+            if v in ['albisccp','cct','ccb']: continue
+            v = 'tas'
+
+
             dimensions = vars[v]['dimensions']
 
             # Create a list of dimensions to iterate over
@@ -100,7 +107,7 @@ class CMORise:
                 if 'time' in dim:
                     ax = dict(table_entry=dim, units='days since 2000-01-01 00:00:00', 
                               coord_vals=[30,60], cell_bounds=[15,45,75])
-                    print(ax)
+                    print('AX',dim , ax)
                     axis_id = self.cmor.axis(**ax)
                     axis.append(axis_id)
                     shape.append(2)
@@ -111,7 +118,7 @@ class CMORise:
                         except:
                             bounds = [0, 1]
                         ax = dict(table_entry=dim, units=d['units'], cell_bounds=bounds, coord_vals=[sum(bounds) / 2.])
-                        print(ax)
+                        print('AX',dim , ax)
                         axis_id = self.cmor.axis(**ax)
                         axis.append(axis_id)
                         shape.append(1)
@@ -119,16 +126,54 @@ class CMORise:
                         print(e)
                         # Handle the exception as needed
 
+            print('--var--', v , vars[v]['units'],vars[v]['positive'],axis,)
             ivar = self.cmor.variable(v, units=vars[v]['units'], axis_ids=axis, positive=vars[v]['positive'])
             data = np.random.random(shape) 
             if vars[v]['ok_min_mean_abs'] !="":
                 min_v = float(vars[v]['ok_min_mean_abs'])
                 max_v = float(vars[v]['ok_max_mean_abs'])
                 data = min_v + (max_v - min_v) * data
-            self.cmor.write(ivar, data)
-            # close each file as you go
-            self.cmor.close(ivar)
+
+
             print(axis, data, vars[v]['units'])
+
+            # print(list(vars.keys()))
+            ################
+            ################
+            print('q',ivar, data)
+
+
+            axes = [{'table_entry': 'time',
+             'units': 'days since 2000-01-01 00:00:00',
+             },
+            {'table_entry': 'latitude',
+             'units': 'degrees_north',
+             'coord_vals': [0],
+             'cell_bounds': [-1, 1]},
+            {'table_entry': 'longitude',
+             'units': 'degrees_east',
+             'coord_vals': [90],
+             'cell_bounds': [89, 91]},
+            ]
+
+            axis_ids = list()
+            for axis in axes:
+                axis_id = self.cmor.axis(**axis)
+                axis_ids.append(axis_id)
+            varid = self.cmor.variable('ts', 'K', axis_ids)
+            self.cmor.write(varid, [275], time_vals=[15], time_bnds=[[0, 30]])
+
+    # end
+
+
+
+
+
+            # self.cmor.write(ivar, data)
+
+            # close each file as you go
+            # self.cmor.close(ivar)
+            
 
         #self.cmor.close()
 

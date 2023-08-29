@@ -185,13 +185,25 @@ def read_temp(prefix: str, index: int = 0) -> dict:
 
     Returns:
         dict: The content read from the temporary file as a dictionary, or None if the file does not exist.
-    """
+    """ 
     tmp = tempfile.gettempdir()
-    existing = glob.glob(f'{tmp}/{prefix}*')[index]
+    existing = glob.glob(f'{tmp}/{prefix}*')
 
     if existing:
-        with open(existing, 'r') as file:
+        with open(existing[index], 'r') as file:
             content = json.load(file)
             return content
         
     return None
+
+
+def relative_to(absolte,current):
+        
+    absolute = os.path.abspath(absolte)
+    # Get the absolute path of the current script
+    current_script_path = os.path.abspath(current)
+
+    # Calculate the relative path
+    relative_path = os.path.relpath(absolte, current_script_path)
+
+    return relative_path

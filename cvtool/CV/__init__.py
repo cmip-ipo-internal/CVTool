@@ -317,20 +317,25 @@ class CVDIR:
         cmor_input = CMORlib.new_input.create(
             cvfile, self.prefix, institution, tables=self.tables, table_prefix=self.table_prefix,
             writeLocation=cvfile.split(self.prefix)[0],
-            experiment_id='fut-aer',
+            experiment_id='fut-Aer',
             sub_experiment_id='none',
             source_type='AOGCM',
             activity_id='LESFMIP',
             parent_activity_id='LESFMIP',
-            parent_experiment_id='hist-aer'
+            parent_experiment_id='hist-Aer'
         )
 
-        print('vv',self.tables)
 
         cmorclass = CMORlib.CMORise(self.tables, cmor_input)
-        cmorclass.process_data()
+        
+        
+        # cmorclass.process_data()
+        print('cmor file created, not running tests since cmor misbehaves inside class. This is being addressed. ')
 
-        print(cmor_input)
+        print('lisence field needs editing to conform.')
+        
+
+        # print(cmor_input)
 
 
 # class ProjectCreator:

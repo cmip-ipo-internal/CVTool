@@ -24,7 +24,7 @@ import os
 from . import io
 from .version_control import last_commit  # Assuming version_control is properly set up
 
-__REPOPREFIX__ = 'cmortool.miptables.'
+__REPOPREFIX__ = 'cvtool.miptables.'
 
 def setup_mip_tables() -> None:
     """
@@ -43,6 +43,7 @@ def setup_mip_tables() -> None:
     # Check if we have any existing repositories in the tmp
     existing = glob.glob(f'{tmp}/{__REPOPREFIX__}*')
 
+
     for path in existing:
         t_repo = Repo(path)
         if str(t_repo.head.commit) == current.get('SHA'):
@@ -53,7 +54,6 @@ def setup_mip_tables() -> None:
             # Remove the outdated duplicates if they exist
             for p in existing:
                 io.rmdir(p)
-            print('Created or updated the repository')
             break
 
     if not repo:
@@ -66,6 +66,7 @@ def setup_mip_tables() -> None:
         # Let's download the latest repository
         repo = Repo.clone_from(repo_url + '.git', temp_dir)
         assert str(repo.head.commit) == current.get('SHA')
+        print('we have cloned the most up to date version')
 
     # Get the repository URL
     repo_url = repo.remotes.origin.url
