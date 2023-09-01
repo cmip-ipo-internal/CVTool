@@ -200,13 +200,16 @@
                 "end": 2024,
                 "experiment": "future anthropogenic aerosols-only run",
                 "experiment_id": "fut-Aer",
-                "parent_activity_id": "LESFMIP",
-                "parent_experiment_id": "fut-Aer",
+                "parent_activity_id": [
+                    "LESFMIP"
+                ],
+                "parent_experiment_id": [
+                    null
+                ],
                 "required_model_components": [
                     "AOGCM"
                 ],
                 "start": 2015,
-                "sub-experiment_id": "none",
                 "sub_experiment_id": [
                     "none"
                 ],
@@ -225,13 +228,16 @@
                 "end": 2024,
                 "experiment": "future well-mixed GHG-only run",
                 "experiment_id": "fut-GHG",
-                "parent_activity_id": "LESFMIP",
-                "parent_experiment_id": "fut-GHG",
+                "parent_activity_id": [
+                    "LESFMIP"
+                ],
+                "parent_experiment_id": [
+                    null
+                ],
                 "required_model_components": [
                     "AOGCM"
                 ],
                 "start": 2015,
-                "sub-experiment_id": "none",
                 "sub_experiment_id": [
                     "none"
                 ],
@@ -250,12 +256,16 @@
                 "end": 2024,
                 "experiment": "Single forcing projections",
                 "experiment_id": "fut-lu",
-                "parent_activity_id": "LESFMIP",
+                "parent_activity_id": [
+                    "LESFMIP"
+                ],
                 "required_model_components": [
                     "AOGCM"
                 ],
                 "start": 2015,
-                "sub-experiment_id": "none",
+                "sub_experiment_id": [
+                    "none"
+                ],
                 "tier": 2
             },
             "fut-sol": {
@@ -271,13 +281,16 @@
                 "end": 2024,
                 "experiment": "future solar-only run",
                 "experiment_id": "fut-sol",
-                "parent_activity_id": "LESFMIP",
-                "parent_experiment_id": "fut-sol",
+                "parent_activity_id": [
+                    "LESFMIP"
+                ],
+                "parent_experiment_id": [
+                    null
+                ],
                 "required_model_components": [
                     "AOGCM"
                 ],
                 "start": 2015,
-                "sub-experiment_id": "none",
                 "sub_experiment_id": [
                     "none"
                 ],
@@ -296,13 +309,16 @@
                 "end": 2024,
                 "experiment": "future total ozone-only run",
                 "experiment_id": "fut-totalO3",
-                "parent_activity_id": "LESFMIP",
-                "parent_experiment_id": "fut-totalO3",
+                "parent_activity_id": [
+                    "LESFMIP"
+                ],
+                "parent_experiment_id": [
+                    null
+                ],
                 "required_model_components": [
                     "AOGCM"
                 ],
                 "start": 2015,
-                "sub-experiment_id": "none",
                 "sub_experiment_id": [
                     "none"
                 ],
@@ -321,13 +337,16 @@
                 "end": 2024,
                 "experiment": "future volcanic-only run",
                 "experiment_id": "fut-volc",
-                "parent_activity_id": "LESFMIP",
-                "parent_experiment_id": "fut-volc",
+                "parent_activity_id": [
+                    "LESFMIP"
+                ],
+                "parent_experiment_id": [
+                    null
+                ],
                 "required_model_components": [
                     "AOGCM"
                 ],
                 "start": 2015,
-                "sub-experiment_id": "none",
                 "sub_experiment_id": [
                     "none"
                 ],
@@ -346,7 +365,9 @@
                 "end": 2020,
                 "experiment": "historical well-mixed GHG-only run",
                 "experiment_id": "hist-GHG",
-                "parent_activity_id": "LESFMIP",
+                "parent_activity_id": [
+                    "LESFMIP"
+                ],
                 "parent_experiment_id": [
                     "piControl"
                 ],
@@ -354,7 +375,6 @@
                     "AOGCM"
                 ],
                 "start": 1850,
-                "sub-experiment_id": "none",
                 "sub_experiment_id": [
                     "none"
                 ],
@@ -373,7 +393,9 @@
                 "end": 2020,
                 "experiment": "historical anthropogenic aerosols-only run",
                 "experiment_id": "hist-aer",
-                "parent_activity_id": "LESFMIP",
+                "parent_activity_id": [
+                    "LESFMIP"
+                ],
                 "parent_experiment_id": [
                     "piControl"
                 ],
@@ -381,7 +403,6 @@
                     "AOGCM"
                 ],
                 "start": 1850,
-                "sub-experiment_id": "none",
                 "sub_experiment_id": [
                     "none"
                 ],
@@ -400,12 +421,16 @@
                 "end": 2020,
                 "experiment": "Single forcing historical simulations",
                 "experiment_id": "hist-lu",
-                "parent_activity_id": "LESFMIP",
+                "parent_activity_id": [
+                    "LESFMIP"
+                ],
                 "required_model_components": [
                     "AOGCM"
                 ],
                 "start": 1850,
-                "sub-experiment_id": "none",
+                "sub_experiment_id": [
+                    "none"
+                ],
                 "tier": 1
             },
             "hist-nat": {
@@ -421,7 +446,9 @@
                 "end": 2020,
                 "experiment": "historical natural-only run",
                 "experiment_id": "hist-nat",
-                "parent_activity_id": "LESFMIP",
+                "parent_activity_id": [
+                    "LESFMIP"
+                ],
                 "parent_experiment_id": [
                     "piControl"
                 ],
@@ -429,7 +456,6 @@
                     "AOGCM"
                 ],
                 "start": 1850,
-                "sub-experiment_id": "none",
                 "sub_experiment_id": [
                     "none"
                 ],
@@ -448,7 +474,9 @@
                 "end": 2020,
                 "experiment": "historical solar-only run",
                 "experiment_id": "hist-sol",
-                "parent_activity_id": "LESFMIP",
+                "parent_activity_id": [
+                    "LESFMIP"
+                ],
                 "parent_experiment_id": [
                     "piControl"
                 ],
@@ -456,7 +484,6 @@
                     "AOGCM"
                 ],
                 "start": 1850,
-                "sub-experiment_id": "none",
                 "sub_experiment_id": [
                     "none"
                 ],
@@ -475,7 +502,9 @@
                 "end": 2020,
                 "experiment": "historical total ozone-only run",
                 "experiment_id": "hist-totalO3",
-                "parent_activity_id": "LESFMIP",
+                "parent_activity_id": [
+                    "LESFMIP"
+                ],
                 "parent_experiment_id": [
                     "piControl"
                 ],
@@ -483,7 +512,6 @@
                     "AOGCM"
                 ],
                 "start": 1850,
-                "sub-experiment_id": "none",
                 "sub_experiment_id": [
                     "none"
                 ],
@@ -502,7 +530,9 @@
                 "end": 2020,
                 "experiment": "historical volcanic-only run",
                 "experiment_id": "hist-volc",
-                "parent_activity_id": "LESFMIP",
+                "parent_activity_id": [
+                    "LESFMIP"
+                ],
                 "parent_experiment_id": [
                     "piControl"
                 ],
@@ -510,7 +540,6 @@
                     "AOGCM"
                 ],
                 "start": 1850,
-                "sub-experiment_id": "none",
                 "sub_experiment_id": [
                     "none"
                 ],
@@ -542,7 +571,6 @@
                     "AOGCM"
                 ],
                 "start": 1850,
-                "sub-experiment_id": "none",
                 "sub_experiment_id": [
                     "none"
                 ],
@@ -866,9 +894,11 @@
             }
         },
         "source_type": {
+            "AER": "aerosol treatment in an atmospheric model where concentrations are calculated based on emissions, transformation, and removal processes (rather than being prescribed or omitted entirely)",
             "AGCM": "atmospheric general circulation model run with prescribed ocean surface conditions and usually a model of the land surface",
             "AOGCM": "coupled atmosphere-ocean global climate model, additionally including explicit representation of at least the land and sea ice",
-            "BGC": "biogeochemistry model component that at the very least accounts for carbon reservoirs and fluxes in the atmosphere, terrestrial biosphere, and ocean"
+            "BGC": "biogeochemistry model component that at the very least accounts for carbon reservoirs and fluxes in the atmosphere, terrestrial biosphere, and ocean",
+            "CHEM": "chemistry treatment in an atmospheric model that calculates atmospheric oxidant concentrations (including at least ozone), rather than prescribing them"
         },
         "sub_experiment_id": {
             "none": "none"
