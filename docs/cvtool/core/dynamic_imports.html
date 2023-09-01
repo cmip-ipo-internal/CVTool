@@ -36,9 +36,17 @@ Author and Maintainer:
 Daniel Ellis (daniel.ellis @ ext.esa.int)
 &#39;&#39;&#39;
 
+import importlib
 import importlib.abc
 import importlib.util
+import importlib.machinery
 import os 
+
+try: from custom_errors import * 
+except: from .custom_errors import * 
+
+LIBPATH = os.path.abspath(__file__.replace(&#39;core/dynamic_imports.py&#39;,&#39;&#39;))
+
 
 class CustomLoader(importlib.abc.Loader):
     def __init__(self, path):
@@ -72,6 +80,36 @@ def load_module(absolute_path, module_name):
         print(&#39;ModuleLoadError&#39;, e)
         return None
 
+
+def import_script(absolute_path, module_name):
+    &#39;&#39;&#39;
+    Dynamically loads a script from the specified absolute path.
+
+    Args:
+        absolute_path (str): The absolute path of the module file.
+        module_name (str): The desired name for the imported module.
+
+    Returns:
+        module: The imported module.
+
+    Example:
+        module = load_module(&#39;/path/to/my_module.py&#39;, &#39;my_module&#39;)
+    &#39;&#39;&#39;
+    try:
+
+        spec = importlib.util.spec_from_file_location(module_name, absolute_path)
+        module = importlib.util.module_from_spec(spec)
+        # Execute the module&#39;s code
+        spec.loader.exec_module(module)
+        
+        return module
+    except Exception as e:
+        print(&#39;ModuleLoadWarning&#39;, e)
+        print(module)
+        print(&#39;err&#39;,module_name, absolute_path)
+        return None
+
+
 def import_relative(__file__, module_name):
     &#39;&#39;&#39;
     Imports a relative module using the same process as load_module.
@@ -89,6 +127,37 @@ def import_relative(__file__, module_name):
     module_spec.loader.exec_module(my_module)
     globals()[module_name] = my_module
 
+
+def basepath(name: str, basepath: str = &#39;&#39;) -&gt; tuple:
+    &#34;&#34;&#34;
+    Generate the base path for a module file.
+
+    Args:
+        name (str): Name of the file/module.
+        basepath (str): Base path to be appended.
+
+    Returns:
+        tuple: Tuple containing the base path and module name.
+    &#34;&#34;&#34;
+    return __file__.replace(&#39;__init__&#39;, f&#39;{basepath}{name}/__init__&#39;), name
+
+def script_path(name: str, basepath: str = LIBPATH) -&gt; tuple:
+    &#34;&#34;&#34;
+    Generate the base path for a module file.
+
+    Args:
+        name (str): Name of the file/module.
+        basepath (str): Base path to be appended.
+
+    Returns:
+        tuple: Tuple containing the base path and module name.
+    &#34;&#34;&#34;
+    return  f&#39;{basepath}/CV/components/{name}.py&#39;, name
+
+
+def check_module_functions(module):
+    import inspect
+    print(&#39;**********&#39;,module,[member for member in inspect.getmembers(module) if inspect.isfunction(member[1])])
 
 &#39;&#39;&#39;
 # Example usage:
@@ -112,6 +181,55 @@ if __name__ == &#39;__main__&#39;:
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="cvtool.core.dynamic_imports.basepath"><code class="name flex">
+<span>def <span class="ident">basepath</span></span>(<span>name: str, basepath: str = '') ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generate the base path for a module file.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name of the file/module.</dd>
+<dt><strong><code>basepath</code></strong> :&ensp;<code>str</code></dt>
+<dd>Base path to be appended.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>tuple</code></dt>
+<dd>Tuple containing the base path and module name.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def basepath(name: str, basepath: str = &#39;&#39;) -&gt; tuple:
+    &#34;&#34;&#34;
+    Generate the base path for a module file.
+
+    Args:
+        name (str): Name of the file/module.
+        basepath (str): Base path to be appended.
+
+    Returns:
+        tuple: Tuple containing the base path and module name.
+    &#34;&#34;&#34;
+    return __file__.replace(&#39;__init__&#39;, f&#39;{basepath}{name}/__init__&#39;), name</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.dynamic_imports.check_module_functions"><code class="name flex">
+<span>def <span class="ident">check_module_functions</span></span>(<span>module)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_module_functions(module):
+    import inspect
+    print(&#39;**********&#39;,module,[member for member in inspect.getmembers(module) if inspect.isfunction(member[1])])</code></pre>
+</details>
+</dd>
 <dt id="cvtool.core.dynamic_imports.import_relative"><code class="name flex">
 <span>def <span class="ident">import_relative</span></span>(<span>__file__, module_name)</span>
 </code></dt>
@@ -146,6 +264,58 @@ if __name__ == &#39;__main__&#39;:
     my_module = importlib.util.module_from_spec(module_spec)
     module_spec.loader.exec_module(my_module)
     globals()[module_name] = my_module</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.dynamic_imports.import_script"><code class="name flex">
+<span>def <span class="ident">import_script</span></span>(<span>absolute_path, module_name)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Dynamically loads a script from the specified absolute path.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>absolute_path</code></strong> :&ensp;<code>str</code></dt>
+<dd>The absolute path of the module file.</dd>
+<dt><strong><code>module_name</code></strong> :&ensp;<code>str</code></dt>
+<dd>The desired name for the imported module.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>module</code></dt>
+<dd>The imported module.</dd>
+</dl>
+<h2 id="example">Example</h2>
+<p>module = load_module('/path/to/my_module.py', 'my_module')</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def import_script(absolute_path, module_name):
+    &#39;&#39;&#39;
+    Dynamically loads a script from the specified absolute path.
+
+    Args:
+        absolute_path (str): The absolute path of the module file.
+        module_name (str): The desired name for the imported module.
+
+    Returns:
+        module: The imported module.
+
+    Example:
+        module = load_module(&#39;/path/to/my_module.py&#39;, &#39;my_module&#39;)
+    &#39;&#39;&#39;
+    try:
+
+        spec = importlib.util.spec_from_file_location(module_name, absolute_path)
+        module = importlib.util.module_from_spec(spec)
+        # Execute the module&#39;s code
+        spec.loader.exec_module(module)
+        
+        return module
+    except Exception as e:
+        print(&#39;ModuleLoadWarning&#39;, e)
+        print(module)
+        print(&#39;err&#39;,module_name, absolute_path)
+        return None</code></pre>
 </details>
 </dd>
 <dt id="cvtool.core.dynamic_imports.load_module"><code class="name flex">
@@ -194,6 +364,41 @@ if __name__ == &#39;__main__&#39;:
     except Exception as e:
         print(&#39;ModuleLoadError&#39;, e)
         return None</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.dynamic_imports.script_path"><code class="name flex">
+<span>def <span class="ident">script_path</span></span>(<span>name: str, basepath: str = '/Users/daniel.ellis/WIPwork/CVTool/cvtool') ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generate the base path for a module file.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name of the file/module.</dd>
+<dt><strong><code>basepath</code></strong> :&ensp;<code>str</code></dt>
+<dd>Base path to be appended.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>tuple</code></dt>
+<dd>Tuple containing the base path and module name.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def script_path(name: str, basepath: str = LIBPATH) -&gt; tuple:
+    &#34;&#34;&#34;
+    Generate the base path for a module file.
+
+    Args:
+        name (str): Name of the file/module.
+        basepath (str): Base path to be appended.
+
+    Returns:
+        tuple: Tuple containing the base path and module name.
+    &#34;&#34;&#34;
+    return  f&#39;{basepath}/CV/components/{name}.py&#39;, name</code></pre>
 </details>
 </dd>
 </dl>
@@ -257,8 +462,12 @@ if __name__ == &#39;__main__&#39;:
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="cvtool.core.dynamic_imports.basepath" href="#cvtool.core.dynamic_imports.basepath">basepath</a></code></li>
+<li><code><a title="cvtool.core.dynamic_imports.check_module_functions" href="#cvtool.core.dynamic_imports.check_module_functions">check_module_functions</a></code></li>
 <li><code><a title="cvtool.core.dynamic_imports.import_relative" href="#cvtool.core.dynamic_imports.import_relative">import_relative</a></code></li>
+<li><code><a title="cvtool.core.dynamic_imports.import_script" href="#cvtool.core.dynamic_imports.import_script">import_script</a></code></li>
 <li><code><a title="cvtool.core.dynamic_imports.load_module" href="#cvtool.core.dynamic_imports.load_module">load_module</a></code></li>
+<li><code><a title="cvtool.core.dynamic_imports.script_path" href="#cvtool.core.dynamic_imports.script_path">script_path</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>

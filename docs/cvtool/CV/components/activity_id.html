@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>cvtool.core API documentation</title>
-<meta name="description" content="Core Lib files. These deal with: …" />
+<title>cvtool.CV.components.activity_id API documentation</title>
+<meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -19,79 +19,191 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>cvtool.core</code></h1>
+<h1 class="title">Module <code>cvtool.CV.components.activity_id</code></h1>
 </header>
 <section id="section-intro">
-<p>Core Lib files. These deal with:</p>
-<ul>
-<li>curses</li>
-<li>terminal parameters</li>
-<li>file input-output</li>
-<li>print formatting
-etc.</li>
-</ul>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#39;&#39;&#39;
-Core Lib files. These deal with:
+<pre><code class="python">import sys
+import os
+import json
 
-- curses
-- terminal parameters
-- file input-output
-- print formatting
-etc.
-&#39;&#39;&#39;
-from . import stdout, io, dynamic_imports, curses_toolbox, checksum,version_control</code></pre>
+# Importing &#39;cvtool.core&#39; and &#39;cvtool.CV.meta&#39; modules
+# core = sys.modules.get(&#39;cvtool.core&#39;)
+# meta = sys.modules.get(&#39;cvtool.CV.meta&#39;)
+import cvtool.core as core
+import cvtool.CV.meta as meta
+whoami = __file__.split(&#39;/&#39;)[-1].replace(&#39;.py&#39;,&#39;&#39;)
+
+
+# Logging &#39;info&#39; level message using &#39;core.stdout.log&#39; function
+logger = core.stdout.log(whoami, level=&#39;info&#39;)
+
+default = None
+
+
+def create(optdata):
+    &#34;&#34;&#34;
+    Create a dictionary representing the header and content of a CV collection.
+
+    Args:
+        optdata (dict): Optional data dictionary.
+
+    Returns:
+        dict: A dictionary representing the header and content of the CV collection.
+
+    &#34;&#34;&#34;
+    this = core.io.get_current_function_name()
+
+    # get the globals before overwriting
+    institution = optdata[&#39;globals&#39;][&#39;institution&#39;]
+    optdata = optdata.get(this) or {}
+
+    content = optdata.get(whoami) # this may be different if the varaible does not reflect the file name (e.g. mip_era and mipera)
+    institution = optdata.get(&#39;institution&#39;)
+
+    header = meta.create(institution)
+    header[whoami] = content or default
+
+    return header
+
+
+def update(jsn, optdata):
+    &#34;&#34;&#34;
+    Update the metadata of a CV collection.
+
+    Args:
+        jsn (dict): The existing CV collection dictionary.
+        optdata (dict): Optional data dictionary.
+
+    Returns:
+        dict: The updated CV collection dictionary.
+
+    &#34;&#34;&#34;
+    this = core.io.get_current_function_name()
+    optdata = optdata.get(this)
+    if not optdata:
+        logger.info(&#39;nothing to update&#39;)
+        return jsn
+
+
+    # Check if there is something to update
+    assert len(jsn) &gt;= 0
+
+    # Update some of the metadata
+    overwrite = meta.update()
+
+    optdata = core.io.combine(optdata, overwrite)
+    
+    return core.io.combine(jsn, optdata)</code></pre>
 </details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt><code class="name"><a title="cvtool.core.checksum" href="checksum.html">cvtool.core.checksum</a></code></dt>
+<dt id="cvtool.CV.components.activity_id.create"><code class="name flex">
+<span>def <span class="ident">create</span></span>(<span>optdata)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>Tools for adding and validating checksums</p></div>
+<div class="desc"><p>Create a dictionary representing the header and content of a CV collection.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>optdata</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Optional data dictionary.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>A dictionary representing the header and content of the CV collection.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create(optdata):
+    &#34;&#34;&#34;
+    Create a dictionary representing the header and content of a CV collection.
+
+    Args:
+        optdata (dict): Optional data dictionary.
+
+    Returns:
+        dict: A dictionary representing the header and content of the CV collection.
+
+    &#34;&#34;&#34;
+    this = core.io.get_current_function_name()
+
+    # get the globals before overwriting
+    institution = optdata[&#39;globals&#39;][&#39;institution&#39;]
+    optdata = optdata.get(this) or {}
+
+    content = optdata.get(whoami) # this may be different if the varaible does not reflect the file name (e.g. mip_era and mipera)
+    institution = optdata.get(&#39;institution&#39;)
+
+    header = meta.create(institution)
+    header[whoami] = content or default
+
+    return header</code></pre>
+</details>
 </dd>
-<dt><code class="name"><a title="cvtool.core.curses_toolbox" href="curses_toolbox.html">cvtool.core.curses_toolbox</a></code></dt>
+<dt id="cvtool.CV.components.activity_id.update"><code class="name flex">
+<span>def <span class="ident">update</span></span>(<span>jsn, optdata)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>A list editor written in ncurses …</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.custom_errors" href="custom_errors.html">cvtool.core.custom_errors</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.dynamic_imports" href="dynamic_imports.html">cvtool.core.dynamic_imports</a></code></dt>
-<dd>
-<div class="desc"><p>Scripts to dynamically import modules …</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.io" href="io.html">cvtool.core.io</a></code></dt>
-<dd>
-<div class="desc"><p>Functions for input-output operations within the cvtools library</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.logo" href="logo.html">cvtool.core.logo</a></code></dt>
-<dd>
-<div class="desc"><p>The file which determines the logo splash screen</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.miptables" href="miptables.html">cvtool.core.miptables</a></code></dt>
-<dd>
-<div class="desc"><p>This file is set up such that importing it will run the relevant setup scripts.</p>
-<hr>
-<p>WARN: This does mean that once imported, it will not import …</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.stdout" href="stdout.html">cvtool.core.stdout</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.version_control" href="version_control.html">cvtool.core.version_control</a></code></dt>
-<dd>
-<div class="desc"><p>This file contains all the git, github and versioning functions for the cvtools library.</p></div>
+<div class="desc"><p>Update the metadata of a CV collection.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>jsn</code></strong> :&ensp;<code>dict</code></dt>
+<dd>The existing CV collection dictionary.</dd>
+<dt><strong><code>optdata</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Optional data dictionary.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>The updated CV collection dictionary.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update(jsn, optdata):
+    &#34;&#34;&#34;
+    Update the metadata of a CV collection.
+
+    Args:
+        jsn (dict): The existing CV collection dictionary.
+        optdata (dict): Optional data dictionary.
+
+    Returns:
+        dict: The updated CV collection dictionary.
+
+    &#34;&#34;&#34;
+    this = core.io.get_current_function_name()
+    optdata = optdata.get(this)
+    if not optdata:
+        logger.info(&#39;nothing to update&#39;)
+        return jsn
+
+
+    # Check if there is something to update
+    assert len(jsn) &gt;= 0
+
+    # Update some of the metadata
+    overwrite = meta.update()
+
+    optdata = core.io.combine(optdata, overwrite)
+    
+    return core.io.combine(jsn, optdata)</code></pre>
+</details>
 </dd>
 </dl>
-</section>
-<section>
-</section>
-<section>
 </section>
 <section>
 </section>
@@ -104,20 +216,13 @@ from . import stdout, io, dynamic_imports, curses_toolbox, checksum,version_cont
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="cvtool" href="../index.html">cvtool</a></code></li>
+<li><code><a title="cvtool.CV.components" href="index.html">cvtool.CV.components</a></code></li>
 </ul>
 </li>
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
-<ul>
-<li><code><a title="cvtool.core.checksum" href="checksum.html">cvtool.core.checksum</a></code></li>
-<li><code><a title="cvtool.core.curses_toolbox" href="curses_toolbox.html">cvtool.core.curses_toolbox</a></code></li>
-<li><code><a title="cvtool.core.custom_errors" href="custom_errors.html">cvtool.core.custom_errors</a></code></li>
-<li><code><a title="cvtool.core.dynamic_imports" href="dynamic_imports.html">cvtool.core.dynamic_imports</a></code></li>
-<li><code><a title="cvtool.core.io" href="io.html">cvtool.core.io</a></code></li>
-<li><code><a title="cvtool.core.logo" href="logo.html">cvtool.core.logo</a></code></li>
-<li><code><a title="cvtool.core.miptables" href="miptables.html">cvtool.core.miptables</a></code></li>
-<li><code><a title="cvtool.core.stdout" href="stdout.html">cvtool.core.stdout</a></code></li>
-<li><code><a title="cvtool.core.version_control" href="version_control.html">cvtool.core.version_control</a></code></li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="cvtool.CV.components.activity_id.create" href="#cvtool.CV.components.activity_id.create">create</a></code></li>
+<li><code><a title="cvtool.CV.components.activity_id.update" href="#cvtool.CV.components.activity_id.update">update</a></code></li>
 </ul>
 </li>
 </ul>

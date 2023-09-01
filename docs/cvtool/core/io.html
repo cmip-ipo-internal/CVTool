@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>cvtool.core.io API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Functions for input-output operations within the cvtools library" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,15 +22,25 @@
 <h1 class="title">Module <code>cvtool.core.io</code></h1>
 </header>
 <section id="section-intro">
+<p>Functions for input-output operations within the cvtools library</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import os
-import sys
-import json
+<pre><code class="python">&#39;&#39;&#39;
+Functions for input-output operations within the cvtools library
 
-def exists(path, error=True):
+&#39;&#39;&#39;
+
+import os
+import json
+import shutil
+import tempfile
+import inspect
+import glob
+from typing import Union, Dict, Any
+
+def exists(path: str, error: bool = True) -&gt; Union[str, bool]:
     &#34;&#34;&#34;
     Check if a given path exists.
 
@@ -39,22 +49,19 @@ def exists(path, error=True):
         error (bool): Flag indicating whether to raise an error if the path does not exist.
     
     Returns:
-        str or False: The path if it exists, False otherwise.
+        Union[str, bool]: The path if it exists, False otherwise.
     
     Raises:
         FileNotFoundError: If the path does not exist and error is set to True.
     &#34;&#34;&#34;
-    if path:
-        if not os.path.exists(path):
-            if error:
-                raise FileNotFoundError(f&#34;The path &#39;{path}&#39; does not exist.&#34;)
-            else:
-                return False
-        return path
-    return False
+    if path and not os.path.exists(path):
+        if error:
+            raise FileNotFoundError(f&#34;The path &#39;{path}&#39; does not exist.&#34;)
+        else:
+            return False
+    return path
 
-
-def combine(new, old):
+def combine(new: dict, old: dict) -&gt; dict:
     &#34;&#34;&#34;
     Combine two dictionaries.
 
@@ -65,10 +72,6 @@ def combine(new, old):
     Returns:
         dict: The merged dictionary.
     &#34;&#34;&#34;
-    # merged_dict = old.copy()
-    # merged_dict.update(new)
-    # return merged_dict
-
     merged_dict = old.copy()
     for key, value in new.items():
         if key in merged_dict and isinstance(merged_dict[key], dict) and isinstance(value, dict):
@@ -77,8 +80,7 @@ def combine(new, old):
             merged_dict[key] = value
     return merged_dict
 
-
-def json_write(jsndata, filename, mode=&#39;w&#39;,sort=False):
+def json_write(jsndata: dict, filename: str, mode: str = &#39;w&#39;, sort: bool = False) -&gt; None:
     &#34;&#34;&#34;
     Write JSON data to a file.
 
@@ -86,53 +88,154 @@ def json_write(jsndata, filename, mode=&#39;w&#39;,sort=False):
         jsndata (dict): The JSON data to write.
         filename (str): The name of the file to write to.
         mode (str): The file mode (default is &#39;w&#39; for write).
+        sort (bool): Whether to sort the keys in the JSON output.
 
     Raises:
         IOError: If there is an error writing the JSON data to the file.
     &#34;&#34;&#34;
-    if filename [-5:] != &#39;.json&#39;: 
+    if not filename.endswith(&#39;.json&#39;):
         filename += &#39;.json&#39;
-        
+
     with open(filename, mode) as file:
-        json.dump(jsndata, file, indent=4,sort_keys=sort)
+        json.dump(jsndata, file, indent=4, sort_keys=sort)
 
-
-def json_read(file_path,mode=&#39;r&#39;):
+def json_read(file_path: str, mode: str = &#39;r&#39;) -&gt; dict:
     &#34;&#34;&#34;
-    Reads the contents of a file.
+    Reads the contents of a JSON file.
 
     Args:
-        file_name (str): Name of the file.
+        file_path (str): Path to the JSON file.
+        mode (str): The file mode (default is &#39;r&#39; for read).
 
     Returns:
         dict: Contents of the file as a dictionary, or an empty dictionary if the file is not found.
     &#34;&#34;&#34;
-
     try:
-        with open(file_path,mode) as file:
+        with open(file_path, mode) as file:
             return json.load(file)
     except FileNotFoundError:
         return {}
 
+def get_current_function_name() -&gt; str:
+    &#34;&#34;&#34;
+    Get the name of the calling function.
 
-
-def get_current_function_name():
-    import inspect
+    Returns:
+        str: The name of the calling function.
+    &#34;&#34;&#34;
     current_frame = inspect.currentframe()
     caller_frame = inspect.getouterframes(current_frame)[1]
     function_name = caller_frame.function
     return function_name
 
-def ensure_suffix(var,end):
+def ensure_suffix(var: str, end: str) -&gt; str:
+    &#34;&#34;&#34;
+    Ensure that a string ends with a specified suffix.
+
+    Args:
+        var (str): The input string.
+        end (str): The suffix to ensure.
+
+    Returns:
+        str: The modified string with the ensured suffix.
+    &#34;&#34;&#34;
     if not var.endswith(end):
-            var += end
+        var += end
     return var
 
-def relpath(path,relto=None):
-   
+def relpath(path: str, relto: str = None) -&gt; str:
+    &#34;&#34;&#34;
+    Get the relative path of a given path.
+
+    Args:
+        path (str): The path to get the relative path for.
+        relto (str): The base path to make the path relative to (default is current working directory).
+
+    Returns:
+        str: The relative path of the input path.
+    &#34;&#34;&#34;
     abs_path = os.path.abspath(path)
     current_dir = relto or os.getcwd()
-    return os.path.relpath(abs_path,current_dir)</code></pre>
+    return os.path.relpath(abs_path, current_dir)
+
+def mkdir(directory_path: str) -&gt; None:
+    &#34;&#34;&#34;
+    Create a directory.
+
+    Args:
+        directory_path (str): The path of the directory to create.
+
+    Raises:
+        FileExistsError: If the directory already exists.
+        Exception: If an error occurs while creating the directory.
+    &#34;&#34;&#34;
+    try:
+        os.mkdir(directory_path)
+        print(f&#34;Directory &#39;{directory_path}&#39; created successfully.&#34;)
+    except FileExistsError:
+        print(f&#34;Directory &#39;{directory_path}&#39; already exists.&#34;)
+    except Exception as e:
+        print(f&#34;An error occurred: {e}&#34;)
+
+def rmdir(directory_path: str) -&gt; None:
+    &#34;&#34;&#34;
+    Remove a directory and its contents.
+
+    Args:
+        directory_path (str): The path of the directory to remove.
+
+    Raises:
+        Exception: If an error occurs while deleting the directory.
+    &#34;&#34;&#34;
+    try:
+        shutil.rmtree(directory_path)
+        print(f&#34;Removed directory: {directory_path}&#34;)
+    except Exception as e:
+        print(f&#34;Error deleting directory {directory_path}: {e}&#34;)
+
+def write_temp(prefix: str, content: dict) -&gt; None:
+    &#34;&#34;&#34;
+    Write content to a temporary JSON file.
+
+    Args:
+        prefix (str): The prefix for the temporary file name.
+        content (dict): The content to write to the temporary file.
+    &#34;&#34;&#34;
+    with tempfile.NamedTemporaryFile(mode=&#39;w&#39;, prefix=prefix, delete=False, suffix=&#39;.json&#39;) as temp_file:
+        json.dump(content, temp_file, indent=4)
+
+def read_temp(prefix: str, index: int = 0) -&gt; dict:
+    &#34;&#34;&#34;
+    Read content from a temporary JSON file.
+
+    Args:
+        prefix (str): The prefix of the temporary file name.
+        index (int): The index of the temporary file to read from (default is 0).
+
+    Returns:
+        dict: The content read from the temporary file as a dictionary, or None if the file does not exist.
+    &#34;&#34;&#34; 
+    tmp = tempfile.gettempdir()
+    existing = glob.glob(f&#39;{tmp}/{prefix}*&#39;)
+
+    if existing:
+        with open(existing[index], &#39;r&#39;) as file:
+            content = json.load(file)
+            return content
+        
+    return None
+
+
+def relative_to(absolte,current):
+        
+    absolute = os.path.abspath(absolte)
+    # Get the absolute path of the current script
+    current_script_path = os.path.abspath(current)
+
+    # Calculate the relative path
+    relative_path = os.path.relpath(absolte, current_script_path)
+
+    return relative_path</code></pre>
 </details>
 </section>
 <section>
@@ -143,7 +246,7 @@ def relpath(path,relto=None):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="cvtool.core.io.combine"><code class="name flex">
-<span>def <span class="ident">combine</span></span>(<span>new, old)</span>
+<span>def <span class="ident">combine</span></span>(<span>new: dict, old: dict) ‑> dict</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Combine two dictionaries.</p>
@@ -163,7 +266,7 @@ def relpath(path,relto=None):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def combine(new, old):
+<pre><code class="python">def combine(new: dict, old: dict) -&gt; dict:
     &#34;&#34;&#34;
     Combine two dictionaries.
 
@@ -174,10 +277,6 @@ def relpath(path,relto=None):
     Returns:
         dict: The merged dictionary.
     &#34;&#34;&#34;
-    # merged_dict = old.copy()
-    # merged_dict.update(new)
-    # return merged_dict
-
     merged_dict = old.copy()
     for key, value in new.items():
         if key in merged_dict and isinstance(merged_dict[key], dict) and isinstance(value, dict):
@@ -188,22 +287,44 @@ def relpath(path,relto=None):
 </details>
 </dd>
 <dt id="cvtool.core.io.ensure_suffix"><code class="name flex">
-<span>def <span class="ident">ensure_suffix</span></span>(<span>var, end)</span>
+<span>def <span class="ident">ensure_suffix</span></span>(<span>var: str, end: str) ‑> str</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Ensure that a string ends with a specified suffix.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>var</code></strong> :&ensp;<code>str</code></dt>
+<dd>The input string.</dd>
+<dt><strong><code>end</code></strong> :&ensp;<code>str</code></dt>
+<dd>The suffix to ensure.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>The modified string with the ensured suffix.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def ensure_suffix(var,end):
+<pre><code class="python">def ensure_suffix(var: str, end: str) -&gt; str:
+    &#34;&#34;&#34;
+    Ensure that a string ends with a specified suffix.
+
+    Args:
+        var (str): The input string.
+        end (str): The suffix to ensure.
+
+    Returns:
+        str: The modified string with the ensured suffix.
+    &#34;&#34;&#34;
     if not var.endswith(end):
-            var += end
+        var += end
     return var</code></pre>
 </details>
 </dd>
 <dt id="cvtool.core.io.exists"><code class="name flex">
-<span>def <span class="ident">exists</span></span>(<span>path, error=True)</span>
+<span>def <span class="ident">exists</span></span>(<span>path: str, error: bool = True) ‑> Union[str, bool]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Check if a given path exists.</p>
@@ -216,7 +337,7 @@ def relpath(path,relto=None):
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
-<dt><code>str</code> or <code>False</code></dt>
+<dt><code>Union[str, bool]</code></dt>
 <dd>The path if it exists, False otherwise.</dd>
 </dl>
 <h2 id="raises">Raises</h2>
@@ -228,7 +349,7 @@ def relpath(path,relto=None):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def exists(path, error=True):
+<pre><code class="python">def exists(path: str, error: bool = True) -&gt; Union[str, bool]:
     &#34;&#34;&#34;
     Check if a given path exists.
 
@@ -237,32 +358,40 @@ def relpath(path,relto=None):
         error (bool): Flag indicating whether to raise an error if the path does not exist.
     
     Returns:
-        str or False: The path if it exists, False otherwise.
+        Union[str, bool]: The path if it exists, False otherwise.
     
     Raises:
         FileNotFoundError: If the path does not exist and error is set to True.
     &#34;&#34;&#34;
-    if path:
-        if not os.path.exists(path):
-            if error:
-                raise FileNotFoundError(f&#34;The path &#39;{path}&#39; does not exist.&#34;)
-            else:
-                return False
-        return path
-    return False</code></pre>
+    if path and not os.path.exists(path):
+        if error:
+            raise FileNotFoundError(f&#34;The path &#39;{path}&#39; does not exist.&#34;)
+        else:
+            return False
+    return path</code></pre>
 </details>
 </dd>
 <dt id="cvtool.core.io.get_current_function_name"><code class="name flex">
-<span>def <span class="ident">get_current_function_name</span></span>(<span>)</span>
+<span>def <span class="ident">get_current_function_name</span></span>(<span>) ‑> str</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Get the name of the calling function.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>The name of the calling function.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_current_function_name():
-    import inspect
+<pre><code class="python">def get_current_function_name() -&gt; str:
+    &#34;&#34;&#34;
+    Get the name of the calling function.
+
+    Returns:
+        str: The name of the calling function.
+    &#34;&#34;&#34;
     current_frame = inspect.currentframe()
     caller_frame = inspect.getouterframes(current_frame)[1]
     function_name = caller_frame.function
@@ -270,14 +399,16 @@ def relpath(path,relto=None):
 </details>
 </dd>
 <dt id="cvtool.core.io.json_read"><code class="name flex">
-<span>def <span class="ident">json_read</span></span>(<span>file_path, mode='r')</span>
+<span>def <span class="ident">json_read</span></span>(<span>file_path: str, mode: str = 'r') ‑> dict</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Reads the contents of a file.</p>
+<div class="desc"><p>Reads the contents of a JSON file.</p>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>file_name</code></strong> :&ensp;<code>str</code></dt>
-<dd>Name of the file.</dd>
+<dt><strong><code>file_path</code></strong> :&ensp;<code>str</code></dt>
+<dd>Path to the JSON file.</dd>
+<dt><strong><code>mode</code></strong> :&ensp;<code>str</code></dt>
+<dd>The file mode (default is 'r' for read).</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -288,26 +419,26 @@ def relpath(path,relto=None):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def json_read(file_path,mode=&#39;r&#39;):
+<pre><code class="python">def json_read(file_path: str, mode: str = &#39;r&#39;) -&gt; dict:
     &#34;&#34;&#34;
-    Reads the contents of a file.
+    Reads the contents of a JSON file.
 
     Args:
-        file_name (str): Name of the file.
+        file_path (str): Path to the JSON file.
+        mode (str): The file mode (default is &#39;r&#39; for read).
 
     Returns:
         dict: Contents of the file as a dictionary, or an empty dictionary if the file is not found.
     &#34;&#34;&#34;
-
     try:
-        with open(file_path,mode) as file:
+        with open(file_path, mode) as file:
             return json.load(file)
     except FileNotFoundError:
         return {}</code></pre>
 </details>
 </dd>
 <dt id="cvtool.core.io.json_write"><code class="name flex">
-<span>def <span class="ident">json_write</span></span>(<span>jsndata, filename, mode='w', sort=False)</span>
+<span>def <span class="ident">json_write</span></span>(<span>jsndata: dict, filename: str, mode: str = 'w', sort: bool = False) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Write JSON data to a file.</p>
@@ -319,6 +450,8 @@ def relpath(path,relto=None):
 <dd>The name of the file to write to.</dd>
 <dt><strong><code>mode</code></strong> :&ensp;<code>str</code></dt>
 <dd>The file mode (default is 'w' for write).</dd>
+<dt><strong><code>sort</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to sort the keys in the JSON output.</dd>
 </dl>
 <h2 id="raises">Raises</h2>
 <dl>
@@ -329,7 +462,7 @@ def relpath(path,relto=None):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def json_write(jsndata, filename, mode=&#39;w&#39;,sort=False):
+<pre><code class="python">def json_write(jsndata: dict, filename: str, mode: str = &#39;w&#39;, sort: bool = False) -&gt; None:
     &#34;&#34;&#34;
     Write JSON data to a file.
 
@@ -337,19 +470,104 @@ def relpath(path,relto=None):
         jsndata (dict): The JSON data to write.
         filename (str): The name of the file to write to.
         mode (str): The file mode (default is &#39;w&#39; for write).
+        sort (bool): Whether to sort the keys in the JSON output.
 
     Raises:
         IOError: If there is an error writing the JSON data to the file.
     &#34;&#34;&#34;
-    if filename [-5:] != &#39;.json&#39;: 
+    if not filename.endswith(&#39;.json&#39;):
         filename += &#39;.json&#39;
-        
+
     with open(filename, mode) as file:
-        json.dump(jsndata, file, indent=4,sort_keys=sort)</code></pre>
+        json.dump(jsndata, file, indent=4, sort_keys=sort)</code></pre>
 </details>
 </dd>
-<dt id="cvtool.core.io.relpath"><code class="name flex">
-<span>def <span class="ident">relpath</span></span>(<span>path, relto=None)</span>
+<dt id="cvtool.core.io.mkdir"><code class="name flex">
+<span>def <span class="ident">mkdir</span></span>(<span>directory_path: str) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a directory.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>directory_path</code></strong> :&ensp;<code>str</code></dt>
+<dd>The path of the directory to create.</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>FileExistsError</code></dt>
+<dd>If the directory already exists.</dd>
+<dt><code>Exception</code></dt>
+<dd>If an error occurs while creating the directory.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mkdir(directory_path: str) -&gt; None:
+    &#34;&#34;&#34;
+    Create a directory.
+
+    Args:
+        directory_path (str): The path of the directory to create.
+
+    Raises:
+        FileExistsError: If the directory already exists.
+        Exception: If an error occurs while creating the directory.
+    &#34;&#34;&#34;
+    try:
+        os.mkdir(directory_path)
+        print(f&#34;Directory &#39;{directory_path}&#39; created successfully.&#34;)
+    except FileExistsError:
+        print(f&#34;Directory &#39;{directory_path}&#39; already exists.&#34;)
+    except Exception as e:
+        print(f&#34;An error occurred: {e}&#34;)</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.io.read_temp"><code class="name flex">
+<span>def <span class="ident">read_temp</span></span>(<span>prefix: str, index: int = 0) ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Read content from a temporary JSON file.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>prefix</code></strong> :&ensp;<code>str</code></dt>
+<dd>The prefix of the temporary file name.</dd>
+<dt><strong><code>index</code></strong> :&ensp;<code>int</code></dt>
+<dd>The index of the temporary file to read from (default is 0).</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>The content read from the temporary file as a dictionary, or None if the file does not exist.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_temp(prefix: str, index: int = 0) -&gt; dict:
+    &#34;&#34;&#34;
+    Read content from a temporary JSON file.
+
+    Args:
+        prefix (str): The prefix of the temporary file name.
+        index (int): The index of the temporary file to read from (default is 0).
+
+    Returns:
+        dict: The content read from the temporary file as a dictionary, or None if the file does not exist.
+    &#34;&#34;&#34; 
+    tmp = tempfile.gettempdir()
+    existing = glob.glob(f&#39;{tmp}/{prefix}*&#39;)
+
+    if existing:
+        with open(existing[index], &#39;r&#39;) as file:
+            content = json.load(file)
+            return content
+        
+    return None</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.io.relative_to"><code class="name flex">
+<span>def <span class="ident">relative_to</span></span>(<span>absolte, current)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -357,11 +575,117 @@ def relpath(path,relto=None):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def relpath(path,relto=None):
-   
+<pre><code class="python">def relative_to(absolte,current):
+        
+    absolute = os.path.abspath(absolte)
+    # Get the absolute path of the current script
+    current_script_path = os.path.abspath(current)
+
+    # Calculate the relative path
+    relative_path = os.path.relpath(absolte, current_script_path)
+
+    return relative_path</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.io.relpath"><code class="name flex">
+<span>def <span class="ident">relpath</span></span>(<span>path: str, relto: str = None) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the relative path of a given path.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>path</code></strong> :&ensp;<code>str</code></dt>
+<dd>The path to get the relative path for.</dd>
+<dt><strong><code>relto</code></strong> :&ensp;<code>str</code></dt>
+<dd>The base path to make the path relative to (default is current working directory).</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>The relative path of the input path.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def relpath(path: str, relto: str = None) -&gt; str:
+    &#34;&#34;&#34;
+    Get the relative path of a given path.
+
+    Args:
+        path (str): The path to get the relative path for.
+        relto (str): The base path to make the path relative to (default is current working directory).
+
+    Returns:
+        str: The relative path of the input path.
+    &#34;&#34;&#34;
     abs_path = os.path.abspath(path)
     current_dir = relto or os.getcwd()
-    return os.path.relpath(abs_path,current_dir)</code></pre>
+    return os.path.relpath(abs_path, current_dir)</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.io.rmdir"><code class="name flex">
+<span>def <span class="ident">rmdir</span></span>(<span>directory_path: str) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Remove a directory and its contents.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>directory_path</code></strong> :&ensp;<code>str</code></dt>
+<dd>The path of the directory to remove.</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>Exception</code></dt>
+<dd>If an error occurs while deleting the directory.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rmdir(directory_path: str) -&gt; None:
+    &#34;&#34;&#34;
+    Remove a directory and its contents.
+
+    Args:
+        directory_path (str): The path of the directory to remove.
+
+    Raises:
+        Exception: If an error occurs while deleting the directory.
+    &#34;&#34;&#34;
+    try:
+        shutil.rmtree(directory_path)
+        print(f&#34;Removed directory: {directory_path}&#34;)
+    except Exception as e:
+        print(f&#34;Error deleting directory {directory_path}: {e}&#34;)</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.io.write_temp"><code class="name flex">
+<span>def <span class="ident">write_temp</span></span>(<span>prefix: str, content: dict) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Write content to a temporary JSON file.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>prefix</code></strong> :&ensp;<code>str</code></dt>
+<dd>The prefix for the temporary file name.</dd>
+<dt><strong><code>content</code></strong> :&ensp;<code>dict</code></dt>
+<dd>The content to write to the temporary file.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def write_temp(prefix: str, content: dict) -&gt; None:
+    &#34;&#34;&#34;
+    Write content to a temporary JSON file.
+
+    Args:
+        prefix (str): The prefix for the temporary file name.
+        content (dict): The content to write to the temporary file.
+    &#34;&#34;&#34;
+    with tempfile.NamedTemporaryFile(mode=&#39;w&#39;, prefix=prefix, delete=False, suffix=&#39;.json&#39;) as temp_file:
+        json.dump(content, temp_file, indent=4)</code></pre>
 </details>
 </dd>
 </dl>
@@ -388,7 +712,12 @@ def relpath(path,relto=None):
 <li><code><a title="cvtool.core.io.get_current_function_name" href="#cvtool.core.io.get_current_function_name">get_current_function_name</a></code></li>
 <li><code><a title="cvtool.core.io.json_read" href="#cvtool.core.io.json_read">json_read</a></code></li>
 <li><code><a title="cvtool.core.io.json_write" href="#cvtool.core.io.json_write">json_write</a></code></li>
+<li><code><a title="cvtool.core.io.mkdir" href="#cvtool.core.io.mkdir">mkdir</a></code></li>
+<li><code><a title="cvtool.core.io.read_temp" href="#cvtool.core.io.read_temp">read_temp</a></code></li>
+<li><code><a title="cvtool.core.io.relative_to" href="#cvtool.core.io.relative_to">relative_to</a></code></li>
 <li><code><a title="cvtool.core.io.relpath" href="#cvtool.core.io.relpath">relpath</a></code></li>
+<li><code><a title="cvtool.core.io.rmdir" href="#cvtool.core.io.rmdir">rmdir</a></code></li>
+<li><code><a title="cvtool.core.io.write_temp" href="#cvtool.core.io.write_temp">write_temp</a></code></li>
 </ul>
 </li>
 </ul>

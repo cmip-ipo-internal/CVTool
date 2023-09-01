@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>cvtool.core API documentation</title>
-<meta name="description" content="Core Lib files. These deal with: …" />
+<title>cvtool.core.custom_errors API documentation</title>
+<meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -19,81 +19,130 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>cvtool.core</code></h1>
+<h1 class="title">Module <code>cvtool.core.custom_errors</code></h1>
 </header>
 <section id="section-intro">
-<p>Core Lib files. These deal with:</p>
-<ul>
-<li>curses</li>
-<li>terminal parameters</li>
-<li>file input-output</li>
-<li>print formatting
-etc.</li>
-</ul>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#39;&#39;&#39;
-Core Lib files. These deal with:
+<pre><code class="python">class CustomError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
 
-- curses
-- terminal parameters
-- file input-output
-- print formatting
-etc.
-&#39;&#39;&#39;
-from . import stdout, io, dynamic_imports, curses_toolbox, checksum,version_control</code></pre>
+class MipTableError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+class ModuleLoadError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+
+class GitAPIError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+        </code></pre>
 </details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt><code class="name"><a title="cvtool.core.checksum" href="checksum.html">cvtool.core.checksum</a></code></dt>
+<dt id="cvtool.core.custom_errors.CustomError"><code class="flex name class">
+<span>class <span class="ident">CustomError</span></span>
+<span>(</span><span>message)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>Tools for adding and validating checksums</p></div>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CustomError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
 </dd>
-<dt><code class="name"><a title="cvtool.core.curses_toolbox" href="curses_toolbox.html">cvtool.core.curses_toolbox</a></code></dt>
+<dt id="cvtool.core.custom_errors.GitAPIError"><code class="flex name class">
+<span>class <span class="ident">GitAPIError</span></span>
+<span>(</span><span>message)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>A list editor written in ncurses …</p></div>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GitAPIError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
 </dd>
-<dt><code class="name"><a title="cvtool.core.custom_errors" href="custom_errors.html">cvtool.core.custom_errors</a></code></dt>
+<dt id="cvtool.core.custom_errors.MipTableError"><code class="flex name class">
+<span>class <span class="ident">MipTableError</span></span>
+<span>(</span><span>message)</span>
+</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MipTableError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
 </dd>
-<dt><code class="name"><a title="cvtool.core.dynamic_imports" href="dynamic_imports.html">cvtool.core.dynamic_imports</a></code></dt>
+<dt id="cvtool.core.custom_errors.ModuleLoadError"><code class="flex name class">
+<span>class <span class="ident">ModuleLoadError</span></span>
+<span>(</span><span>message)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>Scripts to dynamically import modules …</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.io" href="io.html">cvtool.core.io</a></code></dt>
-<dd>
-<div class="desc"><p>Functions for input-output operations within the cvtools library</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.logo" href="logo.html">cvtool.core.logo</a></code></dt>
-<dd>
-<div class="desc"><p>The file which determines the logo splash screen</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.miptables" href="miptables.html">cvtool.core.miptables</a></code></dt>
-<dd>
-<div class="desc"><p>This file is set up such that importing it will run the relevant setup scripts.</p>
-<hr>
-<p>WARN: This does mean that once imported, it will not import …</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.stdout" href="stdout.html">cvtool.core.stdout</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.version_control" href="version_control.html">cvtool.core.version_control</a></code></dt>
-<dd>
-<div class="desc"><p>This file contains all the git, github and versioning functions for the cvtools library.</p></div>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ModuleLoadError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
 </dd>
 </dl>
-</section>
-<section>
-</section>
-<section>
-</section>
-<section>
 </section>
 </article>
 <nav id="sidebar">
@@ -104,20 +153,23 @@ from . import stdout, io, dynamic_imports, curses_toolbox, checksum,version_cont
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="cvtool" href="../index.html">cvtool</a></code></li>
+<li><code><a title="cvtool.core" href="index.html">cvtool.core</a></code></li>
 </ul>
 </li>
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
-<li><code><a title="cvtool.core.checksum" href="checksum.html">cvtool.core.checksum</a></code></li>
-<li><code><a title="cvtool.core.curses_toolbox" href="curses_toolbox.html">cvtool.core.curses_toolbox</a></code></li>
-<li><code><a title="cvtool.core.custom_errors" href="custom_errors.html">cvtool.core.custom_errors</a></code></li>
-<li><code><a title="cvtool.core.dynamic_imports" href="dynamic_imports.html">cvtool.core.dynamic_imports</a></code></li>
-<li><code><a title="cvtool.core.io" href="io.html">cvtool.core.io</a></code></li>
-<li><code><a title="cvtool.core.logo" href="logo.html">cvtool.core.logo</a></code></li>
-<li><code><a title="cvtool.core.miptables" href="miptables.html">cvtool.core.miptables</a></code></li>
-<li><code><a title="cvtool.core.stdout" href="stdout.html">cvtool.core.stdout</a></code></li>
-<li><code><a title="cvtool.core.version_control" href="version_control.html">cvtool.core.version_control</a></code></li>
+<li>
+<h4><code><a title="cvtool.core.custom_errors.CustomError" href="#cvtool.core.custom_errors.CustomError">CustomError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="cvtool.core.custom_errors.GitAPIError" href="#cvtool.core.custom_errors.GitAPIError">GitAPIError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="cvtool.core.custom_errors.MipTableError" href="#cvtool.core.custom_errors.MipTableError">MipTableError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="cvtool.core.custom_errors.ModuleLoadError" href="#cvtool.core.custom_errors.ModuleLoadError">ModuleLoadError</a></code></h4>
+</li>
 </ul>
 </li>
 </ul>
