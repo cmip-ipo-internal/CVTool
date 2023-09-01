@@ -8,7 +8,7 @@ from cvtool.core.stdout import view
 import pandas as pd
 
 # we need a different table set for DAMIP (only)
-CMIP6Tables4DAMIP = os.environ['HOME']+ '/WIPwork/cmip6-cmor-tables/Tables/CMIP6'
+CMIP6Tables4DAMIP = os.environ['HOME']+ '/CDDS/github/cmip6-cmor-tables/Tables/CMIP6'
 
 
 num = re.compile('\d+')
@@ -133,7 +133,8 @@ if UPDATE_CVS:
             # print('fut')
             # if we are creating future occurances
             entry = damip['experiment_id'][name.replace('fut', 'hist').lower()].copy()
-            entry['parent_experiment_id'] = name
+            entry['parent_experiment_id'] = [name.replace('fut', 'hist')]  # Not perfect as fut-ghg should have hist-GHG
+            entry['parent_activity_id'] = ['LESFMIP']
             entry['experiment'] = entry['experiment'].replace(
                 'historical', 'future')
             entry['experiment_id'] = name
@@ -146,7 +147,7 @@ if UPDATE_CVS:
             entry['experiment'] = r.Experiment
             
             entry['experiment_id'] = name
-            entry['sub-experiment_id'] =  "none" or entry['sub-experiment_id']
+            entry['sub_experiment_id'] =  ["none"] or entry['sub_experiment_id']
             entry['description'] = entry.get('description') or r.Description
 
             print(f'Not in DAMIP[{name}]: {entry["experiment"]}-{entry["description"]}')
@@ -160,7 +161,7 @@ if UPDATE_CVS:
 
         # activity info
         entry['activity_id'] = ['LESFMIP']
-        entry['parent_activity_id'] = 'LESFMIP'
+        entry['parent_activity_id'] = ['LESFMIP']
 
         # dates and numbers 
         entry['tier'] = y(r.Tier)
@@ -170,7 +171,7 @@ if UPDATE_CVS:
         # if not existing add 
         entry['additional_allowed_model_components'] = 'AER CHEM BGC'.split() #entry.get('additional_allowed_model_components', 'AER CHEM BGC'.split())
         entry['required_model_components'] = entry.get('required_model_components', ['AOGCM'])
-        entry['sub-experiment_id'] =  entry.get('sub-experiment_id','none')
+        entry['sub_experiment_id'] =  entry.get('sub_experiment_id',['none'])
         
         experiments[name] = entry
 

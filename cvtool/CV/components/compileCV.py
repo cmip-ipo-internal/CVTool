@@ -82,7 +82,7 @@ def create(directory,prefix,tables,outloc=None):
 
 
                 cvdict['source_type'] = set(cvdict['source_type']).union(set(component for experiment in cvdict[entry].values() if "required_model_components" in experiment
-                       for component in experiment["required_model_components"]))
+                       for component in experiment["required_model_components"]+experiment["additional_allowed_model_components"]))
                
 
                
