@@ -26,15 +26,22 @@ from .version_control import last_commit  # Assuming version_control is properly
 
 __REPOPREFIX__ = 'cvtool.miptables.'
 
-def setup_mip_tables() -> None:
+def setup_mip_tables(commit_hash=None ) -> None:
     """
     Set up the MIP tables by checking for existing versions, downloading the latest version, and updating environment variables.
     """
     repo_url = 'https://github.com/PCMDI/mip-cmor-tables'
     table_subdir = '/mip_cmor_tables/out/'
 
-    # Get the last update from the GitHub repository
-    current = last_commit(*repo_url.split('/')[-2:])
+    term = io.terminal()
+    print('*'*term.columns)
+
+    if not commit_hash:
+        # Get the last update from the GitHub repository
+        current = last_commit(*repo_url.split('/')[-2:])
+    else:
+        current = dict(SHA=commit_hash)
+        print(f'User specified MIPTABLE version')
 
     # The location of the system temporary files
     tmp = tempfile.gettempdir()
@@ -65,6 +72,20 @@ def setup_mip_tables() -> None:
 
         # Let's download the latest repository
         repo = Repo.clone_from(repo_url + '.git', temp_dir)
+
+        # if we have specified a commit hash 
+        if commit_hash:
+            try:
+                # Check if the commit exists
+                commit = repo.commit(commit_hash)
+                # Revert to the specified commit (creates a new commit)
+                repo.git.reset('--hard', commit)
+
+                print(f"Reverted to commit {commit_hash}")
+            except git.exc.GitCommandError:
+                print(f"Commit {commit_hash} not found in the repository.")
+                print('WARN - using the latest version of the miptables instead.')
+
         assert str(repo.head.commit) == current.get('SHA')
         print('we have cloned the most up to date version')
 
@@ -80,7 +101,9 @@ def setup_mip_tables() -> None:
     os.environ['cmor_tables'] = LOCATION
     os.environ['cmor_tableorigin'] = commit_link
 
-    print(f'MipTable location: {os.environ["cmor_tables"]} \norigin: {commit_link}')
+    print(f'MipTable location: {os.environ["cmor_tables"]} \nWith Commit: {current.get("SHA")}\norigin: {commit_link}')
+    print('*'*term.columns)
 
-# Run the setup function if the module is imported
-setup_mip_tables()
+# # Run the setup function if the module is imported
+# setup_mip_tables()
+

@@ -77,6 +77,7 @@ handler = CV.CVDIR(
 
 # # Update all files with data using the example update function
 if UPDATE_CVS:
+
     deck = handler.get_activity()
     damip = handler.get_activity(activity='DAMIP',external_path=CMIP6Tables4DAMIP)
 
@@ -92,6 +93,14 @@ if UPDATE_CVS:
     experiments = {}
 
     damip_names = map(lambda x: x.lower(), damip['experiment_id'])
+
+    print('\nDAMIP contains:')
+    for i in damip_names:
+        print('\t-'+i)
+
+    print('\nLESEFMIP table extracted names(see lesef/data dir):')
+    for i in df.Name:
+        print('\t-'+i)
 
     for _, r in df.iterrows():
         name = r.Name
@@ -122,8 +131,7 @@ if UPDATE_CVS:
 
         else:
             # view(r.to_dict())
-            print('^^^ missing')
-
+        
             entry = {}
             entry['experiment'] = r.Experiment
             entry['description'] = entry.get('description') or r.Description
@@ -134,6 +142,7 @@ if UPDATE_CVS:
             entry['end'] = (r['End year'])
 
             experiments[name] = entry
+            print(f'Not in DAMIP[{name}]: {entry["experiment"]}-{entry["description"]}')
 
 
 ##############################################

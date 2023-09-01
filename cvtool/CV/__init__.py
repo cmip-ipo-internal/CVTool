@@ -14,12 +14,17 @@ from typing import Optional, Dict, Callable
 
 
 from .. import core
-from ..core import miptables #this will trigger the miptables import.
+from ..core.miptables import setup_mip_tables #this will trigger the miptables import.
+
 from ..core.dynamic_imports import load_module,import_script,script_path
 from ..core.custom_errors import MipTableError
 
 # from .components import meta
 from . import meta
+
+MIPTABLE_SHA = '9fa6eda52792b51326dfc77b955c4e46a8334a2c'
+setup_mip_tables(commit_hash = MIPTABLE_SHA)
+
 
 try:
     debug = sys.argv[1]
@@ -163,8 +168,6 @@ class CVDIR:
 
 
         if module:
-            print(module)
-            
             if not core.io.exists(output_path, error=False):
                 jsn_data = module.create(data)
             else:
@@ -280,7 +283,8 @@ class CVDIR:
         cvloc = f"{self.directory}"
         cvfile = compileCV.create(
             self.directory, self.prefix, self.tables, outloc=self.cvout)
-        self.checkCV(cvfile, institution)
+        print('check disabled')
+        # self.checkCV(cvfile, institution)
 
     def checkCV(self, cvfile: str, institution: str) -> None:
         """

@@ -207,3 +207,8 @@ def relative_to(absolte,current):
     relative_path = os.path.relpath(absolte, current_script_path)
 
     return relative_path
+
+
+def terminal():
+    size = os.get_terminal_size()
+    return size
