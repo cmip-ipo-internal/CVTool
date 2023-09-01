@@ -96,8 +96,22 @@ def create(directory,prefix,tables,outloc=None):
             
             if &#39;experiment_id&#39; in entry:
                 # this section updates the sources. We expect this to come afterwards, and therefore this should not throw an exception and should work as expected. 
+                
+                
+                # print(&#39;-----&#39;)
+                # print(cvdict[entry].values())
+                # break
+                for experiment in cvdict[entry].values():
+                    for component in experiment[&#34;required_model_components&#34;]:
+                        print (&#39;++&#39;+component, type( experiment[&#34;required_model_components&#34;]),entry)
+
+
+
+
                 cvdict[&#39;source_type&#39;] = set(cvdict[&#39;source_type&#39;]).union(set(component for experiment in cvdict[entry].values() if &#34;required_model_components&#34; in experiment
                        for component in experiment[&#34;required_model_components&#34;]))
+               
+
                
                 
 
@@ -124,6 +138,8 @@ def create(directory,prefix,tables,outloc=None):
 
 
     #  update this to the correct format. 
+
+
 
     cvdict[&#39;source_type&#39;] = dict([[s,source_type[s]] for s in cvdict[&#39;source_type&#39;]])
 
@@ -195,8 +211,22 @@ def create(directory,prefix,tables,outloc=None):
             
             if &#39;experiment_id&#39; in entry:
                 # this section updates the sources. We expect this to come afterwards, and therefore this should not throw an exception and should work as expected. 
+                
+                
+                # print(&#39;-----&#39;)
+                # print(cvdict[entry].values())
+                # break
+                for experiment in cvdict[entry].values():
+                    for component in experiment[&#34;required_model_components&#34;]:
+                        print (&#39;++&#39;+component, type( experiment[&#34;required_model_components&#34;]),entry)
+
+
+
+
                 cvdict[&#39;source_type&#39;] = set(cvdict[&#39;source_type&#39;]).union(set(component for experiment in cvdict[entry].values() if &#34;required_model_components&#34; in experiment
                        for component in experiment[&#34;required_model_components&#34;]))
+               
+
                
                 
 
@@ -223,6 +253,8 @@ def create(directory,prefix,tables,outloc=None):
 
 
     #  update this to the correct format. 
+
+
 
     cvdict[&#39;source_type&#39;] = dict([[s,source_type[s]] for s in cvdict[&#39;source_type&#39;]])
 

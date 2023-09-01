@@ -235,7 +235,12 @@ def relative_to(absolte,current):
     # Calculate the relative path
     relative_path = os.path.relpath(absolte, current_script_path)
 
-    return relative_path</code></pre>
+    return relative_path
+
+
+def terminal():
+    size = os.get_terminal_size()
+    return size</code></pre>
 </details>
 </section>
 <section>
@@ -660,6 +665,20 @@ def relative_to(absolte,current):
         print(f&#34;Error deleting directory {directory_path}: {e}&#34;)</code></pre>
 </details>
 </dd>
+<dt id="cvtool.core.io.terminal"><code class="name flex">
+<span>def <span class="ident">terminal</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def terminal():
+    size = os.get_terminal_size()
+    return size</code></pre>
+</details>
+</dd>
 <dt id="cvtool.core.io.write_temp"><code class="name flex">
 <span>def <span class="ident">write_temp</span></span>(<span>prefix: str, content: dict) ‑> None</span>
 </code></dt>
@@ -717,6 +736,7 @@ def relative_to(absolte,current):
 <li><code><a title="cvtool.core.io.relative_to" href="#cvtool.core.io.relative_to">relative_to</a></code></li>
 <li><code><a title="cvtool.core.io.relpath" href="#cvtool.core.io.relpath">relpath</a></code></li>
 <li><code><a title="cvtool.core.io.rmdir" href="#cvtool.core.io.rmdir">rmdir</a></code></li>
+<li><code><a title="cvtool.core.io.terminal" href="#cvtool.core.io.terminal">terminal</a></code></li>
 <li><code><a title="cvtool.core.io.write_temp" href="#cvtool.core.io.write_temp">write_temp</a></code></li>
 </ul>
 </li>
