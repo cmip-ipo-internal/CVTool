@@ -1,4 +1,4 @@
-import sys,os
+import sys,os,re
 sys.path.append('../../')
 #  keep this 
 import pdb
@@ -11,6 +11,8 @@ import pandas as pd
 CMIP6Tables4DAMIP = os.environ['HOME']+ '/WIPwork/cmip6-cmor-tables/Tables/CMIP6'
 
 
+num = re.compile('\d+')
+y = lambda x: int(num.findall(str(x))[0])
 
 ##############################################
 # env variables
@@ -81,6 +83,20 @@ if UPDATE_CVS:
     deck = handler.get_activity()
     damip = handler.get_activity(activity='DAMIP',external_path=CMIP6Tables4DAMIP)
 
+    # lets solve the case issues when indexing by duplicating all. 
+    #  there will be a more efficient way of doing this. 
+    # Create a new dictionary to store modified values
+    new_damip = {}
+
+    for entry in damip:
+        new_damip[entry] = {}  # Create an empty dictionary for each entry
+        for key, value in damip[entry].items():
+            new_damip[entry][key.lower()] = value
+
+    # Update the original damip dictionary
+    damip = new_damip
+    del new_damip
+
 
     '''
     Lets extract the names 
@@ -92,7 +108,7 @@ if UPDATE_CVS:
 
     experiments = {}
 
-    damip_names = map(lambda x: x.lower(), damip['experiment_id'])
+    damip_names = tuple(map(lambda x: x.lower(), damip['experiment_id']))
 
     print('\nDAMIP contains:')
     for i in damip_names:
@@ -104,45 +120,59 @@ if UPDATE_CVS:
 
     for _, r in df.iterrows():
         name = r.Name
-        if name.lower() in damip_names:
-            #  existing historical
-            entry = damip['experiment_id'][name].copy()
-            entry['activity_id'] = ['LESFMIP']
-            entry['description'] = entry.get('description') or r.Description
-            entry['tier'] = int(r.Tier)
-            entry['start'] = int(r['Start year'])
-            entry['end'] = int(r['End year'])
 
-            experiments[name] = entry
+
+        if name.lower() in damip_names:
+            # print('hist')
+
+            #  existing historical in damip
+            entry = damip['experiment_id'][name.lower()].copy()
+            entry['description'] = entry.get('description') or r.Description
 
         elif name.lower().replace('fut', 'hist') in damip_names:
-            entry = damip['experiment_id'][name.replace('fut', 'hist')].copy()
+            # print('fut')
+            # if we are creating future occurances
+            entry = damip['experiment_id'][name.replace('fut', 'hist').lower()].copy()
+            entry['parent_experiment_id'] = name
             entry['experiment'] = entry['experiment'].replace(
                 'historical', 'future')
-
-            entry['activity_id'] = ['LESFMIP']
-            entry['description'] = entry.get('description') or r.Description
             entry['experiment_id'] = name
-            entry['tier'] = int(r.Tier)
-            entry['start'] = (r['Start year'])
-            entry['end'] = (r['End year'])
-
-            experiments[name] = entry
+            entry['description'] = entry.get('description') or r.Description
 
         else:
             # view(r.to_dict())
-        
+            #  everything else unknown
             entry = {}
             entry['experiment'] = r.Experiment
-            entry['description'] = entry.get('description') or r.Description
-            entry['activity_id'] = ['LESFMIP']
+            
             entry['experiment_id'] = name
-            entry['tier'] = int(r.Tier)
-            entry['start'] = (r['Start year'])
-            entry['end'] = (r['End year'])
+            entry['sub-experiment_id'] =  "none" or entry['sub-experiment_id']
+            entry['description'] = entry.get('description') or r.Description
 
-            experiments[name] = entry
             print(f'Not in DAMIP[{name}]: {entry["experiment"]}-{entry["description"]}')
+
+        ####################
+        #  do this for all! 
+        ####################
+
+        
+        
+
+        # activity info
+        entry['activity_id'] = ['LESFMIP']
+        entry['parent_activity_id'] = 'LESFMIP'
+
+        # dates and numbers 
+        entry['tier'] = y(r.Tier)
+        entry['start'] = y(r['Start year'])
+        entry['end'] = y(r['End year'])
+
+        # if not existing add 
+        entry['additional_allowed_model_components'] = 'AER CHEM BGC'.split() #entry.get('additional_allowed_model_components', 'AER CHEM BGC'.split())
+        entry['required_model_components'] = entry.get('required_model_components', ['AOGCM'])
+        entry['sub-experiment_id'] =  entry.get('sub-experiment_id','none')
+        
+        experiments[name] = entry
 
 
 ##############################################

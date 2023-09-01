@@ -67,8 +67,24 @@ def create(directory,prefix,tables,outloc=None):
             
             if 'experiment_id' in entry:
                 # this section updates the sources. We expect this to come afterwards, and therefore this should not throw an exception and should work as expected. 
+                
+                
+
+                # print('-----')
+                # print(cvdict[entry].values())
+                # break
+                # for experiment in cvdict[entry].values():
+                #     print(bool(experiment))
+                #     for component in experiment["required_model_components"]:
+                #         print ('++'+component, type( experiment["required_model_components"]),entry)
+
+
+
+
                 cvdict['source_type'] = set(cvdict['source_type']).union(set(component for experiment in cvdict[entry].values() if "required_model_components" in experiment
                        for component in experiment["required_model_components"]))
+               
+
                
                 
 
@@ -95,6 +111,8 @@ def create(directory,prefix,tables,outloc=None):
 
 
     #  update this to the correct format. 
+
+
 
     cvdict['source_type'] = dict([[s,source_type[s]] for s in cvdict['source_type']])
 
