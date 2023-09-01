@@ -8,7 +8,12 @@ from cvtool.core.stdout import view
 import pandas as pd
 
 # we need a different table set for DAMIP (only)
-CMIP6Tables4DAMIP = os.environ['HOME']+ '/CDDS/github/cmip6-cmor-tables/Tables/CMIP6'
+
+if  os.getlogin() == 'daniel.ellis':
+    CMIP6Tables4DAMIP = os.environ['HOME']+ '/WIPwork/cmip6-cmor-tables/Tables/CMIP6'
+else:
+    CMIP6Tables4DAMIP = os.environ['HOME']+ '/CDDS/github/cmip6-cmor-tables/Tables/CMIP6'
+
 
 
 num = re.compile('\d+')
@@ -87,8 +92,9 @@ if UPDATE_CVS:
     #  there will be a more efficient way of doing this. 
     # Create a new dictionary to store modified values
     new_damip = {}
-
+    damip_case = {}
     for entry in damip:
+        damip_case[entry.lower()] = entry
         new_damip[entry] = {}  # Create an empty dictionary for each entry
         for key, value in damip[entry].items():
             new_damip[entry][key.lower()] = value
@@ -133,7 +139,7 @@ if UPDATE_CVS:
             # print('fut')
             # if we are creating future occurances
             entry = damip['experiment_id'][name.replace('fut', 'hist').lower()].copy()
-            entry['parent_experiment_id'] = [name.replace('fut', 'hist')]  # Not perfect as fut-ghg should have hist-GHG
+            entry['parent_experiment_id'] = [damip_case.get(name.replace('fut', 'hist'))]  # Not perfect as fut-ghg should have hist-GHG
             entry['parent_activity_id'] = ['LESFMIP']
             entry['experiment'] = entry['experiment'].replace(
                 'historical', 'future')
