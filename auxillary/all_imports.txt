@@ -1,0 +1,455 @@
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/__init__.py
+Imports:
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/__main__.py
+Imports:
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/ESGF/__init__.py
+Imports:
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/ESGF/cv2ini.py
+Imports:
+core.stdout.log
+json
+re
+glob
+core.io.exists
+typing.Any
+os
+pprint.pprint
+sys
+typing.Dict
+collections.Counter
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/ESGF/read.py
+Imports:
+core.stdout.log
+pprint
+re
+shutil
+os
+configparser
+pandas
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/TABLES/__init__.py
+Imports:
+re
+json
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/TABLES/test_functions.py
+Imports:
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/core/dynamic_imports.py
+Imports:
+importlib.abc
+importlib.machinery
+custom_errors.*
+importlib
+os
+importlib.util
+inspect
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/core/miptables.py
+Imports:
+glob
+git.Repo
+tempfile
+typing.Any
+typing.List
+os
+version_control.last_commit
+typing.Dict
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/core/checksum.py
+Imports:
+hashlib
+json
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/core/custom_errors.py
+Imports:
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/core/curses_toolbox.py
+Imports:
+curses
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/core/io.py
+Imports:
+json
+glob
+shutil
+tempfile
+typing.Union
+os
+typing.Any
+inspect
+typing.Dict
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/core/__init__.py
+Imports:
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/core/version_control.py
+Imports:
+io.read_temp
+requests
+custom_errors.GitAPIError
+subprocess
+git.Repo
+os
+io.write_temp
+datetime.datetime
+typing.Dict
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/core/stdout.py
+Imports:
+logging
+requests
+pprint
+datetime.date
+subprocess
+os
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/__init__.py
+Imports:
+core.dynamic_imports.script_path
+typing.Optional
+json
+core.miptables
+typing.Callable
+core.dynamic_imports.load_module
+core.dynamic_imports.import_script
+pdb
+os
+core.custom_errors.MipTableError
+importlib.util
+sys
+typing.Dict
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/meta.py
+Imports:
+os
+sys
+cvtool.core
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/archive/activity.py
+Imports:
+core.stdout.log
+json
+core.stdout.yymmdd
+pprint
+glob
+time
+core.io.exists
+core.curses_toolbox.CursesSelector
+os
+core.curses_toolbox.curses
+argparse
+core.stdout.git_user
+core.curses_toolbox.CursesEditor
+sys
+collections.Counter
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/archive/experiment_checks.py
+Imports:
+ast
+json
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/archive/activity_id/__init__.py
+Imports:
+os
+sys
+json
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/archive/mip_era/__init__.py
+Imports:
+os
+sys
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/archive/license/__init__.py
+Imports:
+os
+sys
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/archive/template/__init__.py
+Imports:
+os
+sys
+json
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/archive/meta/__init__.py
+Imports:
+os
+sys
+core
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/archive/compileCV/variables.py
+Imports:
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/archive/compileCV/__init__.py
+Imports:
+glob.glob
+re
+variables.structure
+shutil
+variables.frequencypattern
+os
+variables.institutions
+importlib.util
+sys
+variables.template
+variables.source_type
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/archive/sub_experiment_id/__init__.py
+Imports:
+os
+sys
+json
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/archive/required_global_attributes/__init__.py
+Imports:
+os
+sys
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/archive/source_id/__init__.py
+Imports:
+os
+sys
+json
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/archive/further_info_url/__init__.py
+Imports:
+os
+sys
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/archive/DRS/__init__.py
+Imports:
+os
+sys
+json
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/archive/experiment_idold/__init__.py
+Imports:
+os
+sys
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/archive/experiment_idold/etest.py
+Imports:
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/archive/experiment_id/__init__.py
+Imports:
+os
+sys
+json
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/components/further_info_url.py
+Imports:
+os
+sys
+cvtool.core
+cvtool.CV.meta
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/components/source_id.py
+Imports:
+json
+os
+cvtool.core
+sys
+cvtool.CV.meta
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/components/required_global_attributes.py
+Imports:
+os
+sys
+cvtool.core
+cvtool.CV.meta
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/components/sub_experiment_id.py
+Imports:
+json
+os
+cvtool.core
+sys
+cvtool.CV.meta
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/components/mip_era.py
+Imports:
+os
+sys
+cvtool.core
+cvtool.CV.meta
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/components/__init__.py
+Imports:
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/components/compileCV-variables.py
+Imports:
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/components/experiment_id.py
+Imports:
+json
+os
+cvtool.core
+sys
+cvtool.CV.meta
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/components/compileCV.py
+Imports:
+glob.glob
+re
+shutil
+os
+cvtool.core
+importlib.util
+sys
+ast
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/components/template.py
+Imports:
+os
+sys
+json
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/components/license.py
+Imports:
+os
+sys
+cvtool.core
+cvtool.CV.meta
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/components/DRS.py
+Imports:
+json
+os
+cvtool.core
+sys
+cvtool.CV.meta
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CV/components/activity_id.py
+Imports:
+json
+os
+cvtool.core
+sys
+cvtool.CV.meta
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CMORlib/run.py
+Imports:
+numpy
+cmor
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CMORlib/__init__.py
+Imports:
+run.CMORise
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CMORlib/variable_autotest.py
+Imports:
+numpy
+cmor
+argparse
+new_Input.create
+
+File: /Users/daniel.ellis/WIPwork/CVTool/cvtool/CMORlib/new_input.py
+Imports:
+os
+json
+
+File: /Users/daniel.ellis/WIPwork/CVTool/mip_specific/test_cmor/test.py
+Imports:
+__future__.print_function
+cmor
+
+File: /Users/daniel.ellis/WIPwork/CVTool/mip_specific/test_cmor/testcvtool.py
+Imports:
+__future__.print_function
+cmor
+json
+os
+
+File: /Users/daniel.ellis/WIPwork/CVTool/mip_specific/lesf/create.py
+Imports:
+cvtool.core.stdout.view
+cvtool.CV
+cvtool
+pdb
+os
+sys
+pandas
+
+File: /Users/daniel.ellis/WIPwork/CVTool/mip_specific/lesf/mip-cmor-tables/test_python_1D_var_segfaults.py
+Imports:
+cmor
+
+File: /Users/daniel.ellis/WIPwork/CVTool/mip_specific/lesf/mip-cmor-tables/test_python_1D_var_works.py
+Imports:
+cmor
+
+File: /Users/daniel.ellis/WIPwork/CVTool/mip_specific/lesf/mip-cmor-tables/mip_cmor_tables/setup.py
+Imports:
+setuptools.find_packages
+setuptools.setup
+typing.AnyStr
+typing.Tuple
+typing.Union
+typing.List
+os
+typing.Any
+imp
+
+File: /Users/daniel.ellis/WIPwork/CVTool/mip_specific/lesf/mip-cmor-tables/mip_cmor_tables/mip_cmor_tables/export37.py
+Imports:
+json
+mip_cmor_tables.controlled_vocab.CVCollection
+collections.OrderedDict
+mip_cmor_tables.MIPTableCollection
+os
+copy.copy
+mip_cmor_tables.ChecksummedJSON
+
+File: /Users/daniel.ellis/WIPwork/CVTool/mip_specific/lesf/mip-cmor-tables/mip_cmor_tables/mip_cmor_tables/__init__.py
+Imports:
+logging
+dataclasses.dataclass
+_collections_abc.dict_values
+json
+typing.Optional
+_collections_abc.dict_keys
+collections.OrderedDict
+hashlib
+typing.Any
+os
+typing.List
+warnings.warn
+copy.deepcopy
+typing.Dict
+dataclasses.field
+dataclasses.asdict
+
+File: /Users/daniel.ellis/WIPwork/CVTool/mip_specific/lesf/mip-cmor-tables/mip_cmor_tables/mip_cmor_tables/controlled_vocab.py
+Imports:
+logging
+json
+typing.Optional
+glob
+mip_cmor_tables.ChecksummedJSON
+os
+typing.List
+warnings.warn
+typing.Dict
+typing.Any
+
+File: /Users/daniel.ellis/WIPwork/CVTool/mip_specific/lesf/mip-cmor-tables/mip_cmor_tables/mip_cmor_tables/tests/test_collection.py
+Imports:
+unittest
+json
+mip_cmor_tables.MIPTableCollection
+os
+mip_cmor_tables.MIPVariable
+copy.deepcopy
+mip_cmor_tables.ChecksummedJSON
+warnings
+
+File: /Users/daniel.ellis/WIPwork/CVTool/mip_specific/lesf/mip-cmor-tables/src/mtlib.py
+Imports:
+copy.deepcopy
+hashlib
+json
+

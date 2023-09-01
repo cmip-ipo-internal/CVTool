@@ -1,0 +1,231 @@
+cmor==3.7.2
+  ├─ hdf5 1.14.1 [required: >=1.14.1,<1.14.2.0a0]
+  │  ├─ libaec 1.0.6 [required: >=1.0.6,<2.0a0]
+  │  │  └─ libcxx 16.0.6 [required: >=14.0.6]
+  │  ├─ libcurl 8.2.0 [required: >=8.1.2,<9.0a0]
+  │  │  ├─ krb5 1.21.1 [required: >=1.21.1,<1.22.0a0]
+  │  │  │  ├─ libcxx 16.0.6 [required: >=15.0.7]
+  │  │  │  ├─ libedit 3.1.20191231 [required: >=3.1.20191231,<4.0a0]
+  │  │  │  │  └─ ncurses 6.4 [required: >=6.2,<7.0.0a0]
+  │  │  │  └─ openssl 3.1.2 [required: >=3.1.1,<4.0a0]
+  │  │  │     └─ ca-certificates 2023.7.22 [required: any]
+  │  │  ├─ libnghttp2 1.52.0 [required: >=1.52.0,<2.0a0]
+  │  │  │  ├─ c-ares 1.19.1 [required: >=1.18.1,<2.0a0]
+  │  │  │  ├─ libcxx 16.0.6 [required: >=14.0.6]
+  │  │  │  ├─ libev 4.33 [required: >=4.33,<4.34.0a0]
+  │  │  │  ├─ libzlib 1.2.13 [required: >=1.2.13,<1.3.0a0]
+  │  │  │  └─ openssl 3.1.2 [required: >=3.0.8,<4.0a0]
+  │  │  │     └─ dependencies of openssl displayed above
+  │  │  ├─ libssh2 1.11.0 [required: >=1.11.0,<2.0a0]
+  │  │  │  ├─ libzlib 1.2.13 [required: >=1.2.13,<1.3.0a0]
+  │  │  │  └─ openssl 3.1.2 [required: >=3.1.1,<4.0a0]
+  │  │  │     └─ dependencies of openssl displayed above
+  │  │  ├─ libzlib 1.2.13 [required: >=1.2.13,<1.3.0a0]
+  │  │  ├─ openssl 3.1.2 [required: >=3.1.1,<4.0a0]
+  │  │  │  └─ dependencies of openssl displayed above
+  │  │  └─ zstd 1.5.2 [required: >=1.5.2,<1.6.0a0]
+  │  │     └─ libzlib 1.2.13 [required: >=1.2.13,<1.3.0a0]
+  │  ├─ libcxx 16.0.6 [required: >=15.0.7]
+  │  ├─ libgfortran 5.0.0 [required: 5.*]
+  │  │  └─ libgfortran5 12.3.0 [required: any]
+  │  │     └─ llvm-openmp 16.0.6 [required: >=8.0.0]
+  │  ├─ libgfortran5 12.3.0 [required: >=12.2.0]
+  │  │  └─ dependencies of libgfortran5 displayed above
+  │  ├─ libzlib 1.2.13 [required: >=1.2.13,<1.3.0a0]
+  │  └─ openssl 3.1.2 [required: >=3.1.1,<4.0a0]
+  │     └─ dependencies of openssl displayed above
+  ├─ json-c 0.16 [required: >=0.16,<0.17.0a0]
+  ├─ libgfortran 5.0.0 [required: 5.*]
+  │  └─ dependencies of libgfortran displayed above
+  ├─ libgfortran5 12.3.0 [required: >=12.2.0]
+  │  └─ dependencies of libgfortran5 displayed above
+  ├─ libnetcdf 4.9.2 [required: >=4.9.2,<4.9.3.0a0]
+  │  ├─ aws-sdk-cpp 1.10.57 [required: >=1.10.57,<1.10.58.0a0]
+  │  │  ├─ aws-c-common 0.8.23 [required: >=0.8.23,<0.8.24.0a0]
+  │  │  ├─ aws-c-event-stream 0.3.1 [required: >=0.3.1,<0.3.2.0a0]
+  │  │  │  ├─ aws-c-common 0.8.23 [required: >=0.8.23,<0.8.24.0a0]
+  │  │  │  ├─ aws-c-io 0.13.28 [required: >=0.13.28,<0.13.29.0a0]
+  │  │  │  │  ├─ aws-c-cal 0.6.0 [required: >=0.6.0,<0.6.1.0a0]
+  │  │  │  │  │  ├─ aws-c-common 0.8.23 [required: >=0.8.23,<0.8.24.0a0]
+  │  │  │  │  │  └─ openssl 3.1.2 [required: >=3.1.1,<4.0a0]
+  │  │  │  │  │     └─ dependencies of openssl displayed above
+  │  │  │  │  └─ aws-c-common 0.8.23 [required: >=0.8.23,<0.8.24.0a0]
+  │  │  │  ├─ aws-checksums 0.1.16 [required: >=0.1.16,<0.1.17.0a0]
+  │  │  │  │  └─ aws-c-common 0.8.23 [required: >=0.8.23,<0.8.24.0a0]
+  │  │  │  └─ libcxx 16.0.6 [required: >=15.0.7]
+  │  │  ├─ aws-crt-cpp 0.20.3 [required: >=0.20.3,<0.20.4.0a0]
+  │  │  │  ├─ aws-c-auth 0.7.0 [required: >=0.7.0,<0.7.1.0a0]
+  │  │  │  │  ├─ aws-c-cal 0.6.0 [required: >=0.6.0,<0.6.1.0a0]
+  │  │  │  │  │  └─ dependencies of aws-c-cal displayed above
+  │  │  │  │  ├─ aws-c-common 0.8.23 [required: >=0.8.23,<0.8.24.0a0]
+  │  │  │  │  ├─ aws-c-http 0.7.11 [required: >=0.7.11,<0.7.12.0a0]
+  │  │  │  │  │  ├─ aws-c-cal 0.6.0 [required: >=0.6.0,<0.6.1.0a0]
+  │  │  │  │  │  │  └─ dependencies of aws-c-cal displayed above
+  │  │  │  │  │  ├─ aws-c-common 0.8.23 [required: >=0.8.23,<0.8.24.0a0]
+  │  │  │  │  │  ├─ aws-c-compression 0.2.17 [required: >=0.2.17,<0.2.18.0a0]
+  │  │  │  │  │  │  └─ aws-c-common 0.8.23 [required: >=0.8.23,<0.8.24.0a0]
+  │  │  │  │  │  └─ aws-c-io 0.13.28 [required: >=0.13.28,<0.13.29.0a0]
+  │  │  │  │  │     └─ dependencies of aws-c-io displayed above
+  │  │  │  │  ├─ aws-c-io 0.13.28 [required: >=0.13.28,<0.13.29.0a0]
+  │  │  │  │  │  └─ dependencies of aws-c-io displayed above
+  │  │  │  │  └─ aws-c-sdkutils 0.1.11 [required: >=0.1.11,<0.1.12.0a0]
+  │  │  │  │     └─ aws-c-common 0.8.23 [required: >=0.8.23,<0.8.24.0a0]
+  │  │  │  ├─ aws-c-cal 0.6.0 [required: >=0.6.0,<0.6.1.0a0]
+  │  │  │  │  └─ dependencies of aws-c-cal displayed above
+  │  │  │  ├─ aws-c-common 0.8.23 [required: >=0.8.23,<0.8.24.0a0]
+  │  │  │  ├─ aws-c-event-stream 0.3.1 [required: >=0.3.1,<0.3.2.0a0]
+  │  │  │  │  └─ dependencies of aws-c-event-stream displayed above
+  │  │  │  ├─ aws-c-http 0.7.11 [required: >=0.7.11,<0.7.12.0a0]
+  │  │  │  │  └─ dependencies of aws-c-http displayed above
+  │  │  │  ├─ aws-c-io 0.13.28 [required: >=0.13.28,<0.13.29.0a0]
+  │  │  │  │  └─ dependencies of aws-c-io displayed above
+  │  │  │  ├─ aws-c-mqtt 0.8.14 [required: >=0.8.14,<0.8.15.0a0]
+  │  │  │  │  ├─ aws-c-common 0.8.23 [required: >=0.8.23,<0.8.24.0a0]
+  │  │  │  │  ├─ aws-c-http 0.7.11 [required: >=0.7.11,<0.7.12.0a0]
+  │  │  │  │  │  └─ dependencies of aws-c-http displayed above
+  │  │  │  │  └─ aws-c-io 0.13.28 [required: >=0.13.28,<0.13.29.0a0]
+  │  │  │  │     └─ dependencies of aws-c-io displayed above
+  │  │  │  ├─ aws-c-s3 0.3.13 [required: >=0.3.13,<0.3.14.0a0]
+  │  │  │  │  ├─ aws-c-auth 0.7.0 [required: >=0.7.0,<0.7.1.0a0]
+  │  │  │  │  │  └─ dependencies of aws-c-auth displayed above
+  │  │  │  │  ├─ aws-c-cal 0.6.0 [required: >=0.6.0,<0.6.1.0a0]
+  │  │  │  │  │  └─ dependencies of aws-c-cal displayed above
+  │  │  │  │  ├─ aws-c-common 0.8.23 [required: >=0.8.23,<0.8.24.0a0]
+  │  │  │  │  ├─ aws-c-http 0.7.11 [required: >=0.7.11,<0.7.12.0a0]
+  │  │  │  │  │  └─ dependencies of aws-c-http displayed above
+  │  │  │  │  ├─ aws-c-io 0.13.28 [required: >=0.13.28,<0.13.29.0a0]
+  │  │  │  │  │  └─ dependencies of aws-c-io displayed above
+  │  │  │  │  └─ aws-checksums 0.1.16 [required: >=0.1.16,<0.1.17.0a0]
+  │  │  │  │     └─ dependencies of aws-checksums displayed above
+  │  │  │  ├─ aws-c-sdkutils 0.1.11 [required: >=0.1.11,<0.1.12.0a0]
+  │  │  │  │  └─ dependencies of aws-c-sdkutils displayed above
+  │  │  │  └─ libcxx 16.0.6 [required: >=15.0.7]
+  │  │  ├─ libcurl 8.2.0 [required: >=8.1.2,<9.0a0]
+  │  │  │  └─ dependencies of libcurl displayed above
+  │  │  ├─ libcxx 16.0.6 [required: >=15.0.7]
+  │  │  ├─ libzlib 1.2.13 [required: >=1.2.13,<1.3.0a0]
+  │  │  └─ openssl 3.1.2 [required: >=3.1.1,<4.0a0]
+  │  │     └─ dependencies of openssl displayed above
+  │  ├─ blosc 1.21.4 [required: >=1.21.4,<2.0a0]
+  │  │  ├─ libcxx 16.0.6 [required: >=15.0.7]
+  │  │  ├─ libzlib 1.2.13 [required: >=1.2.13,<1.3.0a0]
+  │  │  ├─ lz4-c 1.9.4 [required: >=1.9.3,<1.10.0a0]
+  │  │  │  └─ libcxx 16.0.6 [required: >=14.0.6]
+  │  │  ├─ snappy 1.1.10 [required: >=1.1.10,<2.0a0]
+  │  │  │  └─ libcxx 16.0.6 [required: >=14.0.6]
+  │  │  └─ zstd 1.5.2 [required: >=1.5.2,<1.6.0a0]
+  │  │     └─ dependencies of zstd displayed above
+  │  ├─ bzip2 1.0.8 [required: >=1.0.8,<2.0a0]
+  │  ├─ hdf4 4.2.15 [required: >=4.2.15,<4.2.16.0a0]
+  │  │  ├─ libcxx 16.0.6 [required: >=14.0.6]
+  │  │  ├─ libjpeg-turbo 2.1.5.1 [required: >=2.1.5.1,<3.0a0]
+  │  │  └─ libzlib 1.2.13 [required: >=1.2.13,<1.3.0a0]
+  │  ├─ hdf5 1.14.1 [required: >=1.14.1,<1.14.2.0a0]
+  │  │  └─ dependencies of hdf5 displayed above
+  │  ├─ libaec 1.0.6 [required: >=1.0.6,<2.0a0]
+  │  │  └─ dependencies of libaec displayed above
+  │  ├─ libcurl 8.2.0 [required: >=8.1.2,<9.0a0]
+  │  │  └─ dependencies of libcurl displayed above
+  │  ├─ libcxx 16.0.6 [required: >=15.0.7]
+  │  ├─ libxml2 2.11.4 [required: >=2.11.4,<2.12.0a0]
+  │  │  ├─ icu 72.1 [required: >=72.1,<73.0a0]
+  │  │  ├─ libiconv 1.17 [required: >=1.17,<2.0a0]
+  │  │  ├─ libzlib 1.2.13 [required: >=1.2.13,<1.3.0a0]
+  │  │  └─ xz 5.2.6 [required: >=5.2.6,<6.0a0]
+  │  ├─ libzip 1.9.2 [required: >=1.9.2,<2.0a0]
+  │  │  ├─ bzip2 1.0.8 [required: >=1.0.8,<2.0a0]
+  │  │  ├─ libzlib 1.2.13 [required: >=1.2.12,<1.3.0a0]
+  │  │  └─ openssl 3.1.2 [required: >=3.0.5,<4.0a0]
+  │  │     └─ dependencies of openssl displayed above
+  │  ├─ libzlib 1.2.13 [required: >=1.2.13,<1.3.0a0]
+  │  ├─ openssl 3.1.2 [required: >=3.1.1,<4.0a0]
+  │  │  └─ dependencies of openssl displayed above
+  │  └─ zstd 1.5.2 [required: >=1.5.2,<1.6.0a0]
+  │     └─ dependencies of zstd displayed above
+  ├─ libuuid 2.38.1 [required: >=2.38.1,<3.0a0]
+  ├─ netcdf4 1.6.4 [required: any]
+  │  ├─ certifi 2023.7.22 [required: any]
+  │  │  └─ python 3.11.4 [required: >=3.7]
+  │  │     ├─ bzip2 1.0.8 [required: >=1.0.8,<2.0a0]
+  │  │     ├─ libexpat 2.5.0 [required: >=2.5.0,<3.0a0]
+  │  │     ├─ libffi 3.4.2 [required: >=3.4,<4.0a0]
+  │  │     ├─ libsqlite 3.42.0 [required: >=3.42.0,<4.0a0]
+  │  │     │  └─ libzlib 1.2.13 [required: >=1.2.13,<1.3.0a0]
+  │  │     ├─ libzlib 1.2.13 [required: >=1.2.13,<1.3.0a0]
+  │  │     ├─ ncurses 6.4 [required: >=6.4,<7.0a0]
+  │  │     ├─ openssl 3.1.2 [required: >=3.1.1,<4.0a0]
+  │  │     │  └─ dependencies of openssl displayed above
+  │  │     ├─ readline 8.2 [required: >=8.2,<9.0a0]
+  │  │     │  └─ ncurses 6.4 [required: >=6.3,<7.0a0]
+  │  │     ├─ tk 8.6.12 [required: >=8.6.12,<8.7.0a0]
+  │  │     │  └─ libzlib 1.2.13 [required: >=1.2.11,<1.3.0a0]
+  │  │     ├─ tzdata 2023c [required: any]
+  │  │     ├─ xz 5.2.6 [required: >=5.2.6,<6.0a0]
+  │  │     └─ pip 23.2.1 [required: any]
+  │  │        ├─ python 3.11.4 [required: >=3.7]
+  │  │        │  └─ dependencies of python displayed above
+  │  │        ├─ setuptools 68.0.0 [required: any]
+  │  │        │  └─ python 3.11.4 [required: >=3.7]
+  │  │        │     └─ dependencies of python displayed above
+  │  │        └─ wheel 0.41.0 [required: any]
+  │  │           └─ python 3.11.4 [required: >=3.7]
+  │  │              └─ dependencies of python displayed above
+  │  ├─ cftime 1.6.2 [required: any]
+  │  │  ├─ numpy 1.25.1 [required: >=1.23.4,<2.0a0]
+  │  │  │  ├─ libblas 3.9.0 [required: >=3.9.0,<4.0a0]
+  │  │  │  │  └─ libopenblas 0.3.23 [required: >=0.3.23,<1.0a0]
+  │  │  │  │     ├─ libgfortran 5.0.0 [required: 5.*]
+  │  │  │  │     │  └─ dependencies of libgfortran displayed above
+  │  │  │  │     ├─ libgfortran5 12.3.0 [required: >=11.3.0]
+  │  │  │  │     │  └─ dependencies of libgfortran5 displayed above
+  │  │  │  │     └─ llvm-openmp 16.0.6 [required: >=14.0.6]
+  │  │  │  ├─ libcblas 3.9.0 [required: >=3.9.0,<4.0a0]
+  │  │  │  │  └─ libblas 3.9.0 [required: 3.9.0, 17_osx64_openblas]
+  │  │  │  │     └─ dependencies of libblas displayed above
+  │  │  │  ├─ libcxx 16.0.6 [required: >=15.0.7]
+  │  │  │  ├─ liblapack 3.9.0 [required: >=3.9.0,<4.0a0]
+  │  │  │  │  └─ libblas 3.9.0 [required: 3.9.0, 17_osx64_openblas]
+  │  │  │  │     └─ dependencies of libblas displayed above
+  │  │  │  ├─ python 3.11.4 [required: >=3.11,<3.12.0a0]
+  │  │  │  │  └─ dependencies of python displayed above
+  │  │  │  └─ python_abi 3.11 [required: 3.11.*, *_cp311]
+  │  │  ├─ python 3.11.4 [required: >=3.11,<3.12.0a0]
+  │  │  │  └─ dependencies of python displayed above
+  │  │  └─ python_abi 3.11 [required: 3.11.*, *_cp311]
+  │  ├─ hdf5 1.14.1 [required: >=1.14.1,<1.14.2.0a0]
+  │  │  └─ dependencies of hdf5 displayed above
+  │  ├─ libnetcdf 4.9.2 [required: >=4.9.2,<4.9.3.0a0]
+  │  │  └─ dependencies of libnetcdf displayed above
+  │  ├─ libzlib 1.2.13 [required: >=1.2.13,<1.3.0a0]
+  │  ├─ numpy 1.25.1 [required: >=1.23.5,<2.0a0]
+  │  │  └─ dependencies of numpy displayed above
+  │  ├─ python 3.11.4 [required: >=3.11,<3.12.0a0]
+  │  │  └─ dependencies of python displayed above
+  │  ├─ python_abi 3.11 [required: 3.11.*, *_cp311]
+  │  └─ setuptools 68.0.0 [required: any]
+  │     └─ dependencies of setuptools displayed above
+  ├─ numpy 1.25.1 [required: >=1.23.5,<2.0a0]
+  │  └─ dependencies of numpy displayed above
+  ├─ openblas 0.3.23 [required: any]
+  │  ├─ libgfortran 5.0.0 [required: 5.*]
+  │  │  └─ dependencies of libgfortran displayed above
+  │  ├─ libgfortran5 12.3.0 [required: >=11.3.0]
+  │  │  └─ dependencies of libgfortran5 displayed above
+  │  ├─ libopenblas 0.3.23 [required: 0.3.23, openmp_h429af6e_0]
+  │  │  └─ dependencies of libopenblas displayed above
+  │  └─ llvm-openmp 16.0.6 [required: >=14.0.6]
+  ├─ python 3.11.4 [required: >=3.11,<3.12.0a0]
+  │  └─ dependencies of python displayed above
+  ├─ python_abi 3.11 [required: 3.11.*, *_cp311]
+  ├─ six 1.16.0 [required: any]
+  │  └─ python 3.11.4 [required: any]
+  │     └─ dependencies of python displayed above
+  └─ udunits2 2.2.28 [required: any]
+     └─ expat 2.5.0 [required: >=2.4.4,<3.0a0]
+        └─ libexpat 2.5.0 [required: 2.5.0, hf0c8a7f_1]
+
+For the sake of clarity, some redundancies have been hidden.
+Please use the '--full' option to display them anyway.
+
+If you are tired of seeing 'conda' and 'python' everywhere,
+you can use the '--small' option to hide their dependencies completely.

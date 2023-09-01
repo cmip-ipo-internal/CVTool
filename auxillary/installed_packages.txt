@@ -1,0 +1,13 @@
+numpy is installed by pip using command: Name: numpy
+Version: 1.25.2
+Summary: Fundamental package for array computing in Python
+Home-page: https://www.numpy.org
+Author: Travis E. Oliphant et al.
+Author-email: 
+License: BSD-3-Clause
+Location: /opt/anaconda3/envs/CMOR/lib/python3.11/site-packages
+Requires: 
+Required-by: cftime, netCDF4, pandas
+
+numpy is installed by conda using command: conda install numpy
+numpy is installed by mamba using command: mamba install numpy

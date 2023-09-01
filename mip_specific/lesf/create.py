@@ -1,24 +1,48 @@
-import sys
+import sys,os
 sys.path.append('../../')
 #  keep this 
-import sys
 import pdb
 import cvtool
 from cvtool import CV
 from cvtool.core.stdout import view
 import pandas as pd
 
-sys.path.append('../../')
+# we need a different table set for DAMIP (only)
+CMIP6Tables4DAMIP = os.environ['HOME']+ '/WIPwork/cmip6-cmor-tables/Tables/CMIP6'
+
+
+
+##############################################
+# env variables
+##############################################
+
+def create_env():
+    '''
+    This will be replaced by an external specified file. 
+
+    '''
+    # mat
+    # envdict = dict(out_directory='testdirLESF',tables='/home/h03/hadmm/CDDS/github/cmip6-cmor-tables/Tables/',table_prefix='CMIP6')
+
+    # dan
+    envdict = dict(out_directory='testdirLESF', table_prefix='CMIP6Plus')
+    # tables=os.environ['HOME']+ '/WIPwork/cmip6-cmor-tables/Tables/'
+    # !!!!!!!!!!!!!!!!!!!!!!!!!
+
+    for key,val in envdict.items():
+        print(key)
+        os.environ['cmor_'+key] = val
+
+create_env()
+
+
+
+##############################################
+# set defaults
+##############################################
 
 prefix = 'CMIP6Plus'
-UPDATE_CVS = True
-
-
-# Example usage
-handler = CV.CVDIR(
-    prefix=prefix,
-    directory='testdirLESF',
-    base_files=[
+base_files=[
         "mip_era",
         "DRS",
         "required_global_attributes",
@@ -28,15 +52,35 @@ handler = CV.CVDIR(
         "source_id",
         "sub_experiment_id",
         "further_info_url",
-    ],
-    tables='/home/h03/hadmm/CDDS/github/cmip6-cmor-tables/Tables/',
-    table_prefix='CMIP6',
+    ]
+
+
+UPDATE_CVS = True
+
+
+##############################################
+#  intialise the handler
+##############################################
+
+
+# Example usage
+handler = CV.CVDIR(
+    prefix,
+    base_files,
 )
+
+
+##############################################
+# optional additional updates - e.g. reading DAMIP
+##############################################
+
 
 # # Update all files with data using the example update function
 if UPDATE_CVS:
+
     deck = handler.get_activity()
-    damip = handler.get_activity(activity='DAMIP')
+    damip = handler.get_activity(activity='DAMIP',external_path=CMIP6Tables4DAMIP)
+
 
     '''
     Lets extract the names 
@@ -49,6 +93,14 @@ if UPDATE_CVS:
     experiments = {}
 
     damip_names = map(lambda x: x.lower(), damip['experiment_id'])
+
+    print('\nDAMIP contains:')
+    for i in damip_names:
+        print('\t-'+i)
+
+    print('\nLESEFMIP table extracted names(see lesef/data dir):')
+    for i in df.Name:
+        print('\t-'+i)
 
     for _, r in df.iterrows():
         name = r.Name
@@ -78,9 +130,8 @@ if UPDATE_CVS:
             experiments[name] = entry
 
         else:
-            view(r.to_dict())
-            print('^^^ missing')
-
+            # view(r.to_dict())
+        
             entry = {}
             entry['experiment'] = r.Experiment
             entry['description'] = entry.get('description') or r.Description
@@ -91,6 +142,12 @@ if UPDATE_CVS:
             entry['end'] = (r['End year'])
 
             experiments[name] = entry
+            print(f'Not in DAMIP[{name}]: {entry["experiment"]}-{entry["description"]}')
+
+
+##############################################
+#  start CV updates
+##############################################
 
     data = {
         'globals': {

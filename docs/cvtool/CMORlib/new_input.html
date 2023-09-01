@@ -35,7 +35,7 @@ getfirst= lambda cv,key: list(cv[key].keys())[0]
 
 
 
-def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, region=&#39;moon&#39;, history= None, comment = None,references = None ):
+def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, region=&#39;moon&#39;, history= None, comment = None,references = None, **kwargs ):
         
     prefix = core.io.ensure_suffix(prefix,&#39;_&#39;)
     table_prefix = core.io.ensure_suffix(table_prefix,&#39;_&#39;)
@@ -80,7 +80,7 @@ def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, reg
         &#34;#note&#34;:                  &#34;institution_id must be registered at https://github.com/WCRP-CMIP/CMIP6_CVs/issues/new **currently only selecting the first &#34;,
         &#34;institution_id&#34;:         keys(CVs[&#39;institution_id&#39;])[0],
 
-    
+
         &#34;#note&#34;:                  &#34;source_id (model name) must be registered at https://github.com/WCRP-CMIP/CMIP6_CVs/issues/new &#34;,
         &#34;source_id&#34;:              sourceid,
     
@@ -110,8 +110,8 @@ def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, reg
         &#34;#note&#34;:                  &#34; **** The following are set correctly for CMIP6 and should not normally need editing&#34;,  
     
         &#34;_controlled_vocabulary_file&#34;:cvfile,
-        &#34;_AXIS_ENTRY_FILE&#34;:         core.io.relpath(f&#34;{tables}{table_prefix}coordinate.json&#34;),
-        &#34;_FORMULA_VAR_FILE&#34;:        core.io.relpath(f&#34;{tables}{table_prefix}formula_terms.json&#34;),
+        &#34;_AXIS_ENTRY_FILE&#34;:         core.io.relpath(f&#34;{table_prefix}coordinate.json&#34;),
+        &#34;_FORMULA_VAR_FILE&#34;:        core.io.relpath(f&#34;{table_prefix}formula_terms.json&#34;),
         &#34;_cmip6_option&#34;:           &#34;CMIP6&#34;,
     
         &#34;mip_era&#34;:                CVs[&#39;mip_era&#39;],
@@ -125,7 +125,12 @@ def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, reg
 &#34;&lt;mip_era&gt;&lt;activity_id&gt;&lt;institution_id&gt;&lt;source_id&gt;&lt;_member_id&gt;&lt;table&gt;&lt;variable_id&gt;&lt;grid_label&gt;&lt;version&gt;&#34;,
         &#34;output_file_template&#34;:    &#34;&lt;variable_id&gt;&lt;table&gt;&lt;source_id&gt;&lt;_member_id&gt;&lt;grid_label&gt;&#34;
     }
+    template.update(kwargs)
 
+
+    # sanity check - ensure that files exist. 
+    core.io.exists(tables+template[&#34;_AXIS_ENTRY_FILE&#34;])
+    core.io.exists(tables+template[&#34;_FORMULA_VAR_FILE&#34;])
 
 
     filename = f&#34;{writeLocation}{prefix}input.json&#34;
@@ -146,7 +151,7 @@ def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, reg
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="cvtool.CMORlib.new_input.create"><code class="name flex">
-<span>def <span class="ident">create</span></span>(<span>cvfile, prefix, institution, tables, table_prefix, writeLocation, region='moon', history=None, comment=None, references=None)</span>
+<span>def <span class="ident">create</span></span>(<span>cvfile, prefix, institution, tables, table_prefix, writeLocation, region='moon', history=None, comment=None, references=None, **kwargs)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -154,7 +159,7 @@ def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, reg
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, region=&#39;moon&#39;, history= None, comment = None,references = None ):
+<pre><code class="python">def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, region=&#39;moon&#39;, history= None, comment = None,references = None, **kwargs ):
         
     prefix = core.io.ensure_suffix(prefix,&#39;_&#39;)
     table_prefix = core.io.ensure_suffix(table_prefix,&#39;_&#39;)
@@ -199,7 +204,7 @@ def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, reg
         &#34;#note&#34;:                  &#34;institution_id must be registered at https://github.com/WCRP-CMIP/CMIP6_CVs/issues/new **currently only selecting the first &#34;,
         &#34;institution_id&#34;:         keys(CVs[&#39;institution_id&#39;])[0],
 
-    
+
         &#34;#note&#34;:                  &#34;source_id (model name) must be registered at https://github.com/WCRP-CMIP/CMIP6_CVs/issues/new &#34;,
         &#34;source_id&#34;:              sourceid,
     
@@ -229,8 +234,8 @@ def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, reg
         &#34;#note&#34;:                  &#34; **** The following are set correctly for CMIP6 and should not normally need editing&#34;,  
     
         &#34;_controlled_vocabulary_file&#34;:cvfile,
-        &#34;_AXIS_ENTRY_FILE&#34;:         core.io.relpath(f&#34;{tables}{table_prefix}coordinate.json&#34;),
-        &#34;_FORMULA_VAR_FILE&#34;:        core.io.relpath(f&#34;{tables}{table_prefix}formula_terms.json&#34;),
+        &#34;_AXIS_ENTRY_FILE&#34;:         core.io.relpath(f&#34;{table_prefix}coordinate.json&#34;),
+        &#34;_FORMULA_VAR_FILE&#34;:        core.io.relpath(f&#34;{table_prefix}formula_terms.json&#34;),
         &#34;_cmip6_option&#34;:           &#34;CMIP6&#34;,
     
         &#34;mip_era&#34;:                CVs[&#39;mip_era&#39;],
@@ -244,7 +249,12 @@ def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, reg
 &#34;&lt;mip_era&gt;&lt;activity_id&gt;&lt;institution_id&gt;&lt;source_id&gt;&lt;_member_id&gt;&lt;table&gt;&lt;variable_id&gt;&lt;grid_label&gt;&lt;version&gt;&#34;,
         &#34;output_file_template&#34;:    &#34;&lt;variable_id&gt;&lt;table&gt;&lt;source_id&gt;&lt;_member_id&gt;&lt;grid_label&gt;&#34;
     }
+    template.update(kwargs)
 
+
+    # sanity check - ensure that files exist. 
+    core.io.exists(tables+template[&#34;_AXIS_ENTRY_FILE&#34;])
+    core.io.exists(tables+template[&#34;_FORMULA_VAR_FILE&#34;])
 
 
     filename = f&#34;{writeLocation}{prefix}input.json&#34;

@@ -31,12 +31,16 @@
 A run template for self.CMOR for use with the 
 &#39;&#39;&#39;
 from .. import core
+import numpy as np
 # import cmor
 
 class CMORise:
     def __init__(self, tables, cmor_input, verbose=False):
         # verbose can also be NORMAL
-        import cmor as cmor_main
+        try:
+            import cmor as cmor_main
+        except ModuleNotFoundError:
+            raise ModuleNotFoundError(&#39;We are unable to find the &#34;cmor&#34; library in python. Please check this has been installed and you are using the correct environment&#39;)
         self.cmor = cmor_main
         self.tables = tables
         self.cmor_input = cmor_input
@@ -72,6 +76,7 @@ class CMORise:
         &#34;&#34;&#34;
         Load the self.CMOR table.
         &#34;&#34;&#34;
+        print(table_id)
         self.cmor.load_table(table_id)
 
     def process_data(self):
@@ -80,27 +85,48 @@ class CMORise:
         &#34;&#34;&#34;
         input_dict = core.io.json_read(self.cmor_input)
         cvfile = core.io.json_read(input_dict[&#34;_controlled_vocabulary_file&#34;])
+        mipera = cvfile[&#39;CV&#39;].get(&#39;mip_era&#39;,&#39;&#39;)+&#39;_&#39;
+         
         tables = cvfile[&#39;CV&#39;][&#39;table_id&#39;]
-        table = tables[2]
+        table =  tables[0] 
+        # in test case table is apmon as this is the only one suplied. 
+        # table = &#39;CMIP6_APmon&#39;
 
-        self.load_table(table + &#39;.json&#39;)
+        #  APMON IS EVIL - not in cmip 6 and resembles AMON
 
-        print(&#39;only testing the first table&#39;, table)
 
-        coord_dict = core.io.json_read(input_dict[&#34;_AXIS_ENTRY_FILE&#34;])[&#34;axis_entry&#34;]
-        table_dict = core.io.json_read(f&#39;{self.tables}{table}.json&#39;)
+        print(&#39;TEST ONE OPTION - SUPPLY TABLE PREFIX&#39;)
+
+        print(tables)
+        self.load_table(f&#39;{mipera}{table}.json&#39;)
+
+        print(&#39;only testing the first table&#39;,mipera, table)
+
+        coord_dict = core.io.json_read(f&#34;{self.tables}{input_dict[&#39;_AXIS_ENTRY_FILE&#39;]}&#34;)[&#34;axis_entry&#34;]
+        table_dict = core.io.json_read(f&#39;{self.tables}{mipera}{table}.json&#39;)
+
         vars = table_dict[&#39;variable_entry&#39;]
 
         data = []
         axis = []
 
         for v in vars:
+
+
+            if v in [&#39;albisccp&#39;,&#39;cct&#39;,&#39;ccb&#39;]: continue
+            v = &#39;tas&#39;
+
+
             dimensions = vars[v][&#39;dimensions&#39;]
 
             # Create a list of dimensions to iterate over
             if isinstance(dimensions, str):
                 dimensions = dimensions.split(&#39; &#39;)
-
+            shape = []
+            axis = []
+            awkward_dims = [&#39;plev&#39;, &#39;tau&#39;, &#39;sza5&#39;, &#39;alt40&#39;, &#39;dbze&#39;]
+            if any([d in str(dimensions) for d in awkward_dims]):
+                    continue
             for dim in dimensions:
                 # previous table files had these as a str, so needed .split()
                 print(&#39;-&#39;, dim, type(vars[v][&#39;dimensions&#39;]), &#39;-&#39;)
@@ -108,28 +134,77 @@ class CMORise:
                 d = coord_dict[dim]
 
                 if &#39;time&#39; in dim:
-                    ax = dict(table_entry=dim, units=&#39;days since 2000-01-01 00:00:00&#39;)
-                    print(ax)
+                    ax = dict(table_entry=dim, units=&#39;days since 2000-01-01 00:00:00&#39;, 
+                              coord_vals=[30,60], cell_bounds=[15,45,75])
+                    print(&#39;AX&#39;,dim , ax)
                     axis_id = self.cmor.axis(**ax)
                     axis.append(axis_id)
-                    data.append(1.)
+                    shape.append(2)
                 else:
                     try:
-                        bounds = [float(d[&#39;valid_min&#39;]), float(d[&#39;valid_max&#39;])]
-                        data.append(sum(bounds) / 2.)
+                        try:
+                            bounds = [float(d[&#39;valid_min&#39;]), float(d[&#39;valid_max&#39;])]
+                        except:
+                            bounds = [0, 1]
                         ax = dict(table_entry=dim, units=d[&#39;units&#39;], cell_bounds=bounds, coord_vals=[sum(bounds) / 2.])
-                        print(ax)
+                        print(&#39;AX&#39;,dim , ax)
                         axis_id = self.cmor.axis(**ax)
                         axis.append(axis_id)
+                        shape.append(1)
                     except Exception as e:
                         print(e)
                         # Handle the exception as needed
 
-            ivar = self.cmor.variable(v, units=vars[v][&#39;units&#39;], axis_ids=axis)
-            self.cmor.write(ivar, data)
+            print(&#39;--var--&#39;, v , vars[v][&#39;units&#39;],vars[v][&#39;positive&#39;],axis,)
+            ivar = self.cmor.variable(v, units=vars[v][&#39;units&#39;], axis_ids=axis, positive=vars[v][&#39;positive&#39;])
+            data = np.random.random(shape) 
+            if vars[v][&#39;ok_min_mean_abs&#39;] !=&#34;&#34;:
+                min_v = float(vars[v][&#39;ok_min_mean_abs&#39;])
+                max_v = float(vars[v][&#39;ok_max_mean_abs&#39;])
+                data = min_v + (max_v - min_v) * data
+
+
             print(axis, data, vars[v][&#39;units&#39;])
 
-        self.cmor.close()
+            # print(list(vars.keys()))
+            ################
+            ################
+            print(&#39;q&#39;,ivar, data)
+
+
+            axes = [{&#39;table_entry&#39;: &#39;time&#39;,
+             &#39;units&#39;: &#39;days since 2000-01-01 00:00:00&#39;,
+             },
+            {&#39;table_entry&#39;: &#39;latitude&#39;,
+             &#39;units&#39;: &#39;degrees_north&#39;,
+             &#39;coord_vals&#39;: [0],
+             &#39;cell_bounds&#39;: [-1, 1]},
+            {&#39;table_entry&#39;: &#39;longitude&#39;,
+             &#39;units&#39;: &#39;degrees_east&#39;,
+             &#39;coord_vals&#39;: [90],
+             &#39;cell_bounds&#39;: [89, 91]},
+            ]
+
+            axis_ids = list()
+            for axis in axes:
+                axis_id = self.cmor.axis(**axis)
+                axis_ids.append(axis_id)
+            varid = self.cmor.variable(&#39;ts&#39;, &#39;K&#39;, axis_ids)
+            self.cmor.write(varid, [275], time_vals=[15], time_bnds=[[0, 30]])
+
+    # end
+
+
+
+
+
+            # self.cmor.write(ivar, data)
+
+            # close each file as you go
+            # self.cmor.close(ivar)
+            
+
+        #self.cmor.close()
 
 
 # if __name__ == &#34;__main__&#34;:
@@ -163,7 +238,10 @@ class CMORise:
 <pre><code class="python">class CMORise:
     def __init__(self, tables, cmor_input, verbose=False):
         # verbose can also be NORMAL
-        import cmor as cmor_main
+        try:
+            import cmor as cmor_main
+        except ModuleNotFoundError:
+            raise ModuleNotFoundError(&#39;We are unable to find the &#34;cmor&#34; library in python. Please check this has been installed and you are using the correct environment&#39;)
         self.cmor = cmor_main
         self.tables = tables
         self.cmor_input = cmor_input
@@ -199,6 +277,7 @@ class CMORise:
         &#34;&#34;&#34;
         Load the self.CMOR table.
         &#34;&#34;&#34;
+        print(table_id)
         self.cmor.load_table(table_id)
 
     def process_data(self):
@@ -207,27 +286,48 @@ class CMORise:
         &#34;&#34;&#34;
         input_dict = core.io.json_read(self.cmor_input)
         cvfile = core.io.json_read(input_dict[&#34;_controlled_vocabulary_file&#34;])
+        mipera = cvfile[&#39;CV&#39;].get(&#39;mip_era&#39;,&#39;&#39;)+&#39;_&#39;
+         
         tables = cvfile[&#39;CV&#39;][&#39;table_id&#39;]
-        table = tables[2]
+        table =  tables[0] 
+        # in test case table is apmon as this is the only one suplied. 
+        # table = &#39;CMIP6_APmon&#39;
 
-        self.load_table(table + &#39;.json&#39;)
+        #  APMON IS EVIL - not in cmip 6 and resembles AMON
 
-        print(&#39;only testing the first table&#39;, table)
 
-        coord_dict = core.io.json_read(input_dict[&#34;_AXIS_ENTRY_FILE&#34;])[&#34;axis_entry&#34;]
-        table_dict = core.io.json_read(f&#39;{self.tables}{table}.json&#39;)
+        print(&#39;TEST ONE OPTION - SUPPLY TABLE PREFIX&#39;)
+
+        print(tables)
+        self.load_table(f&#39;{mipera}{table}.json&#39;)
+
+        print(&#39;only testing the first table&#39;,mipera, table)
+
+        coord_dict = core.io.json_read(f&#34;{self.tables}{input_dict[&#39;_AXIS_ENTRY_FILE&#39;]}&#34;)[&#34;axis_entry&#34;]
+        table_dict = core.io.json_read(f&#39;{self.tables}{mipera}{table}.json&#39;)
+
         vars = table_dict[&#39;variable_entry&#39;]
 
         data = []
         axis = []
 
         for v in vars:
+
+
+            if v in [&#39;albisccp&#39;,&#39;cct&#39;,&#39;ccb&#39;]: continue
+            v = &#39;tas&#39;
+
+
             dimensions = vars[v][&#39;dimensions&#39;]
 
             # Create a list of dimensions to iterate over
             if isinstance(dimensions, str):
                 dimensions = dimensions.split(&#39; &#39;)
-
+            shape = []
+            axis = []
+            awkward_dims = [&#39;plev&#39;, &#39;tau&#39;, &#39;sza5&#39;, &#39;alt40&#39;, &#39;dbze&#39;]
+            if any([d in str(dimensions) for d in awkward_dims]):
+                    continue
             for dim in dimensions:
                 # previous table files had these as a str, so needed .split()
                 print(&#39;-&#39;, dim, type(vars[v][&#39;dimensions&#39;]), &#39;-&#39;)
@@ -235,28 +335,77 @@ class CMORise:
                 d = coord_dict[dim]
 
                 if &#39;time&#39; in dim:
-                    ax = dict(table_entry=dim, units=&#39;days since 2000-01-01 00:00:00&#39;)
-                    print(ax)
+                    ax = dict(table_entry=dim, units=&#39;days since 2000-01-01 00:00:00&#39;, 
+                              coord_vals=[30,60], cell_bounds=[15,45,75])
+                    print(&#39;AX&#39;,dim , ax)
                     axis_id = self.cmor.axis(**ax)
                     axis.append(axis_id)
-                    data.append(1.)
+                    shape.append(2)
                 else:
                     try:
-                        bounds = [float(d[&#39;valid_min&#39;]), float(d[&#39;valid_max&#39;])]
-                        data.append(sum(bounds) / 2.)
+                        try:
+                            bounds = [float(d[&#39;valid_min&#39;]), float(d[&#39;valid_max&#39;])]
+                        except:
+                            bounds = [0, 1]
                         ax = dict(table_entry=dim, units=d[&#39;units&#39;], cell_bounds=bounds, coord_vals=[sum(bounds) / 2.])
-                        print(ax)
+                        print(&#39;AX&#39;,dim , ax)
                         axis_id = self.cmor.axis(**ax)
                         axis.append(axis_id)
+                        shape.append(1)
                     except Exception as e:
                         print(e)
                         # Handle the exception as needed
 
-            ivar = self.cmor.variable(v, units=vars[v][&#39;units&#39;], axis_ids=axis)
-            self.cmor.write(ivar, data)
+            print(&#39;--var--&#39;, v , vars[v][&#39;units&#39;],vars[v][&#39;positive&#39;],axis,)
+            ivar = self.cmor.variable(v, units=vars[v][&#39;units&#39;], axis_ids=axis, positive=vars[v][&#39;positive&#39;])
+            data = np.random.random(shape) 
+            if vars[v][&#39;ok_min_mean_abs&#39;] !=&#34;&#34;:
+                min_v = float(vars[v][&#39;ok_min_mean_abs&#39;])
+                max_v = float(vars[v][&#39;ok_max_mean_abs&#39;])
+                data = min_v + (max_v - min_v) * data
+
+
             print(axis, data, vars[v][&#39;units&#39;])
 
-        self.cmor.close()</code></pre>
+            # print(list(vars.keys()))
+            ################
+            ################
+            print(&#39;q&#39;,ivar, data)
+
+
+            axes = [{&#39;table_entry&#39;: &#39;time&#39;,
+             &#39;units&#39;: &#39;days since 2000-01-01 00:00:00&#39;,
+             },
+            {&#39;table_entry&#39;: &#39;latitude&#39;,
+             &#39;units&#39;: &#39;degrees_north&#39;,
+             &#39;coord_vals&#39;: [0],
+             &#39;cell_bounds&#39;: [-1, 1]},
+            {&#39;table_entry&#39;: &#39;longitude&#39;,
+             &#39;units&#39;: &#39;degrees_east&#39;,
+             &#39;coord_vals&#39;: [90],
+             &#39;cell_bounds&#39;: [89, 91]},
+            ]
+
+            axis_ids = list()
+            for axis in axes:
+                axis_id = self.cmor.axis(**axis)
+                axis_ids.append(axis_id)
+            varid = self.cmor.variable(&#39;ts&#39;, &#39;K&#39;, axis_ids)
+            self.cmor.write(varid, [275], time_vals=[15], time_bnds=[[0, 30]])
+
+    # end
+
+
+
+
+
+            # self.cmor.write(ivar, data)
+
+            # close each file as you go
+            # self.cmor.close(ivar)
+            
+
+        #self.cmor.close()</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
@@ -289,6 +438,7 @@ class CMORise:
     &#34;&#34;&#34;
     Load the self.CMOR table.
     &#34;&#34;&#34;
+    print(table_id)
     self.cmor.load_table(table_id)</code></pre>
 </details>
 </dd>
@@ -307,27 +457,48 @@ class CMORise:
     &#34;&#34;&#34;
     input_dict = core.io.json_read(self.cmor_input)
     cvfile = core.io.json_read(input_dict[&#34;_controlled_vocabulary_file&#34;])
+    mipera = cvfile[&#39;CV&#39;].get(&#39;mip_era&#39;,&#39;&#39;)+&#39;_&#39;
+     
     tables = cvfile[&#39;CV&#39;][&#39;table_id&#39;]
-    table = tables[2]
+    table =  tables[0] 
+    # in test case table is apmon as this is the only one suplied. 
+    # table = &#39;CMIP6_APmon&#39;
 
-    self.load_table(table + &#39;.json&#39;)
+    #  APMON IS EVIL - not in cmip 6 and resembles AMON
 
-    print(&#39;only testing the first table&#39;, table)
 
-    coord_dict = core.io.json_read(input_dict[&#34;_AXIS_ENTRY_FILE&#34;])[&#34;axis_entry&#34;]
-    table_dict = core.io.json_read(f&#39;{self.tables}{table}.json&#39;)
+    print(&#39;TEST ONE OPTION - SUPPLY TABLE PREFIX&#39;)
+
+    print(tables)
+    self.load_table(f&#39;{mipera}{table}.json&#39;)
+
+    print(&#39;only testing the first table&#39;,mipera, table)
+
+    coord_dict = core.io.json_read(f&#34;{self.tables}{input_dict[&#39;_AXIS_ENTRY_FILE&#39;]}&#34;)[&#34;axis_entry&#34;]
+    table_dict = core.io.json_read(f&#39;{self.tables}{mipera}{table}.json&#39;)
+
     vars = table_dict[&#39;variable_entry&#39;]
 
     data = []
     axis = []
 
     for v in vars:
+
+
+        if v in [&#39;albisccp&#39;,&#39;cct&#39;,&#39;ccb&#39;]: continue
+        v = &#39;tas&#39;
+
+
         dimensions = vars[v][&#39;dimensions&#39;]
 
         # Create a list of dimensions to iterate over
         if isinstance(dimensions, str):
             dimensions = dimensions.split(&#39; &#39;)
-
+        shape = []
+        axis = []
+        awkward_dims = [&#39;plev&#39;, &#39;tau&#39;, &#39;sza5&#39;, &#39;alt40&#39;, &#39;dbze&#39;]
+        if any([d in str(dimensions) for d in awkward_dims]):
+                continue
         for dim in dimensions:
             # previous table files had these as a str, so needed .split()
             print(&#39;-&#39;, dim, type(vars[v][&#39;dimensions&#39;]), &#39;-&#39;)
@@ -335,28 +506,77 @@ class CMORise:
             d = coord_dict[dim]
 
             if &#39;time&#39; in dim:
-                ax = dict(table_entry=dim, units=&#39;days since 2000-01-01 00:00:00&#39;)
-                print(ax)
+                ax = dict(table_entry=dim, units=&#39;days since 2000-01-01 00:00:00&#39;, 
+                          coord_vals=[30,60], cell_bounds=[15,45,75])
+                print(&#39;AX&#39;,dim , ax)
                 axis_id = self.cmor.axis(**ax)
                 axis.append(axis_id)
-                data.append(1.)
+                shape.append(2)
             else:
                 try:
-                    bounds = [float(d[&#39;valid_min&#39;]), float(d[&#39;valid_max&#39;])]
-                    data.append(sum(bounds) / 2.)
+                    try:
+                        bounds = [float(d[&#39;valid_min&#39;]), float(d[&#39;valid_max&#39;])]
+                    except:
+                        bounds = [0, 1]
                     ax = dict(table_entry=dim, units=d[&#39;units&#39;], cell_bounds=bounds, coord_vals=[sum(bounds) / 2.])
-                    print(ax)
+                    print(&#39;AX&#39;,dim , ax)
                     axis_id = self.cmor.axis(**ax)
                     axis.append(axis_id)
+                    shape.append(1)
                 except Exception as e:
                     print(e)
                     # Handle the exception as needed
 
-        ivar = self.cmor.variable(v, units=vars[v][&#39;units&#39;], axis_ids=axis)
-        self.cmor.write(ivar, data)
+        print(&#39;--var--&#39;, v , vars[v][&#39;units&#39;],vars[v][&#39;positive&#39;],axis,)
+        ivar = self.cmor.variable(v, units=vars[v][&#39;units&#39;], axis_ids=axis, positive=vars[v][&#39;positive&#39;])
+        data = np.random.random(shape) 
+        if vars[v][&#39;ok_min_mean_abs&#39;] !=&#34;&#34;:
+            min_v = float(vars[v][&#39;ok_min_mean_abs&#39;])
+            max_v = float(vars[v][&#39;ok_max_mean_abs&#39;])
+            data = min_v + (max_v - min_v) * data
+
+
         print(axis, data, vars[v][&#39;units&#39;])
 
-    self.cmor.close()</code></pre>
+        # print(list(vars.keys()))
+        ################
+        ################
+        print(&#39;q&#39;,ivar, data)
+
+
+        axes = [{&#39;table_entry&#39;: &#39;time&#39;,
+         &#39;units&#39;: &#39;days since 2000-01-01 00:00:00&#39;,
+         },
+        {&#39;table_entry&#39;: &#39;latitude&#39;,
+         &#39;units&#39;: &#39;degrees_north&#39;,
+         &#39;coord_vals&#39;: [0],
+         &#39;cell_bounds&#39;: [-1, 1]},
+        {&#39;table_entry&#39;: &#39;longitude&#39;,
+         &#39;units&#39;: &#39;degrees_east&#39;,
+         &#39;coord_vals&#39;: [90],
+         &#39;cell_bounds&#39;: [89, 91]},
+        ]
+
+        axis_ids = list()
+        for axis in axes:
+            axis_id = self.cmor.axis(**axis)
+            axis_ids.append(axis_id)
+        varid = self.cmor.variable(&#39;ts&#39;, &#39;K&#39;, axis_ids)
+        self.cmor.write(varid, [275], time_vals=[15], time_bnds=[[0, 30]])
+
+# end
+
+
+
+
+
+        # self.cmor.write(ivar, data)
+
+        # close each file as you go
+        # self.cmor.close(ivar)
+        
+
+    #self.cmor.close()</code></pre>
 </details>
 </dd>
 <dt id="cvtool.CMORlib.run.CMORise.setup_cmor"><code class="name flex">

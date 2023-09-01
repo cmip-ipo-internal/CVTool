@@ -82,8 +82,8 @@ def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, reg
         "#note":                  " **** The following are set correctly for CMIP6 and should not normally need editing",  
     
         "_controlled_vocabulary_file":cvfile,
-        "_AXIS_ENTRY_FILE":         core.io.relpath(f"{tables}coordinate.json"),
-        "_FORMULA_VAR_FILE":        core.io.relpath(f"{tables}formula_terms.json"),
+        "_AXIS_ENTRY_FILE":         core.io.relpath(f"{table_prefix}coordinate.json"),
+        "_FORMULA_VAR_FILE":        core.io.relpath(f"{table_prefix}formula_terms.json"),
         "_cmip6_option":           "CMIP6",
     
         "mip_era":                CVs['mip_era'],
@@ -98,6 +98,12 @@ def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, reg
         "output_file_template":    "<variable_id><table><source_id><_member_id><grid_label>"
     }
     template.update(kwargs)
+
+
+    # sanity check - ensure that files exist. 
+    core.io.exists(tables+template["_AXIS_ENTRY_FILE"])
+    core.io.exists(tables+template["_FORMULA_VAR_FILE"])
+
 
     filename = f"{writeLocation}{prefix}input.json"
 
