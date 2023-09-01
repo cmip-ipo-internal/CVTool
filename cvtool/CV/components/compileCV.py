@@ -69,12 +69,14 @@ def create(directory,prefix,tables,outloc=None):
                 # this section updates the sources. We expect this to come afterwards, and therefore this should not throw an exception and should work as expected. 
                 
                 
+
                 # print('-----')
                 # print(cvdict[entry].values())
                 # break
-                for experiment in cvdict[entry].values():
-                    for component in experiment["required_model_components"]:
-                        print ('++'+component, type( experiment["required_model_components"]),entry)
+                # for experiment in cvdict[entry].values():
+                #     print(bool(experiment))
+                #     for component in experiment["required_model_components"]:
+                #         print ('++'+component, type( experiment["required_model_components"]),entry)
 
 
 
