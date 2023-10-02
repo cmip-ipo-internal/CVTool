@@ -22,8 +22,6 @@ from ..core.custom_errors import MipTableError
 # from .components import meta
 from . import meta
 
-MIPTABLE_SHA = '9fa6eda52792b51326dfc77b955c4e46a8334a2c'
-setup_mip_tables(commit_hash = MIPTABLE_SHA)
 
 
 try:
@@ -84,12 +82,17 @@ class CVDIR:
                 print(f'Updating $cmor_{name} to {kwargs[name]}')
                 os.environ['cmor_' + name] = kwargs[name]
             return os.environ.get('cmor_' + name, default)
+        
+        
+        self.miptable_meta, self.tables = setup_mip_tables(commit_hash = config('MIPTABLE_SHA') or None)
+        meta.tables = self.miptable_meta
+    
 
         self.prefix = core.io.ensure_suffix(prefix, '_')
         self.directory = core.io.ensure_suffix(config('out_directory'), '/')
         self.file_names = base_files
         self.files = {}
-        self.tables = config('tables')
+        self.tables = config('tables') or self.tables
         if not self.tables: MipTableError(f'Table: "{self.tables}" not found in environmental variables "cmor+tables". This is usually generated from cvtool.core.miptables ')
         self.table_prefix = config('table_prefix')
         self.cvout = config('cvout', 'cv_cmor')
@@ -235,7 +238,7 @@ class CVDIR:
             preprocessed_data[f"{self.prefix}{key}"] = value
         return preprocessed_data
 
-    def get_activity(self, activity: str = 'CMIP', external_path=None) -> dict:
+    def get_activity(self, activity: str = 'CMIP', external_path=None, aux = '') -> dict:
         """
         Get activity data.
 

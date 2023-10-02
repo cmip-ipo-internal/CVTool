@@ -7,7 +7,21 @@ import os
 #     sys.path.append('../../')
 #     import core
 
+
+cvtool = sys.modules.get('cvtool')
+cvtool_version = cvtool.version
+try:
+    from cmor import CMOR_VERSION_MAJOR,CMOR_VERSION_MINOR,CMOR_VERSION_PATCH
+    cmor_version = f"{CMOR_VERSION_MAJOR}.{CMOR_VERSION_MINOR}.{CMOR_VERSION_PATCH}"
+except:
+    cmor_version = "cmor python library not installed - version unknown"
+
 import cvtool.core as core
+from cvtool.core.institutions import institutions , institutions_meta
+
+
+
+tables = None
 
 whoami = __file__.split('/')[-1].replace('.py','')
 
@@ -31,13 +45,21 @@ def create(institution, gitowner='WCRP-CMIP', gitrepo='CMIP6Plus_CVs', user=None
 
     return {
         "Header": {
-            "CV_collection_modified": current_date,
-            "CV_collection_version": core.version_control.get_github_version(gitowner, gitrepo),
-            "author": f'{user.get("user")} <{user.get("email")}>',
-            "checksum": "md5: EDITEDITEDITEDITEDITEDITEDITEDIT",
-            "institution_id": institution,
-            "previous_commit": core.version_control.get_github_version(gitowner, gitrepo),
-            "specs_doc": "v6.3.0 (link TBC)"
+            "latest change":{
+                "author": f'{user.get("user")} <{user.get("email")}>',
+                "institution_id": institution,
+            },
+            "specs_doc": "v6.3.0 (link TBC)",
+            "CMIP6Plus_CVS dir?":{
+                "CV_collection_modified": current_date,
+                "CV_collection_version": core.version_control.get_github_version(gitowner, gitrepo),
+                "previous_commit": core.version_control.get_github_version(gitowner, gitrepo),
+            },
+            "miptables":tables, 
+            "institutions":institutions_meta,
+            "CMOR":cmor_version,
+            "CVTool":cvtool_version
+            
         }
     }
 
@@ -59,10 +81,19 @@ def update(gitowner='WCRP-CMIP', gitrepo='CMIP6Plus_CVs'):
 
     return {
         "Header": {
-            # 'updatetest': 'Yay! - to be removed.',
-            "CV_collection_modified": current_date,
-            "CV_collection_version": core.version_control.get_github_version(gitowner, gitrepo),
-            "previous_commit": core.version_control.get_github_version(gitowner, gitrepo),
-            "author": f'{user.get("user")} <{user.get("email")}>',
+            "CMIP6Plus_CVS dir?":{
+                 # 'updatetest': 'Yay! - to be removed.',
+                "CV_collection_modified": current_date,
+                "CV_collection_version": core.version_control.get_github_version(gitowner, gitrepo),
+                "previous_commit": core.version_control.get_github_version(gitowner, gitrepo),
+            },
+            "latest change":{
+                "author": f'{user.get("user")} <{user.get("email")}>',
+                # "institution_id": institution,
+            },
+            "miptables":tables,
+            "institutions":institutions_meta,
+            "CMOR":cmor_version,
+            "CVTool":cvtool_version
         }
     }

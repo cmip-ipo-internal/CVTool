@@ -4,12 +4,13 @@ This file contains all the git, github and versioning functions for the cvtools 
 
 import requests
 import subprocess
-import os
+import os,re
 from typing import Dict
 from .custom_errors import GitAPIError
-from .io import read_temp, write_temp
+from .io import read_temp, write_temp, exists
 from git import Repo
 from datetime import datetime
+
 
 def last_commit(repo_owner: str, repo_name: str) -> Dict[str, str]:
     """
@@ -162,3 +163,72 @@ def repo_commits(repo):
         print("Date:", commit.authored_datetime)
         print("Message:", commit.message)
         print("-" * 50)
+
+
+
+
+def query_repo(repo_path,verbose = True):
+
+    exists(repo_path)
+    repo = Repo(repo_path)
+
+    # Get the current commit SHA
+    current_commit = repo.head.object.hexsha
+
+   # Get the latest tag version
+    tags = repo.tags
+    latest_tag = tags[-1]
+
+   # Find the closest tag released prior to the target commit
+    closest_previous_tag = None
+    closest_distance = float('inf')
+
+    for tag in repo.tags:
+        tag_commit = repo.commit(tag.commit)
+        distance = len(list(repo.iter_commits(rev=f'{tag_commit}..{current_commit}')))
+        if distance < closest_distance:
+            closest_distance = distance
+            closest_previous_tag = tag
+
+
+    # Get the current commit SHA
+    current_commit = repo.head.object.hexsha
+
+    # Check if the current commit is the latest commit
+    is_latest_commit = current_commit == repo.heads[repo.active_branch.name].commit.hexsha
+
+    # Get the repository URL
+    repo_url = repo.remotes.origin.url
+
+    # Check if there is a Zenodo DOI attached to the repository (assuming it's in the README file)
+    zenodo_doi = None
+    readme_path = os.path.join(repo_path, 'README.md')
+    if os.path.exists(readme_path):
+        with open(readme_path, 'r', encoding='utf-8') as readme_file:
+            readme_content = readme_file.read()
+            match = re.search(r'zenodo\.org/record/(\d+)', readme_content)
+            if match:
+                zenodo_doi = match.group(1)
+
+    # Store the information in a dictionary
+    if verbose:
+        output_dict = {
+            "tag":{
+                "version": str(closest_previous_tag),
+                "latest": latest_tag == closest_previous_tag,
+            },
+            "commit":{
+                "SHA": current_commit,
+                "latest": is_latest_commit,
+            },
+            "Repository URL": repo_url,
+            "DOI": zenodo_doi
+        }
+    else:
+        output_dict = {
+            "tag":str(closest_previous_tag),
+            "Repository URL": repo_url,
+            "DOI": zenodo_doi
+        }
+
+    return output_dict
