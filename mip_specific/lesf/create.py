@@ -9,8 +9,10 @@ import pandas as pd
 
 # we need a different table set for DAMIP (only)
 
-if  os.getlogin() == 'daniel.ellis':
-    CMIP6Tables4DAMIP = os.environ['HOME']+ '/WIPwork/cmip6-cmor-tables/Tables/CMIP6'
+if  os.getlogin() in ['daniel.ellis','root']:
+
+    print( 'WARN WARN WARN WARN Moved Non-table files in "Auxillary" folder' )
+    CMIP6Tables4DAMIP = os.environ['HOME']+ '/WIPwork/cmip6-cmor-tables/Tables/Auxillary/CMIP6'
 else:
     CMIP6Tables4DAMIP = os.environ['HOME']+ '/CDDS/github/cmip6-cmor-tables/Tables/CMIP6'
 
@@ -32,7 +34,7 @@ def create_env():
     # envdict = dict(out_directory='testdirLESF',tables='/home/h03/hadmm/CDDS/github/cmip6-cmor-tables/Tables/',table_prefix='CMIP6')
 
     # dan
-    envdict = dict(out_directory='testdirLESF', table_prefix='CMIP6Plus')
+    envdict = dict(out_directory='testdirLESF', table_prefix='CMIP6Plus', MIPTABLE_SHA = '9fa6eda52792b51326dfc77b955c4e46a8334a2c')
     # tables=os.environ['HOME']+ '/WIPwork/cmip6-cmor-tables/Tables/'
     # !!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -86,6 +88,7 @@ handler = CV.CVDIR(
 if UPDATE_CVS:
 
     deck = handler.get_activity()
+
     damip = handler.get_activity(activity='DAMIP',external_path=CMIP6Tables4DAMIP)
 
     # lets solve the case issues when indexing by duplicating all. 
@@ -153,7 +156,7 @@ if UPDATE_CVS:
             entry['experiment'] = r.Experiment
             
             entry['experiment_id'] = name
-            entry['sub_experiment_id'] =  ["none"] or entry['sub_experiment_id']
+            # entry['sub_experiment_id'] =  entry['sub_experiment_id']
             entry['description'] = entry.get('description') or r.Description
 
             print(f'Not in DAMIP[{name}]: {entry["experiment"]}-{entry["description"]}')
@@ -177,7 +180,7 @@ if UPDATE_CVS:
         # if not existing add 
         entry['additional_allowed_model_components'] = 'AER CHEM BGC'.split() #entry.get('additional_allowed_model_components', 'AER CHEM BGC'.split())
         entry['required_model_components'] = entry.get('required_model_components', ['AOGCM'])
-        entry['sub_experiment_id'] =  entry.get('sub_experiment_id',['none'])
+        entry['sub_experiment_id'] =  entry.get('sub_experiment_id',["f2023"])
         
         experiments[name] = entry
 
@@ -205,7 +208,9 @@ if UPDATE_CVS:
             },
             'update': {
                 "activity_id": {
-                    'LESFMIP': 'The Large Ensemble Single Forcing Model Intercomparison Project'
+                    'LESFMIP': 'The Large Ensemble Single Forcing Model Intercomparison Project',
+                    'PMIP' : 'Paleoclimat Modeling Intercomparison Project',
+
                 }
             }
         },
@@ -215,6 +220,14 @@ if UPDATE_CVS:
             },
             'update': {
                 'experiment_id': experiments
+            }
+        },
+
+        'sub_experiment_id' : {
+            'create':{
+                'sub_experiment_id':{
+                    'f2023': 'Forcings 2023'
+                }
             }
         }
     }

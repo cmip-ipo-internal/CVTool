@@ -17,20 +17,26 @@ Todo:
 '''
 
 from typing import List, Dict, Any
+import git
 from git import Repo
 import tempfile
 import glob
 import os
 from . import io
-from .version_control import last_commit  # Assuming version_control is properly set up
+from .version_control import last_commit, query_repo  # Assuming version_control is properly set up
 
 __REPOPREFIX__ = 'cvtool.miptables.'
 
-def setup_mip_tables(commit_hash=None ) -> None:
+def setup_mip_tables(commit_hash = None ) -> None:
     """
     Set up the MIP tables by checking for existing versions, downloading the latest version, and updating environment variables.
     """
-    repo_url = 'https://github.com/PCMDI/mip-cmor-tables'
+
+    print('WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN - using wolfiex (test miptables) instead of PCMDI repo')
+    print('WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN - using wolfiex (test miptables) instead of PCMDI repo')
+    # repo_url = 'https://github.com/PCMDI/mip-cmor-tables'
+
+    repo_url = 'https://github.com/wolfiex/mip-cmor-tables'
     table_subdir = '/mip_cmor_tables/out/'
 
     term = io.terminal()
@@ -53,7 +59,7 @@ def setup_mip_tables(commit_hash=None ) -> None:
 
     for path in existing:
         t_repo = Repo(path)
-        if str(t_repo.head.commit) == current.get('SHA'):
+        if str(t_repo.head.commit) == current.get('SHA') and t_repo.remotes.origin.url == repo_url:
             # Set the main repo as the existing one
             repo = t_repo
             existing.remove(path)
@@ -87,7 +93,6 @@ def setup_mip_tables(commit_hash=None ) -> None:
                 print('WARN - using the latest version of the miptables instead.')
 
         assert str(repo.head.commit) == current.get('SHA')
-        print('we have cloned the most up to date version')
 
     # Get the repository URL
     repo_url = repo.remotes.origin.url
@@ -98,12 +103,23 @@ def setup_mip_tables(commit_hash=None ) -> None:
     commit_link = f"{repo_link}/commit/{current_commit_hash}"
 
     LOCATION = repo.working_dir + table_subdir
-    os.environ['cmor_tables'] = LOCATION
-    os.environ['cmor_tableorigin'] = commit_link
+    # os.environ['cmor_tables'] = LOCATION
+    # os.environ['cmor_tableorigin'] = commit_link
 
-    print(f'MipTable location: {os.environ["cmor_tables"]} \nWith Commit: {current.get("SHA")}\norigin: {commit_link}')
+    miptables = query_repo(repo.working_dir)
+    print('*'*term.columns)
+    print(f"""
+          MipTable location: {LOCATION} 
+          With Commit: {current.get('SHA')}
+          
+          Latest Tag: {miptables['tag']['latest']}
+          Latest Commit:{miptables['commit']['latest']}
+          
+          Viewable URL: {commit_link}
+
+          """)
     print('*'*term.columns)
 
-# # Run the setup function if the module is imported
-# setup_mip_tables()
+    return miptables, LOCATION
+
 

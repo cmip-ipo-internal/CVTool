@@ -9,6 +9,7 @@ import shutil
 import sys,os 
 # core = sys.modules.get('cvtool.core')
 import cvtool.core as core
+from cvtool.CV.meta import institutions
 
 
 # save eval of the variables files. 
@@ -83,6 +84,12 @@ def create(directory,prefix,tables,outloc=None):
 
                 cvdict['source_type'] = set(cvdict['source_type']).union(set(component for experiment in cvdict[entry].values() if "required_model_components" in experiment
                        for component in experiment["required_model_components"]+experiment["additional_allowed_model_components"]))
+                
+            
+                from cvtool.CV.compliance.experiment_id import test as experiment_test
+
+                experiment_test(cvdict)
+
                
 
                
@@ -90,7 +97,14 @@ def create(directory,prefix,tables,outloc=None):
 
             if entry == 'source_id':
                 # this section updates the institutions
+
+                from cvtool.CV.compliance.source_id import test as source_test
+                source_test(cvdict)
+
+
                 cvdict['institution_id'] = {i: institutions[i] for i in sorted({component for source in cvdict[entry].values() for component in source.get("institution_id", [])})}
+
+                # cvdict['institution_id'] = {i: institutions[i] for i in sorted({component for source in cvdict[entry].values() for component in source.get("institution_id", [])})}
 
                 # [[i,instutitions[i]] for i in sorted(list(set(component for source in cvdict[entry].values() for component in source.get("institution_id",[]))))]
 

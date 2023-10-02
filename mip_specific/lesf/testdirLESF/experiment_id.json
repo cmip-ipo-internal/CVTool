@@ -1,11 +1,33 @@
 {
     "Header": {
-        "CV_collection_modified": "2023-09-01",
-        "CV_collection_version": "0.0.1",
-        "previous_commit": "0.0.1",
-        "author": "Daniel Ellis <daniel.ellis@ext.esa.int>",
-        "checksum": "md5: EDITEDITEDITEDITEDITEDITEDITEDIT",
-        "institution_id": null,
+        "CMIP6Plus_CVS dir?": {
+            "CV_collection_modified": "2023-10-02",
+            "CV_collection_version": "0.0.1",
+            "previous_commit": "0.0.1"
+        },
+        "latest change": {
+            "author": "Daniel Ellis <daniel.ellis@ext.esa.int>",
+            "institution_id": null
+        },
+        "miptables": {
+            "tag": {
+                "version": "0.0.1",
+                "latest": true
+            },
+            "commit": {
+                "SHA": "9fa6eda52792b51326dfc77b955c4e46a8334a2c",
+                "latest": true
+            },
+            "Repository URL": "https://github.com/wolfiex/mip-cmor-tables.git",
+            "DOI": null
+        },
+        "institutions": {
+            "tag": "0.0.2",
+            "Repository URL": "https://github.com/cmip-ipo-internal/CMIPInstitutions.git",
+            "DOI": null
+        },
+        "CMOR": "3.7.2",
+        "CVTool": "0.0.3",
         "specs_doc": "v6.3.0 (link TBC)"
     },
     "experiment_id": {
@@ -152,9 +174,6 @@
         "hist-lu": {
             "experiment": "Single forcing historical simulations",
             "experiment_id": "hist-lu",
-            "sub_experiment_id": [
-                "none"
-            ],
             "description": "Historical simulations with only land use changes",
             "activity_id": [
                 "LESFMIP"
@@ -172,6 +191,9 @@
             ],
             "required_model_components": [
                 "AOGCM"
+            ],
+            "sub_experiment_id": [
+                "f2023"
             ]
         },
         "fut-GHG": {
@@ -317,9 +339,6 @@
         "fut-lu": {
             "experiment": "Single forcing projections",
             "experiment_id": "fut-lu",
-            "sub_experiment_id": [
-                "none"
-            ],
             "description": "As hist-lu but with updated forcings",
             "activity_id": [
                 "LESFMIP"
@@ -337,14 +356,14 @@
             ],
             "required_model_components": [
                 "AOGCM"
+            ],
+            "sub_experiment_id": [
+                "f2023"
             ]
         },
         "historical": {
             "experiment": "all-forcing simulation of the recent past",
             "experiment_id": "historical",
-            "sub_experiment_id": [
-                "none"
-            ],
             "description": "All forcings",
             "activity_id": [
                 "CMIP"
@@ -363,6 +382,9 @@
             ],
             "required_model_components": [
                 "AOGCM"
+            ],
+            "sub_experiment_id": [
+                "none"
             ],
             "parent_experiment_id": [
                 "piControl",

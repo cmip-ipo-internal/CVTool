@@ -36,3 +36,4 @@ subprocess
 cmor
 setuptools
 sys
+Jsonschema
