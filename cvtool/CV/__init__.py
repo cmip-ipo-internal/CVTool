@@ -284,19 +284,20 @@ class CVDIR:
 
         return deck
 
-    def createCV(self, institution: str) -> None:
+    def createCV(self, institution: str, location=None) -> None:
         """
         Create CV data.
 
         Args:
             institution (str): Institution name.
         """
+        location = location or self.directory
         # from .components import compileCV
         compileCV = import_script(*script_path('compileCV'))
-        cvloc = f"{self.directory}"
+        # cvloc = f"{self.directory}"
         cvfile = compileCV.create(
-            self.directory, self.prefix, self.tables, outloc=self.cvout)
-        print('check disabled')
+            location, self.prefix, self.tables, outloc=self.cvout)
+        # print('check disabled')
         # self.checkCV(cvfile, institution)
 
     def checkCV(self, cvfile: str, institution: str) -> None:
@@ -393,13 +394,13 @@ class CVDIR:
             output_path = os.path.join(mergeloc, section_name + '.json')
             core.io.json_write(currentData, output_path)
 
+            # self.createCV()
+
         return mergeloc
 
 
 
     def push(self,repo_location,branch,source_location, overwrite = False):
-        # self.merge()
-        print('ADD MERGE FNS HERE')
 
         from .merge_git import pull_updates, push_output
 

@@ -98,6 +98,15 @@ def listify(dictionary, keys):
                 dictionary[key] = [dictionary[key]]
     return dictionary
 
+def notnull(dictionary, keys,replace='none'):
+    if not isinstance(keys, list): keys = [keys]
+    for key in keys:
+        if key in dictionary:
+            if isinstance(dictionary[key], list):
+                dictionary[key] = [ str(i or replace) for i in dictionary[key]]
+            print(key)
+    return dictionary
+
 
 
 

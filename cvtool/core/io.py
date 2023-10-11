@@ -162,7 +162,8 @@ def rmdir(directory_path: str) -> None:
         shutil.rmtree(directory_path)
         print(f"Removed directory: {directory_path}")
     except Exception as e:
-        print(f"Error deleting directory {directory_path}: {e}")
+        # print(f"Error deleting directory {directory_path}: {e}")
+        ...
 
 def write_temp(prefix: str, content: dict) -> None:
     """

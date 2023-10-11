@@ -246,7 +246,7 @@ if UPDATE_CVS:
         'mip_era': {
             'create': {
                 'mipera': prefix,
-                'institution': 'testipo'
+                # 'institution': 'testipo'
             },
             'update': {
                 'updatedadd': 'topleveltest'
@@ -289,5 +289,7 @@ if UPDATE_CVS:
 handler.createCV('CMIP-IPO')
 # merge with the existing CVs
 merge_location = handler.merge(CVtables = mergeLoc,prefix = 'CMIP6Plus')
+# create a new updated CV 
+handler.createCV('CMIP-IPO',merge_location)
 # place the output files into the CV directory and push 
 handler.push(mergeLoc,branch = 'lesfmip',source_location =merge_location,overwrite=True)

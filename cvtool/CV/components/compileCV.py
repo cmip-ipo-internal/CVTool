@@ -2,15 +2,15 @@
 Script to merge all the respective components of the CV directory.
 '''
 import ast
-import importlib.util
-import os
-import re
+# import importlib.util
+# import os
+# import re
 from glob import glob
 import shutil
 
 
-import sys
-import os
+# import sys
+# import os
 
 # core = sys.modules.get('cvtool.core')
 import cvtool.core as core
@@ -18,19 +18,6 @@ from cvtool.CV.meta import institutions
 from cvtool.CV.compliance.clean_up import prune
 
 print = core.stdout.debug_print
-
-# # Get the directory of the current script
-# current_directory = os.path.dirname(os.path.abspath(__file__))
-
-# # Get the absolute path to the file
-# absolute_path = os.path.join(current_directory, "../compliance/clean_up.py")
-
-# # Read the contents of the file
-# with open(absolute_path, "r") as file:
-#     code = file.read()
-#     print(code)
-#     # Execute the code
-#     exec(code)
 
 
 # save eval of the variables files.
@@ -58,6 +45,7 @@ def create(directory, prefix, tables, outloc=None):
     # WARN! Do not comment this out!
     core.io.mkdir(f'{directory}{outloc}')
 
+    # structure comes from imported vars file 
     for entry in structure:
         file = f"{directory}{entry}.json"
 
@@ -80,22 +68,23 @@ def create(directory, prefix, tables, outloc=None):
             if 'experiment_id' in entry:
                 # this section updates the sources. We expect this to come afterwards, and therefore this should not throw an exception and should work as expected.
 
-                # print('-----')
-                # print(cvdict[entry].values())
-                # break
-                # for experiment in cvdict[entry].values():
-                #     print(bool(experiment))
-                #     for component in experiment["required_model_components"]:
-                #         print ('++'+component, type( experiment["required_model_components"]),entry)
 
-                cvdict['source_type'] = set(cvdict['source_type']).union(set(component for experiment in cvdict[entry].values() if "required_model_components" in experiment
-                                                                             for component in experiment["required_model_components"]+experiment["additional_allowed_model_components"]))
+                cvdict['source_type'] = set(cvdict['source_type']).union(set(component for experiment in cvdict[entry].values() if "required_model_components" in experiment for component in experiment["required_model_components"]+experiment["additional_allowed_model_components"]))
+
+                                         
+                if entry == 'experiment_id':
+
+                    cvdict[entry] = core.stdout.listify(cvdict[entry],['parent_experiment_id','parent)sub_experiment_id','parent_activity_id'])
+
+                    cvdict[entry] = core.stdout.notnull(cvdict[entry],['parent_experiment_id','parent)sub_experiment_id'], 'no parent')
+
+
+
 
                 from cvtool.CV.compliance.experiment_id import test as experiment_test
 
                 # experiment_test(cvdict)
 
-            print('experiment test disabled')
 
             if entry == 'source_id':
                 # this section updates the institutions
