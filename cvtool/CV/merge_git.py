@@ -63,9 +63,10 @@ def push_output(repo_path,new_branch_name,source_directory,prefix='CMIP6Plus',ov
         # repo.git.checkout('--', '.')
 
     # Switch to the main branch and pull the latest updates
+    repo.remotes.origin.pull('main')
     main_branch = repo.branches['main']
     main_branch.checkout()
-    repo.remotes.origin.pull()
+    repo.remotes.origin.pull(new_branch_name)
 
 # Check if the branch already exists
     if new_branch_name in [b.name for b in repo.branches]:

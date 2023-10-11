@@ -6,7 +6,7 @@ import cvtool
 from cvtool import CV
 from cvtool.core.stdout import view,listify,debug_print
 
-print = debug_print
+# print = debug_print
 
 
 import pandas as pd
@@ -241,7 +241,7 @@ if UPDATE_CVS:
         'globals': {
             'institution': "CMIP-IPO",
             'mergeLoc' : mergeLoc,
-            'merge':'all'
+            # 'merge':'all'
         },
         'mip_era': {
             'create': {
@@ -287,5 +287,7 @@ if UPDATE_CVS:
 
 # create the CV.json file in an out directory
 handler.createCV('CMIP-IPO')
-handler.merge()
-handler.push(mergeLoc,branch = 'lesfmip',overwrite=True)
+# merge with the existing CVs
+merge_location = handler.merge(CVtables = mergeLoc,prefix = 'CMIP6Plus')
+# place the output files into the CV directory and push 
+handler.push(mergeLoc,branch = 'lesfmip',source_location =merge_location,overwrite=True)

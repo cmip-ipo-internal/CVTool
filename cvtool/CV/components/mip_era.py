@@ -65,7 +65,7 @@ def update(jsn, optdata):
     assert len(jsn) >= 0
 
     # Update some of the metadata
-    current_date = core.stdout.yymmdd()
+    # current_date = core.stdout.yymmdd()
     overwrite = meta.update()
 
     optdata = core.io.combine(optdata, overwrite)

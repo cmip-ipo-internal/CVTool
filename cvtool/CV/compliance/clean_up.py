@@ -35,7 +35,8 @@ def prune(CV):
 
     lc = locals()
     for keystr in keys:
-        CV[keystr] = {key: value for key, value in CV[keystr].items() if key in set(lc[keystr])}
+        keyval = set(lc[keystr])
+        CV[keystr] = {key: value for key, value in CV[keystr].items() if key in keyval}
 
     return CV
         

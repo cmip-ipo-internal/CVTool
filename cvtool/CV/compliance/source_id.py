@@ -85,6 +85,7 @@ def test(CV):
 
     for name, source in CV.get('source_id').items():
 
+
         # schema test
         try:
             # Validate the JSON data against the schema

@@ -32,7 +32,7 @@
         "CMOR": "3.7.2",
         "CVTool": "0.0.3"
     },
-    "sub_experiment_id": {
-        "f2023": "Forcings 2023"
-    }
+    "further_info_url": [
+        "https://furtherinfo.es-doc.org/.*"
+    ]
 }

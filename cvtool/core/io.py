@@ -250,6 +250,8 @@ def merge_dict(dict1, dict2, overwrite_keys=None):
             merged_dict[key] = merge_dict(merged_dict[key], value, overwrite_keys)
         elif key in merged_dict and isinstance(merged_dict[key], list) and isinstance(value, list):
             merged_dict[key].extend(value)
+            merged_dict[key] = list(set(merged_dict[key]))
+
         else:
             merged_dict[key] = value
 

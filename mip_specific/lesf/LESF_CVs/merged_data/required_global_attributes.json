@@ -32,7 +32,36 @@
         "CMOR": "3.7.2",
         "CVTool": "0.0.3"
     },
-    "sub_experiment_id": {
-        "f2023": "Forcings 2023"
-    }
+    "required_global_attributes": [
+        "product",
+        "activity_id",
+        "nominal_resolution",
+        "initialization_index",
+        "source_id",
+        "table_id",
+        "variant_label",
+        "grid_label",
+        "data_specs_version",
+        "source_type",
+        "institution_id",
+        "realization_index",
+        "sub_experiment",
+        "forcing_index",
+        "experiment",
+        "physics_index",
+        "experiment_id",
+        "license",
+        "sub_experiment_id",
+        "mip_era",
+        "source",
+        "realm",
+        "variable_id",
+        "institution",
+        "further_info_url",
+        "tracking_id",
+        "Conventions",
+        "creation_date",
+        "frequency",
+        "grid"
+    ]
 }
