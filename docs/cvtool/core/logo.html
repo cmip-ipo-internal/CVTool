@@ -94,6 +94,8 @@ if height &lt; 18:
     height = 18
 
 
+print(&#34;\033[94m&#34;)
+
 if terminal_width &gt; 60:
     # Split the ASCII art lines and adjust them to fit the terminal width
     adjusted_ascii = &#34;\n&#34;.join(line[::by] for line in ascii[-height:])
@@ -104,7 +106,7 @@ else:
     print( &#39;********************************************&#39;)
     print( &#39;CMIP - Coupled Model Intercomparison Project&#39;)
     print( &#39;********************************************&#39;)
-
+print(&#34;\033[0m&#34;)
 
 # print(terminal_width,width,height)
 # print(&#39;\nContact: cmip-ipo@esa.int&#39;)</code></pre>

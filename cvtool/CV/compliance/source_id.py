@@ -100,7 +100,6 @@ def test(CV):
         check("activity_participation",activity_id,source)
         # check("parent_activity_id",activity_id,experiment)
         
-        print(source)
         assert source.get('cohort')[0] in ['Published']
 
         # id 

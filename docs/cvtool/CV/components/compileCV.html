@@ -29,20 +29,41 @@
 </summary>
 <pre><code class="python">&#39;&#39;&#39; 
 Script to merge all the respective components of the CV directory.
-&#39;&#39;&#39; 
+&#39;&#39;&#39;
+import ast
 import importlib.util
-import os , re
+import os
+import re
 from glob import glob
 import shutil
 
-import sys,os 
+
+import sys
+import os
+
 # core = sys.modules.get(&#39;cvtool.core&#39;)
 import cvtool.core as core
+from cvtool.CV.meta import institutions
+from cvtool.CV.compliance.clean_up import prune
+
+print = core.stdout.debug_print
+
+# # Get the directory of the current script
+# current_directory = os.path.dirname(os.path.abspath(__file__))
+
+# # Get the absolute path to the file
+# absolute_path = os.path.join(current_directory, &#34;../compliance/clean_up.py&#34;)
+
+# # Read the contents of the file
+# with open(absolute_path, &#34;r&#34;) as file:
+#     code = file.read()
+#     print(code)
+#     # Execute the code
+#     exec(code)
 
 
-# save eval of the variables files. 
-import ast
-with open(__file__.replace(&#39;.py&#39;,&#39;-variables.py&#39;), &#34;r&#34;) as file:
+# save eval of the variables files.
+with open(__file__.replace(&#39;.py&#39;, &#39;-variables.py&#39;), &#34;r&#34;) as file:
     script_code = file.read()
 try:
     parsed_code = ast.parse(script_code, filename=&#34;variables.py&#34;, mode=&#34;exec&#34;)
@@ -52,29 +73,21 @@ except Exception as e:
 
 
 
+def create(directory, prefix, tables, outloc=None):
 
-# print(dir(variables))
-
-def create(directory,prefix,tables,outloc=None):
-    
-    outloc = outloc or &#39;cv_cmor&#39;
-    cvdict = {&#39;source_type&#39;:set()}
+    outloc = outloc or &#39;CVs&#39;
+    cvdict = {&#39;source_type&#39;: set()}
     missing = []
 
-
-
-    
     # MSM: Comment out for testing purposes
     if core.io.exists(f&#39;{directory}{outloc}&#39;, False):
         # Delete the directory
         shutil.rmtree(f&#39;{directory}{outloc}&#39;)
-    
-    
-    
-    # WARN! Do not comment this out! 
+
+    # WARN! Do not comment this out!
     core.io.mkdir(f&#39;{directory}{outloc}&#39;)
 
-    for entry in structure: 
+    for entry in structure:
         file = f&#34;{directory}{entry}.json&#34;
 
         if entry == &#39;table_id&#39;:
@@ -90,68 +103,68 @@ def create(directory,prefix,tables,outloc=None):
             # Hard code to a single table
             cvdict[&#39;table_id&#39;] = [&#39;APmon&#39;]
 
-
-        elif core.io.exists(file,False):
+        elif core.io.exists(file, False):
             cvdict[entry] = core.io.json_read(file)[entry]
-            
+
             if &#39;experiment_id&#39; in entry:
-                # this section updates the sources. We expect this to come afterwards, and therefore this should not throw an exception and should work as expected. 
-                
-                
+                # this section updates the sources. We expect this to come afterwards, and therefore this should not throw an exception and should work as expected.
+
                 # print(&#39;-----&#39;)
                 # print(cvdict[entry].values())
                 # break
-                for experiment in cvdict[entry].values():
-                    for component in experiment[&#34;required_model_components&#34;]:
-                        print (&#39;++&#39;+component, type( experiment[&#34;required_model_components&#34;]),entry)
-
-
-
+                # for experiment in cvdict[entry].values():
+                #     print(bool(experiment))
+                #     for component in experiment[&#34;required_model_components&#34;]:
+                #         print (&#39;++&#39;+component, type( experiment[&#34;required_model_components&#34;]),entry)
 
                 cvdict[&#39;source_type&#39;] = set(cvdict[&#39;source_type&#39;]).union(set(component for experiment in cvdict[entry].values() if &#34;required_model_components&#34; in experiment
-                       for component in experiment[&#34;required_model_components&#34;]))
-               
+                                                                             for component in experiment[&#34;required_model_components&#34;]+experiment[&#34;additional_allowed_model_components&#34;]))
 
-               
-                
+                from cvtool.CV.compliance.experiment_id import test as experiment_test
+
+                # experiment_test(cvdict)
+
+            print(&#39;experiment test disabled&#39;)
 
             if entry == &#39;source_id&#39;:
                 # this section updates the institutions
-                cvdict[&#39;institution_id&#39;] = {i: institutions[i] for i in sorted({component for source in cvdict[entry].values() for component in source.get(&#34;institution_id&#34;, [])})}
+                from cvtool.CV.compliance.source_id import test as source_test
+                # source_test(cvdict)
+                print(&#39;source test disabled&#39;)
+
+                cvdict[&#39;institution_id&#39;] = {i: institutions[i] for i in sorted(
+                    {component for source in cvdict[entry].values() for component in source.get(&#34;institution_id&#34;, [])})}
+
+                # cvdict[&#39;institution_id&#39;] = {i: institutions[i] for i in sorted({component for source in cvdict[entry].values() for component in source.get(&#34;institution_id&#34;, [])})}
 
                 # [[i,instutitions[i]] for i in sorted(list(set(component for source in cvdict[entry].values() for component in source.get(&#34;institution_id&#34;,[]))))]
 
         elif entry in template:
             cvdict[entry] = template[entry]
-        
+
         else:
             missing.append(entry)
 
-
-    #  final check 
+    #  final check
     diff = set(missing) - set(cvdict)
-        
-    if diff: 
-        raise core.stdout.MissingValueError(f&#39;The following fields are required:{diff} &#39;)
+
+    if diff:
+        raise core.stdout.MissingValueError(
+            f&#39;The following fields are required:{diff} &#39;)
 
     core.stdout.MissingValueError(f&#39;The following fields are required:{diff} &#39;)
 
+    #  update this to the correct format.
 
-    #  update this to the correct format. 
+    cvdict[&#39;source_type&#39;] = dict([[s, source_type[s]]
+                                 for s in cvdict[&#39;source_type&#39;]])
 
-
-
-    cvdict[&#39;source_type&#39;] = dict([[s,source_type[s]] for s in cvdict[&#39;source_type&#39;]])
-
+    cvdict = prune(cvdict)
 
     CVfile = f&#34;{directory}{outloc}/{core.io.ensure_suffix(prefix,&#39;_&#39;)}CV.json&#34;
-    core.io.json_write(dict(CV = cvdict), CVfile ,sort=True)
+    core.io.json_write(dict(CV=cvdict), CVfile, sort=True)
 
-    return CVfile
-
-
-
-    </code></pre>
+    return CVfile</code></pre>
 </details>
 </section>
 <section>
@@ -170,26 +183,21 @@ def create(directory,prefix,tables,outloc=None):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def create(directory,prefix,tables,outloc=None):
-    
-    outloc = outloc or &#39;cv_cmor&#39;
-    cvdict = {&#39;source_type&#39;:set()}
+<pre><code class="python">def create(directory, prefix, tables, outloc=None):
+
+    outloc = outloc or &#39;CVs&#39;
+    cvdict = {&#39;source_type&#39;: set()}
     missing = []
 
-
-
-    
     # MSM: Comment out for testing purposes
     if core.io.exists(f&#39;{directory}{outloc}&#39;, False):
         # Delete the directory
         shutil.rmtree(f&#39;{directory}{outloc}&#39;)
-    
-    
-    
-    # WARN! Do not comment this out! 
+
+    # WARN! Do not comment this out!
     core.io.mkdir(f&#39;{directory}{outloc}&#39;)
 
-    for entry in structure: 
+    for entry in structure:
         file = f&#34;{directory}{entry}.json&#34;
 
         if entry == &#39;table_id&#39;:
@@ -205,62 +213,66 @@ def create(directory,prefix,tables,outloc=None):
             # Hard code to a single table
             cvdict[&#39;table_id&#39;] = [&#39;APmon&#39;]
 
-
-        elif core.io.exists(file,False):
+        elif core.io.exists(file, False):
             cvdict[entry] = core.io.json_read(file)[entry]
-            
+
             if &#39;experiment_id&#39; in entry:
-                # this section updates the sources. We expect this to come afterwards, and therefore this should not throw an exception and should work as expected. 
-                
-                
+                # this section updates the sources. We expect this to come afterwards, and therefore this should not throw an exception and should work as expected.
+
                 # print(&#39;-----&#39;)
                 # print(cvdict[entry].values())
                 # break
-                for experiment in cvdict[entry].values():
-                    for component in experiment[&#34;required_model_components&#34;]:
-                        print (&#39;++&#39;+component, type( experiment[&#34;required_model_components&#34;]),entry)
-
-
-
+                # for experiment in cvdict[entry].values():
+                #     print(bool(experiment))
+                #     for component in experiment[&#34;required_model_components&#34;]:
+                #         print (&#39;++&#39;+component, type( experiment[&#34;required_model_components&#34;]),entry)
 
                 cvdict[&#39;source_type&#39;] = set(cvdict[&#39;source_type&#39;]).union(set(component for experiment in cvdict[entry].values() if &#34;required_model_components&#34; in experiment
-                       for component in experiment[&#34;required_model_components&#34;]))
-               
+                                                                             for component in experiment[&#34;required_model_components&#34;]+experiment[&#34;additional_allowed_model_components&#34;]))
 
-               
-                
+                from cvtool.CV.compliance.experiment_id import test as experiment_test
+
+                # experiment_test(cvdict)
+
+            print(&#39;experiment test disabled&#39;)
 
             if entry == &#39;source_id&#39;:
                 # this section updates the institutions
-                cvdict[&#39;institution_id&#39;] = {i: institutions[i] for i in sorted({component for source in cvdict[entry].values() for component in source.get(&#34;institution_id&#34;, [])})}
+                from cvtool.CV.compliance.source_id import test as source_test
+                # source_test(cvdict)
+                print(&#39;source test disabled&#39;)
+
+                cvdict[&#39;institution_id&#39;] = {i: institutions[i] for i in sorted(
+                    {component for source in cvdict[entry].values() for component in source.get(&#34;institution_id&#34;, [])})}
+
+                # cvdict[&#39;institution_id&#39;] = {i: institutions[i] for i in sorted({component for source in cvdict[entry].values() for component in source.get(&#34;institution_id&#34;, [])})}
 
                 # [[i,instutitions[i]] for i in sorted(list(set(component for source in cvdict[entry].values() for component in source.get(&#34;institution_id&#34;,[]))))]
 
         elif entry in template:
             cvdict[entry] = template[entry]
-        
+
         else:
             missing.append(entry)
 
-
-    #  final check 
+    #  final check
     diff = set(missing) - set(cvdict)
-        
-    if diff: 
-        raise core.stdout.MissingValueError(f&#39;The following fields are required:{diff} &#39;)
+
+    if diff:
+        raise core.stdout.MissingValueError(
+            f&#39;The following fields are required:{diff} &#39;)
 
     core.stdout.MissingValueError(f&#39;The following fields are required:{diff} &#39;)
 
+    #  update this to the correct format.
 
-    #  update this to the correct format. 
+    cvdict[&#39;source_type&#39;] = dict([[s, source_type[s]]
+                                 for s in cvdict[&#39;source_type&#39;]])
 
-
-
-    cvdict[&#39;source_type&#39;] = dict([[s,source_type[s]] for s in cvdict[&#39;source_type&#39;]])
-
+    cvdict = prune(cvdict)
 
     CVfile = f&#34;{directory}{outloc}/{core.io.ensure_suffix(prefix,&#39;_&#39;)}CV.json&#34;
-    core.io.json_write(dict(CV = cvdict), CVfile ,sort=True)
+    core.io.json_write(dict(CV=cvdict), CVfile, sort=True)
 
     return CVfile</code></pre>
 </details>

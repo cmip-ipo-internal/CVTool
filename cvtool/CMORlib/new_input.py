@@ -99,6 +99,11 @@ def create(cvfile, prefix, institution, tables, table_prefix, writeLocation, reg
     }
     template.update(kwargs)
 
+    # ensure that we have no extra duplicates. 
+
+    
+
+
 
     # sanity check - ensure that files exist. 
     core.io.exists(tables+template["_AXIS_ENTRY_FILE"])

@@ -70,7 +70,7 @@ def combine(new: dict, old: dict) -&gt; dict:
         old (dict): The old dictionary to merge into.
 
     Returns:
-        dict: The merged dictionary.
+        dict: The merged_dict dictionary.
     &#34;&#34;&#34;
     merged_dict = old.copy()
     for key, value in new.items():
@@ -240,7 +240,65 @@ def relative_to(absolte,current):
 
 def terminal():
     size = os.get_terminal_size()
-    return size</code></pre>
+    return size
+
+
+def merge_dict(dict1, dict2, overwrite_keys=None):
+    &#34;&#34;&#34;
+    Merge two dictionaries together.
+    
+    Args:
+        dict1 (dict): First dictionary to merge.
+        dict2 (dict): Second dictionary to merge.
+        overwrite_keys (list): List of keys that are allowed to be overwritten if they exist in both dictionaries.
+
+    ** dict 2 will overwrite values from dict one if those are allowed. 
+    
+    Returns:
+        dict: Merged dictionary.
+    
+    Raises:
+        ValueError: If any identical first-level keys are found and not included in overwrite_keys.
+    &#34;&#34;&#34;
+    if overwrite_keys is None:
+        overwrite_keys = set()
+
+    conflicting_keys = False
+    if overwrite_keys != &#39;all&#39;:
+        common_keys = set(dict1) &amp; set(dict2)
+        conflicting_keys = common_keys - overwrite_keys
+    
+    if conflicting_keys:
+        raise ValueError(f&#34;Duplicate keys found: {&#39;, &#39;.join(conflicting_keys)}. Use overwrite_keys list to allow overwriting or correct the error. &#34;)
+    
+    # merged_dict = {**dict1, **dict2}
+
+    merged_dict = dict(dict1)
+    for key, value in dict2.items():
+        if key in merged_dict and isinstance(merged_dict[key], dict) and isinstance(value, dict):
+            merged_dict[key] = merge_dict(merged_dict[key], value, overwrite_keys)
+        elif key in merged_dict and isinstance(merged_dict[key], list) and isinstance(value, list):
+            merged_dict[key].extend(value)
+        else:
+            merged_dict[key] = value
+
+    return merged_dict
+
+
+def copy_files(src_dir, dest_dir, prefix=&#39;&#39;):
+    # Walk through the source directory
+    for foldername, _, filenames in os.walk(src_dir):
+        # Create corresponding folder in the destination directory
+        dest_folder = dest_dir
+        os.makedirs(dest_folder, exist_ok=True)
+        
+        # Copy files from the current folder to the destination folder
+        for filename in filenames:
+            # Add the specified prefix to individual files
+            new_filename = prefix + filename
+            src_file = os.path.join(foldername, filename)
+            dest_file = os.path.join(dest_folder, new_filename)
+            shutil.copy2(src_file, dest_file)  # Use shutil.copy2 to preserve metadata like timestamps</code></pre>
 </details>
 </section>
 <section>
@@ -265,7 +323,7 @@ def terminal():
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>dict</code></dt>
-<dd>The merged dictionary.</dd>
+<dd>The merged_dict dictionary.</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -280,7 +338,7 @@ def terminal():
         old (dict): The old dictionary to merge into.
 
     Returns:
-        dict: The merged dictionary.
+        dict: The merged_dict dictionary.
     &#34;&#34;&#34;
     merged_dict = old.copy()
     for key, value in new.items():
@@ -289,6 +347,31 @@ def terminal():
         else:
             merged_dict[key] = value
     return merged_dict</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.io.copy_files"><code class="name flex">
+<span>def <span class="ident">copy_files</span></span>(<span>src_dir, dest_dir, prefix='')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy_files(src_dir, dest_dir, prefix=&#39;&#39;):
+    # Walk through the source directory
+    for foldername, _, filenames in os.walk(src_dir):
+        # Create corresponding folder in the destination directory
+        dest_folder = dest_dir
+        os.makedirs(dest_folder, exist_ok=True)
+        
+        # Copy files from the current folder to the destination folder
+        for filename in filenames:
+            # Add the specified prefix to individual files
+            new_filename = prefix + filename
+            src_file = os.path.join(foldername, filename)
+            dest_file = os.path.join(dest_folder, new_filename)
+            shutil.copy2(src_file, dest_file)  # Use shutil.copy2 to preserve metadata like timestamps</code></pre>
 </details>
 </dd>
 <dt id="cvtool.core.io.ensure_suffix"><code class="name flex">
@@ -485,6 +568,77 @@ def terminal():
 
     with open(filename, mode) as file:
         json.dump(jsndata, file, indent=4, sort_keys=sort)</code></pre>
+</details>
+</dd>
+<dt id="cvtool.core.io.merge_dict"><code class="name flex">
+<span>def <span class="ident">merge_dict</span></span>(<span>dict1, dict2, overwrite_keys=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Merge two dictionaries together.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>dict1</code></strong> :&ensp;<code>dict</code></dt>
+<dd>First dictionary to merge.</dd>
+<dt><strong><code>dict2</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Second dictionary to merge.</dd>
+<dt><strong><code>overwrite_keys</code></strong> :&ensp;<code>list</code></dt>
+<dd>List of keys that are allowed to be overwritten if they exist in both dictionaries.</dd>
+</dl>
+<p>** dict 2 will overwrite values from dict one if those are allowed. </p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>Merged dictionary.</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>If any identical first-level keys are found and not included in overwrite_keys.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def merge_dict(dict1, dict2, overwrite_keys=None):
+    &#34;&#34;&#34;
+    Merge two dictionaries together.
+    
+    Args:
+        dict1 (dict): First dictionary to merge.
+        dict2 (dict): Second dictionary to merge.
+        overwrite_keys (list): List of keys that are allowed to be overwritten if they exist in both dictionaries.
+
+    ** dict 2 will overwrite values from dict one if those are allowed. 
+    
+    Returns:
+        dict: Merged dictionary.
+    
+    Raises:
+        ValueError: If any identical first-level keys are found and not included in overwrite_keys.
+    &#34;&#34;&#34;
+    if overwrite_keys is None:
+        overwrite_keys = set()
+
+    conflicting_keys = False
+    if overwrite_keys != &#39;all&#39;:
+        common_keys = set(dict1) &amp; set(dict2)
+        conflicting_keys = common_keys - overwrite_keys
+    
+    if conflicting_keys:
+        raise ValueError(f&#34;Duplicate keys found: {&#39;, &#39;.join(conflicting_keys)}. Use overwrite_keys list to allow overwriting or correct the error. &#34;)
+    
+    # merged_dict = {**dict1, **dict2}
+
+    merged_dict = dict(dict1)
+    for key, value in dict2.items():
+        if key in merged_dict and isinstance(merged_dict[key], dict) and isinstance(value, dict):
+            merged_dict[key] = merge_dict(merged_dict[key], value, overwrite_keys)
+        elif key in merged_dict and isinstance(merged_dict[key], list) and isinstance(value, list):
+            merged_dict[key].extend(value)
+        else:
+            merged_dict[key] = value
+
+    return merged_dict</code></pre>
 </details>
 </dd>
 <dt id="cvtool.core.io.mkdir"><code class="name flex">
@@ -726,11 +880,13 @@ def terminal():
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="cvtool.core.io.combine" href="#cvtool.core.io.combine">combine</a></code></li>
+<li><code><a title="cvtool.core.io.copy_files" href="#cvtool.core.io.copy_files">copy_files</a></code></li>
 <li><code><a title="cvtool.core.io.ensure_suffix" href="#cvtool.core.io.ensure_suffix">ensure_suffix</a></code></li>
 <li><code><a title="cvtool.core.io.exists" href="#cvtool.core.io.exists">exists</a></code></li>
 <li><code><a title="cvtool.core.io.get_current_function_name" href="#cvtool.core.io.get_current_function_name">get_current_function_name</a></code></li>
 <li><code><a title="cvtool.core.io.json_read" href="#cvtool.core.io.json_read">json_read</a></code></li>
 <li><code><a title="cvtool.core.io.json_write" href="#cvtool.core.io.json_write">json_write</a></code></li>
+<li><code><a title="cvtool.core.io.merge_dict" href="#cvtool.core.io.merge_dict">merge_dict</a></code></li>
 <li><code><a title="cvtool.core.io.mkdir" href="#cvtool.core.io.mkdir">mkdir</a></code></li>
 <li><code><a title="cvtool.core.io.read_temp" href="#cvtool.core.io.read_temp">read_temp</a></code></li>
 <li><code><a title="cvtool.core.io.relative_to" href="#cvtool.core.io.relative_to">relative_to</a></code></li>

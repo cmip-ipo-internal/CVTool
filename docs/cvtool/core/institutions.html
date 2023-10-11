@@ -4,8 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>cvtool.core API documentation</title>
-<meta name="description" content="Core Lib files. These deal with: …" />
+<title>cvtool.core.institutions API documentation</title>
+<meta name="description" content="This file is set up such that importing it will run the relevant setup scripts.
+*******
+WARN: This does mean that once imported, it will not import …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -19,81 +21,101 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>cvtool.core</code></h1>
+<h1 class="title">Module <code>cvtool.core.institutions</code></h1>
 </header>
 <section id="section-intro">
-<p>Core Lib files. These deal with:</p>
-<ul>
-<li>curses</li>
-<li>terminal parameters</li>
-<li>file input-output</li>
-<li>print formatting
-etc.</li>
-</ul>
+<p>This file is set up such that importing it will run the relevant setup scripts.</p>
+<hr>
+<p>WARN: This does mean that once imported, it will not import again unless you start a new independent program.</p>
+<hr>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#39;&#39;&#39;
-Core Lib files. These deal with:
+This file is set up such that importing it will run the relevant setup scripts.
+*******
+WARN: This does mean that once imported, it will not import again unless you start a new independent program.
+*******
 
-- curses
-- terminal parameters
-- file input-output
-- print formatting
-etc.
+
 &#39;&#39;&#39;
-from . import stdout, io, dynamic_imports, curses_toolbox, checksum,version_control</code></pre>
+
+from typing import List, Dict, Any
+import git
+from git import Repo
+import tempfile
+import glob
+import os
+from . import io
+from .version_control import last_commit, query_repo  # Assuming version_control is properly set up
+
+__REPOPREFIX__ = &#39;cvtool.institutions.&#39;
+
+
+repo_url = &#39;https://github.com/cmip-ipo-internal/CMIPInstitutions&#39;
+
+
+term = io.terminal()
+
+# # we want the current only 
+# current = last_commit(*repo_url.split(&#39;/&#39;)[-2:])
+
+# The location of the system temporary files
+tmp = tempfile.gettempdir()
+repo = None
+
+# Check if we have any existing repositories in the tmp
+existing = glob.glob(f&#39;{tmp}/{__REPOPREFIX__}*&#39;)
+
+
+for path in existing:
+    repo = Repo(path)
+    repo.remotes.origin.pull()
+    existing.remove(path)
+
+    # Remove the outdated duplicates if they exist
+    for p in existing:
+        io.rmdir(p)
+    break
+
+if not repo:
+    # If the repo does not exist or is not current, we download a new one.
+    try:
+        temp_dir = tempfile.mkdtemp(prefix=__REPOPREFIX__, suffix=&#39;&#39;)
+    except FileExistsError:
+        print(&#34;Directory already exists with the same name [this is unusual]&#34;)
+
+    # Let&#39;s download the latest repository
+    repo = Repo.clone_from(repo_url + &#39;.git&#39;, temp_dir)
+
+
+
+# Get the repository URL
+repo_url = repo.remotes.origin.url
+# Get the current commit hash
+current_commit_hash = repo.head.commit.hexsha
+# Create clickable links
+repo_link = repo_url.replace(&#34;.git&#34;, &#34;&#34;).replace(&#34;:&#34;, &#34;/&#34;).replace(&#34;git@&#34;, &#34;https://&#34;)
+commit_link = f&#34;{repo_link}/commit/{current_commit_hash}&#34;
+
+LOCATION = repo.working_dir
+
+institutions_meta = query_repo(repo.working_dir,False)
+print(&#39;*&#39;*term.columns)
+print(f&#34;&#34;&#34;
+        Institution list: {LOCATION} 
+        Latest Tag: {institutions_meta[&#39;tag&#39;]}
+        Viewable URL: {commit_link}
+
+        &#34;&#34;&#34;)
+print(&#39;*&#39;*term.columns)
+
+import json
+institutions = json.load(open(f&#39;{LOCATION}/institutions.json&#39;,&#39;r&#39;))</code></pre>
 </details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
-<dl>
-<dt><code class="name"><a title="cvtool.core.checksum" href="checksum.html">cvtool.core.checksum</a></code></dt>
-<dd>
-<div class="desc"><p>Tools for adding and validating checksums</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.curses_toolbox" href="curses_toolbox.html">cvtool.core.curses_toolbox</a></code></dt>
-<dd>
-<div class="desc"><p>A list editor written in ncurses …</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.custom_errors" href="custom_errors.html">cvtool.core.custom_errors</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.dynamic_imports" href="dynamic_imports.html">cvtool.core.dynamic_imports</a></code></dt>
-<dd>
-<div class="desc"><p>Scripts to dynamically import modules …</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.institutions" href="institutions.html">cvtool.core.institutions</a></code></dt>
-<dd>
-<div class="desc"><p>This file is set up such that importing it will run the relevant setup scripts.</p>
-<hr>
-<p>WARN: This does mean that once imported, it will not import …</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.io" href="io.html">cvtool.core.io</a></code></dt>
-<dd>
-<div class="desc"><p>Functions for input-output operations within the cvtools library</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.logo" href="logo.html">cvtool.core.logo</a></code></dt>
-<dd>
-<div class="desc"><p>The file which determines the logo splash screen</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.miptables" href="miptables.html">cvtool.core.miptables</a></code></dt>
-<dd>
-<div class="desc"><p>This file is set up such that importing it will run the relevant setup scripts.</p>
-<hr>
-<p>WARN: This does mean that once imported, it will not import …</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.stdout" href="stdout.html">cvtool.core.stdout</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.version_control" href="version_control.html">cvtool.core.version_control</a></code></dt>
-<dd>
-<div class="desc"><p>This file contains all the git, github and versioning functions for the cvtools library.</p></div>
-</dd>
-</dl>
 </section>
 <section>
 </section>
@@ -110,21 +132,7 @@ from . import stdout, io, dynamic_imports, curses_toolbox, checksum,version_cont
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="cvtool" href="../index.html">cvtool</a></code></li>
-</ul>
-</li>
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
-<ul>
-<li><code><a title="cvtool.core.checksum" href="checksum.html">cvtool.core.checksum</a></code></li>
-<li><code><a title="cvtool.core.curses_toolbox" href="curses_toolbox.html">cvtool.core.curses_toolbox</a></code></li>
-<li><code><a title="cvtool.core.custom_errors" href="custom_errors.html">cvtool.core.custom_errors</a></code></li>
-<li><code><a title="cvtool.core.dynamic_imports" href="dynamic_imports.html">cvtool.core.dynamic_imports</a></code></li>
-<li><code><a title="cvtool.core.institutions" href="institutions.html">cvtool.core.institutions</a></code></li>
-<li><code><a title="cvtool.core.io" href="io.html">cvtool.core.io</a></code></li>
-<li><code><a title="cvtool.core.logo" href="logo.html">cvtool.core.logo</a></code></li>
-<li><code><a title="cvtool.core.miptables" href="miptables.html">cvtool.core.miptables</a></code></li>
-<li><code><a title="cvtool.core.stdout" href="stdout.html">cvtool.core.stdout</a></code></li>
-<li><code><a title="cvtool.core.version_control" href="version_control.html">cvtool.core.version_control</a></code></li>
+<li><code><a title="cvtool.core" href="index.html">cvtool.core</a></code></li>
 </ul>
 </li>
 </ul>

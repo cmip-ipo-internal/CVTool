@@ -32,11 +32,14 @@ def setup_mip_tables(commit_hash = None ) -> None:
     Set up the MIP tables by checking for existing versions, downloading the latest version, and updating environment variables.
     """
 
-    print('WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN - using wolfiex (test miptables) instead of PCMDI repo')
-    print('WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN - using wolfiex (test miptables) instead of PCMDI repo')
-    # repo_url = 'https://github.com/PCMDI/mip-cmor-tables'
 
-    repo_url = 'https://github.com/wolfiex/mip-cmor-tables'
+
+    repo_url = 'https://github.com/PCMDI/mip-cmor-tables'
+
+
+    # print('WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN - using wolfiex (test miptables) instead of PCMDI repo')
+    # print('WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN - using wolfiex (test miptables) instead of PCMDI repo')
+    # repo_url = 'https://github.com/wolfiex/mip-cmor-tables'
     table_subdir = '/mip_cmor_tables/out/'
 
     term = io.terminal()

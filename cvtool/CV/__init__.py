@@ -18,7 +18,7 @@ from ..core.miptables import setup_mip_tables #this will trigger the miptables i
 
 from ..core.dynamic_imports import load_module,import_script,script_path
 from ..core.custom_errors import MipTableError
-
+# print = core.stdout.debug_print
 # from .components import meta
 from . import meta
 
@@ -95,13 +95,19 @@ class CVDIR:
         self.tables = config('tables') or self.tables
         if not self.tables: MipTableError(f'Table: "{self.tables}" not found in environmental variables "cmor+tables". This is usually generated from cvtool.core.miptables ')
         self.table_prefix = config('table_prefix')
-        self.cvout = config('cvout', 'cv_cmor')
+        self.cvout = config('cvout', 'CVs')
 
         core.io.exists(self.tables)
 
-        if not core.io.exists(self.directory, False):
+        if bool(config('clean', 'False')):
+            print('removing the directory')
+            core.io.rmdir(self.directory)
 
+        if not core.io.exists(self.directory, False):
             self.create_project()
+
+
+
 
         for file_name in self.file_names:
             self.files[file_name] = core.io.json_read(
@@ -166,6 +172,7 @@ class CVDIR:
             preprocessed_data = self.pre_parse_update(file_name, data)
             data = update_func(self.files[file_name], preprocessed_data)
 
+
         # import inspect
         # print('**********',module,[member for member in inspect.getmembers(module) if inspect.isfunction(member[1])])
 
@@ -182,6 +189,35 @@ class CVDIR:
             jsn_data = module.update(jsn_data, data)
         else:
             jsn_data = data
+
+
+        if 'mergeLoc' in data.get('globals',[]):
+
+            print('mergetable data pre check, format tables to trail / ')
+            
+            # this must exist -> add a check before this point
+            mergeFiles = data.get('globals')['mergeLoc']
+            mergeData = core.io.json_read(f"{mergeFiles}{data.get('globals').get('table_prefix','')}_{output_name}.json","r")[output_name]
+
+            if isinstance(mergeData, dict):
+                jsn_data[output_name] = core.io.merge_dict(mergeData,jsn_data[output_name],data.get("merge") or data['globals'].get("merge",{})) 
+
+            else:
+                jsn_data[output_name] = jsn_data[output_name] or mergeData
+
+        elif 'merge' in data:
+            raise ValueError('"Merge" was specified in the options, however a "mergeLoc" location was not provided in the global attributes. Please see the documentation for more infomation.')
+
+
+        
+    #     if data[output_name]
+
+
+    #     optdata['globals']['institution']
+    # optdata = optdata.get(this) or {}
+
+
+
 
         core.io.json_write(jsn_data, output_path)
 
@@ -343,6 +379,24 @@ class CVDIR:
         
 
         # print(cmor_input)
+
+    def merge(self):
+        ...
+    def push(self,repo_location,branch,overwrite = False):
+        self.merge()
+        print('ADD MERGE FNS HERE')
+
+        from .merge_git import pull_updates, push_output
+
+        pull_updates(repo_location,overwrite=overwrite)
+
+        push_output(repo_location,branch,self.directory,prefix=self.prefix,overwrite=overwrite)
+
+        
+
+
+
+
 
 
 # class ProjectCreator:

@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>cvtool.core API documentation</title>
-<meta name="description" content="Core Lib files. These deal with: …" />
+<title>cvtool.CV.compliance API documentation</title>
+<meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -19,79 +19,24 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>cvtool.core</code></h1>
+<h1 class="title">Module <code>cvtool.CV.compliance</code></h1>
 </header>
 <section id="section-intro">
-<p>Core Lib files. These deal with:</p>
-<ul>
-<li>curses</li>
-<li>terminal parameters</li>
-<li>file input-output</li>
-<li>print formatting
-etc.</li>
-</ul>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">&#39;&#39;&#39;
-Core Lib files. These deal with:
-
-- curses
-- terminal parameters
-- file input-output
-- print formatting
-etc.
-&#39;&#39;&#39;
-from . import stdout, io, dynamic_imports, curses_toolbox, checksum,version_control</code></pre>
-</details>
 </section>
 <section>
 <h2 class="section-title" id="header-submodules">Sub-modules</h2>
 <dl>
-<dt><code class="name"><a title="cvtool.core.checksum" href="checksum.html">cvtool.core.checksum</a></code></dt>
+<dt><code class="name"><a title="cvtool.CV.compliance.clean_up" href="clean_up.html">cvtool.CV.compliance.clean_up</a></code></dt>
 <dd>
-<div class="desc"><p>Tools for adding and validating checksums</p></div>
+<div class="desc"><p>Lets add some checks to ensure that we do not have …</p></div>
 </dd>
-<dt><code class="name"><a title="cvtool.core.curses_toolbox" href="curses_toolbox.html">cvtool.core.curses_toolbox</a></code></dt>
-<dd>
-<div class="desc"><p>A list editor written in ncurses …</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.custom_errors" href="custom_errors.html">cvtool.core.custom_errors</a></code></dt>
+<dt><code class="name"><a title="cvtool.CV.compliance.experiment_id" href="experiment_id.html">cvtool.CV.compliance.experiment_id</a></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt><code class="name"><a title="cvtool.core.dynamic_imports" href="dynamic_imports.html">cvtool.core.dynamic_imports</a></code></dt>
-<dd>
-<div class="desc"><p>Scripts to dynamically import modules …</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.institutions" href="institutions.html">cvtool.core.institutions</a></code></dt>
-<dd>
-<div class="desc"><p>This file is set up such that importing it will run the relevant setup scripts.</p>
-<hr>
-<p>WARN: This does mean that once imported, it will not import …</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.io" href="io.html">cvtool.core.io</a></code></dt>
-<dd>
-<div class="desc"><p>Functions for input-output operations within the cvtools library</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.logo" href="logo.html">cvtool.core.logo</a></code></dt>
-<dd>
-<div class="desc"><p>The file which determines the logo splash screen</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.miptables" href="miptables.html">cvtool.core.miptables</a></code></dt>
-<dd>
-<div class="desc"><p>This file is set up such that importing it will run the relevant setup scripts.</p>
-<hr>
-<p>WARN: This does mean that once imported, it will not import …</p></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.stdout" href="stdout.html">cvtool.core.stdout</a></code></dt>
+<dt><code class="name"><a title="cvtool.CV.compliance.source_id" href="source_id.html">cvtool.CV.compliance.source_id</a></code></dt>
 <dd>
 <div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="cvtool.core.version_control" href="version_control.html">cvtool.core.version_control</a></code></dt>
-<dd>
-<div class="desc"><p>This file contains all the git, github and versioning functions for the cvtools library.</p></div>
 </dd>
 </dl>
 </section>
@@ -110,21 +55,14 @@ from . import stdout, io, dynamic_imports, curses_toolbox, checksum,version_cont
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="cvtool" href="../index.html">cvtool</a></code></li>
+<li><code><a title="cvtool.CV" href="../index.html">cvtool.CV</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
 <ul>
-<li><code><a title="cvtool.core.checksum" href="checksum.html">cvtool.core.checksum</a></code></li>
-<li><code><a title="cvtool.core.curses_toolbox" href="curses_toolbox.html">cvtool.core.curses_toolbox</a></code></li>
-<li><code><a title="cvtool.core.custom_errors" href="custom_errors.html">cvtool.core.custom_errors</a></code></li>
-<li><code><a title="cvtool.core.dynamic_imports" href="dynamic_imports.html">cvtool.core.dynamic_imports</a></code></li>
-<li><code><a title="cvtool.core.institutions" href="institutions.html">cvtool.core.institutions</a></code></li>
-<li><code><a title="cvtool.core.io" href="io.html">cvtool.core.io</a></code></li>
-<li><code><a title="cvtool.core.logo" href="logo.html">cvtool.core.logo</a></code></li>
-<li><code><a title="cvtool.core.miptables" href="miptables.html">cvtool.core.miptables</a></code></li>
-<li><code><a title="cvtool.core.stdout" href="stdout.html">cvtool.core.stdout</a></code></li>
-<li><code><a title="cvtool.core.version_control" href="version_control.html">cvtool.core.version_control</a></code></li>
+<li><code><a title="cvtool.CV.compliance.clean_up" href="clean_up.html">cvtool.CV.compliance.clean_up</a></code></li>
+<li><code><a title="cvtool.CV.compliance.experiment_id" href="experiment_id.html">cvtool.CV.compliance.experiment_id</a></code></li>
+<li><code><a title="cvtool.CV.compliance.source_id" href="source_id.html">cvtool.CV.compliance.source_id</a></code></li>
 </ul>
 </li>
 </ul>

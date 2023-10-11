@@ -231,4 +231,13 @@ def query_repo(repo_path,verbose = True):
             "DOI": zenodo_doi
         }
 
+    # license 
+    with open(os.path.join(repo_path, 'LICENSE'), 'r', encoding='utf-8') as file:
+        lines = file.readlines()
+        if len(lines) >= 3:
+            license_info = lines[2].strip()
+            if license_info:
+                output_dict['lisence'] = license_info
+
+
     return output_dict

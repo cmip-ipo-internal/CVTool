@@ -3,7 +3,7 @@ import requests
 import subprocess
 import os
 from datetime import date
-
+import inspect
 
 class MissingValueError(Exception):
     """
@@ -90,3 +90,27 @@ def get_user(shell: bool = False) -> dict:
 
     return {'user': username, 'email': email}
 
+def listify(dictionary, keys):
+    if not isinstance(keys, list): keys = [keys]
+    for key in keys:
+        if key in dictionary:
+            if not isinstance(dictionary[key], list):
+                dictionary[key] = [dictionary[key]]
+    return dictionary
+
+
+
+
+def debug_print(*args, **kwargs):
+    ''' prints the file and line '''
+    caller_frame = inspect.stack()[1]
+    caller_file = '/'.join(caller_frame[1].split('/')[-2:])
+    caller_line = caller_frame[2]
+
+    print(*args, **kwargs)
+    print(f"\033[92m^ [{caller_file}:{caller_line}]")
+    print("\033[0m")
+    
+
+# # Replace the built-in print function with the custom print function
+# print = core.stdout.custom_print

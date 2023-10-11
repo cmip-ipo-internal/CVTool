@@ -41,7 +41,7 @@ def combine(new: dict, old: dict) -> dict:
         old (dict): The old dictionary to merge into.
 
     Returns:
-        dict: The merged dictionary.
+        dict: The merged_dict dictionary.
     """
     merged_dict = old.copy()
     for key, value in new.items():
@@ -212,3 +212,62 @@ def relative_to(absolte,current):
 def terminal():
     size = os.get_terminal_size()
     return size
+
+
+def merge_dict(dict1, dict2, overwrite_keys=None):
+    """
+    Merge two dictionaries together.
+    
+    Args:
+        dict1 (dict): First dictionary to merge.
+        dict2 (dict): Second dictionary to merge.
+        overwrite_keys (list): List of keys that are allowed to be overwritten if they exist in both dictionaries.
+
+    ** dict 2 will overwrite values from dict one if those are allowed. 
+    
+    Returns:
+        dict: Merged dictionary.
+    
+    Raises:
+        ValueError: If any identical first-level keys are found and not included in overwrite_keys.
+    """
+    if overwrite_keys is None:
+        overwrite_keys = set()
+
+    conflicting_keys = False
+    if overwrite_keys != 'all':
+        common_keys = set(dict1) & set(dict2)
+        conflicting_keys = common_keys - overwrite_keys
+    
+    if conflicting_keys:
+        raise ValueError(f"Duplicate keys found: {', '.join(conflicting_keys)}. Use overwrite_keys list to allow overwriting or correct the error. ")
+    
+    # merged_dict = {**dict1, **dict2}
+
+    merged_dict = dict(dict1)
+    for key, value in dict2.items():
+        if key in merged_dict and isinstance(merged_dict[key], dict) and isinstance(value, dict):
+            merged_dict[key] = merge_dict(merged_dict[key], value, overwrite_keys)
+        elif key in merged_dict and isinstance(merged_dict[key], list) and isinstance(value, list):
+            merged_dict[key].extend(value)
+        else:
+            merged_dict[key] = value
+
+    return merged_dict
+
+
+def copy_files(src_dir, dest_dir, prefix=''):
+    # Walk through the source directory
+    for foldername, _, filenames in os.walk(src_dir):
+        # Create corresponding folder in the destination directory
+        dest_folder = dest_dir
+        os.makedirs(dest_folder, exist_ok=True)
+        
+        # Copy files from the current folder to the destination folder
+        for filename in filenames:
+            # Add the specified prefix to individual files
+            new_filename = prefix + filename
+            src_file = os.path.join(foldername, filename)
+            dest_file = os.path.join(dest_folder, new_filename)
+            shutil.copy2(src_file, dest_file)  # Use shutil.copy2 to preserve metadata like timestamps
+
