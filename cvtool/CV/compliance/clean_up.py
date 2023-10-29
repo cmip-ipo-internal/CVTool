@@ -31,7 +31,7 @@ def prune(CV):
 
         institution_id.extend(source.get("institution_id",[]))
 
-    keys = ['institution_id']
+    keys = ['institution_id','activity_id']
 
     # 'source_type','activity_id','sub_experiment_id'
 
