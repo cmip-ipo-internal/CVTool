@@ -291,5 +291,10 @@ handler.createCV('CMIP-IPO')
 merge_location = handler.merge(CVtables = mergeLoc,prefix = 'CMIP6Plus')
 # create a new updated CV 
 handler.createCV('CMIP-IPO',merge_location)
+
+handler.createIni()
+
+
+
 # place the output files into the CV directory and push 
-handler.push(mergeLoc,branch = 'lesfmip',source_location =merge_location,overwrite=True)
+# handler.push(mergeLoc,branch = 'lesfmip',source_location =merge_location,overwrite=True)

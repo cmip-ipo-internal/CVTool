@@ -259,18 +259,44 @@ def merge_dict(dict1, dict2, overwrite_keys=None):
     return merged_dict
 
 
-def copy_files(src_dir, dest_dir, prefix=''):
-    # Walk through the source directory
-    for foldername, _, filenames in os.walk(src_dir):
-        # Create corresponding folder in the destination directory
-        dest_folder = dest_dir
-        os.makedirs(dest_folder, exist_ok=True)
+# def copy_files(src_dir, dest_dir, prefix=''):
+#     # Walk through the source directory
+#     for foldername, _, filenames in os.walk(src_dir):
+#         # Create corresponding folder in the destination directory
+#         dest_folder = dest_dir
+#         mkdir(dest_folder)
         
-        # Copy files from the current folder to the destination folder
-        for filename in filenames:
-            # Add the specified prefix to individual files
-            new_filename = prefix + filename
-            src_file = os.path.join(foldername, filename)
-            dest_file = os.path.join(dest_folder, new_filename)
-            shutil.copy2(src_file, dest_file)  # Use shutil.copy2 to preserve metadata like timestamps
+#         # Copy files from the current folder to the destination folder
+#         for filename in filenames:
+#             # Add the specified prefix to individual files
+#             new_filename = prefix + filename
+#             src_file = os.path.join(foldername, filename)
+#             dest_file = os.path.join(dest_folder, new_filename)
+#             shutil.copy2(src_file, dest_file)  # Use shutil.copy2 to preserve metadata like timestamps
 
+
+def copy_files(src_dir, dest_dir, prefix=''):
+    # Create the destination directory if it doesn't exist
+    os.makedirs(dest_dir, exist_ok=True)
+
+    # Recursive function to handle nested directories and files
+    def copy_recursive(src, dest):
+        for item in os.listdir(src):
+            src_item = os.path.join(src, item)
+
+            dir_item = dest_item = os.path.join(dest, item)
+
+            if prefix not in item:
+                item = prefix+item
+
+            dest_item = os.path.join(dest, item)
+            
+            if os.path.isdir(src_item):
+                # If it's a directory, copy it recursively
+                os.makedirs(dir_item, exist_ok=True)
+                copy_recursive(src_item, dir_item)
+            else:
+                # If it's a file, copy it with the specified prefix
+                shutil.copy2(src_item, dest_item)
+
+    copy_recursive(src_dir, dest_dir)
