@@ -168,13 +168,14 @@ if UPDATE_CVS:
             #  existing historical in damip
             entry = damip['experiment_id'][name.lower()].copy()
             entry['description'] = entry.get('description') or r.Description
+            entry['sub_experiment_id'] = ["f2023"]
 
         elif name.lower().replace('fut', 'hist') in damip_names:
             # print('fut')
             # if we are creating future occurances
             entry = damip['experiment_id'][name.replace('fut', 'hist').lower()].copy()
             entry['parent_experiment_id'] = [damip_case.get(name.replace('fut', 'hist'))]  # Not perfect as fut-ghg should have hist-GHG
-            entry['parent_activity_id'] = ['LESFMIP']
+            entry['parent_activity_id'] = ['CMIP']
             entry['experiment'] = entry['experiment'].replace(
                 'historical', 'future')
             entry['experiment_id'] = name
@@ -200,8 +201,8 @@ if UPDATE_CVS:
         
 
         # activity info
-        entry['activity_id'] = ['LESFMIP']
-        entry['parent_activity_id'] = ['LESFMIP']
+        entry['activity_id'] = entry.get('activity_id', ['LESFMIP'])
+        entry['parent_activity_id'] = entry.get('parent_activity_id',['CMIP'])
 
         # dates and numbers 
         entry['tier'] = y(r.Tier)
@@ -242,6 +243,9 @@ if UPDATE_CVS:
 
     # manual changes
     experiments['historical'].update({'parent_activity_id':'CMIP','activity_id':'CMIP'})
+    experiments['hist-sol'].update({'parent_activity_id':'piControl','activity_id':'CMIP'})
+    experiments['hist-aer'].update({'parent_activity_id':'piControl','activity_id':'CMIP'})
+    experiments['hist-lu'].update({'parent_activity_id':'piControl','activity_id':'CMIP'})
 
     experiments_to_remove = ['historical-cmip5', 'historical-ext', 'piControl-cmip5', '"piControl-spinup-cmip5"']
     for experiment_id in experiments_to_remove:
