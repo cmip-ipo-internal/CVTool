@@ -223,6 +223,9 @@ if UPDATE_CVS:
     if not any(parent_id in ['past1000', 'past2k'] for parent_id in value.get('parent_experiment_id', []))
     }  
 
+
+    experiments['historical'].update({'parent_activity_id':'CMIP','activity_id':'CMIP'})
+
     # it atually comes from the deck
     deck['experiment_id'] = {
     key: value
