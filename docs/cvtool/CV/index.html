@@ -50,12 +50,10 @@ from ..core.miptables import setup_mip_tables #this will trigger the miptables i
 
 from ..core.dynamic_imports import load_module,import_script,script_path
 from ..core.custom_errors import MipTableError
-
+# print = core.stdout.debug_print
 # from .components import meta
 from . import meta
 
-MIPTABLE_SHA = &#39;9fa6eda52792b51326dfc77b955c4e46a8334a2c&#39;
-setup_mip_tables(commit_hash = MIPTABLE_SHA)
 
 
 try:
@@ -116,21 +114,32 @@ class CVDIR:
                 print(f&#39;Updating $cmor_{name} to {kwargs[name]}&#39;)
                 os.environ[&#39;cmor_&#39; + name] = kwargs[name]
             return os.environ.get(&#39;cmor_&#39; + name, default)
+        
+        
+        self.miptable_meta, self.tables = setup_mip_tables(commit_hash = config(&#39;MIPTABLE_SHA&#39;) or None)
+        meta.tables = self.miptable_meta
+    
 
         self.prefix = core.io.ensure_suffix(prefix, &#39;_&#39;)
         self.directory = core.io.ensure_suffix(config(&#39;out_directory&#39;), &#39;/&#39;)
         self.file_names = base_files
         self.files = {}
-        self.tables = config(&#39;tables&#39;)
+        self.tables = config(&#39;tables&#39;) or self.tables
         if not self.tables: MipTableError(f&#39;Table: &#34;{self.tables}&#34; not found in environmental variables &#34;cmor+tables&#34;. This is usually generated from cvtool.core.miptables &#39;)
         self.table_prefix = config(&#39;table_prefix&#39;)
-        self.cvout = config(&#39;cvout&#39;, &#39;cv_cmor&#39;)
+        self.cvout = config(&#39;cvout&#39;, &#39;CVs&#39;)
 
         core.io.exists(self.tables)
 
-        if not core.io.exists(self.directory, False):
+        if bool(config(&#39;clean&#39;, &#39;False&#39;)):
+            print(&#39;removing the directory&#39;)
+            core.io.rmdir(self.directory)
 
+        if not core.io.exists(self.directory, False):
             self.create_project()
+
+
+
 
         for file_name in self.file_names:
             self.files[file_name] = core.io.json_read(
@@ -195,6 +204,7 @@ class CVDIR:
             preprocessed_data = self.pre_parse_update(file_name, data)
             data = update_func(self.files[file_name], preprocessed_data)
 
+
         # import inspect
         # print(&#39;**********&#39;,module,[member for member in inspect.getmembers(module) if inspect.isfunction(member[1])])
 
@@ -211,6 +221,35 @@ class CVDIR:
             jsn_data = module.update(jsn_data, data)
         else:
             jsn_data = data
+
+
+        if &#39;mergeLoc&#39; in data.get(&#39;globals&#39;,[]):
+
+            print(&#39;mergetable data pre check, format tables to trail / &#39;)
+            
+            # this must exist -&gt; add a check before this point
+            mergeFiles = data.get(&#39;globals&#39;)[&#39;mergeLoc&#39;]
+            mergeData = core.io.json_read(f&#34;{mergeFiles}{data.get(&#39;globals&#39;).get(&#39;table_prefix&#39;,&#39;&#39;)}_{output_name}.json&#34;,&#34;r&#34;)[output_name]
+
+            if isinstance(mergeData, dict):
+                jsn_data[output_name] = core.io.merge_dict(mergeData,jsn_data[output_name],data.get(&#34;merge&#34;) or data[&#39;globals&#39;].get(&#34;merge&#34;,{})) 
+
+            else:
+                jsn_data[output_name] = jsn_data[output_name] or mergeData
+
+        elif &#39;merge&#39; in data:
+            raise ValueError(&#39;&#34;Merge&#34; was specified in the options, however a &#34;mergeLoc&#34; location was not provided in the global attributes. Please see the documentation for more infomation.&#39;)
+
+
+        
+    #     if data[output_name]
+
+
+    #     optdata[&#39;globals&#39;][&#39;institution&#39;]
+    # optdata = optdata.get(this) or {}
+
+
+
 
         core.io.json_write(jsn_data, output_path)
 
@@ -267,7 +306,7 @@ class CVDIR:
             preprocessed_data[f&#34;{self.prefix}{key}&#34;] = value
         return preprocessed_data
 
-    def get_activity(self, activity: str = &#39;CMIP&#39;, external_path=None) -&gt; dict:
+    def get_activity(self, activity: str = &#39;CMIP&#39;, external_path=None, aux = &#39;&#39;) -&gt; dict:
         &#34;&#34;&#34;
         Get activity data.
 
@@ -373,6 +412,24 @@ class CVDIR:
 
         # print(cmor_input)
 
+    def merge(self):
+        ...
+    def push(self,repo_location,branch,overwrite = False):
+        self.merge()
+        print(&#39;ADD MERGE FNS HERE&#39;)
+
+        from .merge_git import pull_updates, push_output
+
+        pull_updates(repo_location,overwrite=overwrite)
+
+        push_output(repo_location,branch,self.directory,prefix=self.prefix,overwrite=overwrite)
+
+        
+
+
+
+
+
 
 # class ProjectCreator:
 #     &#34;&#34;&#34;
@@ -427,7 +484,15 @@ class CVDIR:
 <section>
 <h2 class="section-title" id="header-submodules">Sub-modules</h2>
 <dl>
+<dt><code class="name"><a title="cvtool.CV.compliance" href="compliance/index.html">cvtool.CV.compliance</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt><code class="name"><a title="cvtool.CV.components" href="components/index.html">cvtool.CV.components</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="cvtool.CV.merge_git" href="merge_git.html">cvtool.CV.merge_git</a></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -483,21 +548,32 @@ class CVDIR:
                 print(f&#39;Updating $cmor_{name} to {kwargs[name]}&#39;)
                 os.environ[&#39;cmor_&#39; + name] = kwargs[name]
             return os.environ.get(&#39;cmor_&#39; + name, default)
+        
+        
+        self.miptable_meta, self.tables = setup_mip_tables(commit_hash = config(&#39;MIPTABLE_SHA&#39;) or None)
+        meta.tables = self.miptable_meta
+    
 
         self.prefix = core.io.ensure_suffix(prefix, &#39;_&#39;)
         self.directory = core.io.ensure_suffix(config(&#39;out_directory&#39;), &#39;/&#39;)
         self.file_names = base_files
         self.files = {}
-        self.tables = config(&#39;tables&#39;)
+        self.tables = config(&#39;tables&#39;) or self.tables
         if not self.tables: MipTableError(f&#39;Table: &#34;{self.tables}&#34; not found in environmental variables &#34;cmor+tables&#34;. This is usually generated from cvtool.core.miptables &#39;)
         self.table_prefix = config(&#39;table_prefix&#39;)
-        self.cvout = config(&#39;cvout&#39;, &#39;cv_cmor&#39;)
+        self.cvout = config(&#39;cvout&#39;, &#39;CVs&#39;)
 
         core.io.exists(self.tables)
 
-        if not core.io.exists(self.directory, False):
+        if bool(config(&#39;clean&#39;, &#39;False&#39;)):
+            print(&#39;removing the directory&#39;)
+            core.io.rmdir(self.directory)
 
+        if not core.io.exists(self.directory, False):
             self.create_project()
+
+
+
 
         for file_name in self.file_names:
             self.files[file_name] = core.io.json_read(
@@ -562,6 +638,7 @@ class CVDIR:
             preprocessed_data = self.pre_parse_update(file_name, data)
             data = update_func(self.files[file_name], preprocessed_data)
 
+
         # import inspect
         # print(&#39;**********&#39;,module,[member for member in inspect.getmembers(module) if inspect.isfunction(member[1])])
 
@@ -578,6 +655,35 @@ class CVDIR:
             jsn_data = module.update(jsn_data, data)
         else:
             jsn_data = data
+
+
+        if &#39;mergeLoc&#39; in data.get(&#39;globals&#39;,[]):
+
+            print(&#39;mergetable data pre check, format tables to trail / &#39;)
+            
+            # this must exist -&gt; add a check before this point
+            mergeFiles = data.get(&#39;globals&#39;)[&#39;mergeLoc&#39;]
+            mergeData = core.io.json_read(f&#34;{mergeFiles}{data.get(&#39;globals&#39;).get(&#39;table_prefix&#39;,&#39;&#39;)}_{output_name}.json&#34;,&#34;r&#34;)[output_name]
+
+            if isinstance(mergeData, dict):
+                jsn_data[output_name] = core.io.merge_dict(mergeData,jsn_data[output_name],data.get(&#34;merge&#34;) or data[&#39;globals&#39;].get(&#34;merge&#34;,{})) 
+
+            else:
+                jsn_data[output_name] = jsn_data[output_name] or mergeData
+
+        elif &#39;merge&#39; in data:
+            raise ValueError(&#39;&#34;Merge&#34; was specified in the options, however a &#34;mergeLoc&#34; location was not provided in the global attributes. Please see the documentation for more infomation.&#39;)
+
+
+        
+    #     if data[output_name]
+
+
+    #     optdata[&#39;globals&#39;][&#39;institution&#39;]
+    # optdata = optdata.get(this) or {}
+
+
+
 
         core.io.json_write(jsn_data, output_path)
 
@@ -634,7 +740,7 @@ class CVDIR:
             preprocessed_data[f&#34;{self.prefix}{key}&#34;] = value
         return preprocessed_data
 
-    def get_activity(self, activity: str = &#39;CMIP&#39;, external_path=None) -&gt; dict:
+    def get_activity(self, activity: str = &#39;CMIP&#39;, external_path=None, aux = &#39;&#39;) -&gt; dict:
         &#34;&#34;&#34;
         Get activity data.
 
@@ -738,7 +844,19 @@ class CVDIR:
         print(&#39;lisence field needs editing to conform.&#39;)
         
 
-        # print(cmor_input)</code></pre>
+        # print(cmor_input)
+
+    def merge(self):
+        ...
+    def push(self,repo_location,branch,overwrite = False):
+        self.merge()
+        print(&#39;ADD MERGE FNS HERE&#39;)
+
+        from .merge_git import pull_updates, push_output
+
+        pull_updates(repo_location,overwrite=overwrite)
+
+        push_output(repo_location,branch,self.directory,prefix=self.prefix,overwrite=overwrite)</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
@@ -898,7 +1016,7 @@ class CVDIR:
 </details>
 </dd>
 <dt id="cvtool.CV.CVDIR.get_activity"><code class="name flex">
-<span>def <span class="ident">get_activity</span></span>(<span>self, activity: str = 'CMIP', external_path=None) ‑> dict</span>
+<span>def <span class="ident">get_activity</span></span>(<span>self, activity: str = 'CMIP', external_path=None, aux='') ‑> dict</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Get activity data.</p>
@@ -917,7 +1035,7 @@ class CVDIR:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_activity(self, activity: str = &#39;CMIP&#39;, external_path=None) -&gt; dict:
+<pre><code class="python">def get_activity(self, activity: str = &#39;CMIP&#39;, external_path=None, aux = &#39;&#39;) -&gt; dict:
     &#34;&#34;&#34;
     Get activity data.
 
@@ -952,6 +1070,19 @@ class CVDIR:
     deck[&#39;experiment_id&#39;] = filter_dict(experiments)
 
     return deck</code></pre>
+</details>
+</dd>
+<dt id="cvtool.CV.CVDIR.merge"><code class="name flex">
+<span>def <span class="ident">merge</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def merge(self):
+    ...</code></pre>
 </details>
 </dd>
 <dt id="cvtool.CV.CVDIR.pre_parse_update"><code class="name flex">
@@ -990,6 +1121,26 @@ class CVDIR:
     for key, value in data.items():
         preprocessed_data[f&#34;{self.prefix}{key}&#34;] = value
     return preprocessed_data</code></pre>
+</details>
+</dd>
+<dt id="cvtool.CV.CVDIR.push"><code class="name flex">
+<span>def <span class="ident">push</span></span>(<span>self, repo_location, branch, overwrite=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def push(self,repo_location,branch,overwrite = False):
+    self.merge()
+    print(&#39;ADD MERGE FNS HERE&#39;)
+
+    from .merge_git import pull_updates, push_output
+
+    pull_updates(repo_location,overwrite=overwrite)
+
+    push_output(repo_location,branch,self.directory,prefix=self.prefix,overwrite=overwrite)</code></pre>
 </details>
 </dd>
 <dt id="cvtool.CV.CVDIR.update_all"><code class="name flex">
@@ -1085,6 +1236,7 @@ class CVDIR:
         preprocessed_data = self.pre_parse_update(file_name, data)
         data = update_func(self.files[file_name], preprocessed_data)
 
+
     # import inspect
     # print(&#39;**********&#39;,module,[member for member in inspect.getmembers(module) if inspect.isfunction(member[1])])
 
@@ -1101,6 +1253,35 @@ class CVDIR:
         jsn_data = module.update(jsn_data, data)
     else:
         jsn_data = data
+
+
+    if &#39;mergeLoc&#39; in data.get(&#39;globals&#39;,[]):
+
+        print(&#39;mergetable data pre check, format tables to trail / &#39;)
+        
+        # this must exist -&gt; add a check before this point
+        mergeFiles = data.get(&#39;globals&#39;)[&#39;mergeLoc&#39;]
+        mergeData = core.io.json_read(f&#34;{mergeFiles}{data.get(&#39;globals&#39;).get(&#39;table_prefix&#39;,&#39;&#39;)}_{output_name}.json&#34;,&#34;r&#34;)[output_name]
+
+        if isinstance(mergeData, dict):
+            jsn_data[output_name] = core.io.merge_dict(mergeData,jsn_data[output_name],data.get(&#34;merge&#34;) or data[&#39;globals&#39;].get(&#34;merge&#34;,{})) 
+
+        else:
+            jsn_data[output_name] = jsn_data[output_name] or mergeData
+
+    elif &#39;merge&#39; in data:
+        raise ValueError(&#39;&#34;Merge&#34; was specified in the options, however a &#34;mergeLoc&#34; location was not provided in the global attributes. Please see the documentation for more infomation.&#39;)
+
+
+    
+#     if data[output_name]
+
+
+#     optdata[&#39;globals&#39;][&#39;institution&#39;]
+# optdata = optdata.get(this) or {}
+
+
+
 
     core.io.json_write(jsn_data, output_path)</code></pre>
 </details>
@@ -1123,7 +1304,9 @@ class CVDIR:
 </li>
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
 <ul>
+<li><code><a title="cvtool.CV.compliance" href="compliance/index.html">cvtool.CV.compliance</a></code></li>
 <li><code><a title="cvtool.CV.components" href="components/index.html">cvtool.CV.components</a></code></li>
+<li><code><a title="cvtool.CV.merge_git" href="merge_git.html">cvtool.CV.merge_git</a></code></li>
 <li><code><a title="cvtool.CV.meta" href="meta.html">cvtool.CV.meta</a></code></li>
 </ul>
 </li>
@@ -1136,7 +1319,9 @@ class CVDIR:
 <li><code><a title="cvtool.CV.CVDIR.createCV" href="#cvtool.CV.CVDIR.createCV">createCV</a></code></li>
 <li><code><a title="cvtool.CV.CVDIR.create_project" href="#cvtool.CV.CVDIR.create_project">create_project</a></code></li>
 <li><code><a title="cvtool.CV.CVDIR.get_activity" href="#cvtool.CV.CVDIR.get_activity">get_activity</a></code></li>
+<li><code><a title="cvtool.CV.CVDIR.merge" href="#cvtool.CV.CVDIR.merge">merge</a></code></li>
 <li><code><a title="cvtool.CV.CVDIR.pre_parse_update" href="#cvtool.CV.CVDIR.pre_parse_update">pre_parse_update</a></code></li>
+<li><code><a title="cvtool.CV.CVDIR.push" href="#cvtool.CV.CVDIR.push">push</a></code></li>
 <li><code><a title="cvtool.CV.CVDIR.update_all" href="#cvtool.CV.CVDIR.update_all">update_all</a></code></li>
 <li><code><a title="cvtool.CV.CVDIR.update_file" href="#cvtool.CV.CVDIR.update_file">update_file</a></code></li>
 </ul>

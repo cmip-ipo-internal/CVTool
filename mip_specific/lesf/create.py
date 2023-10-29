@@ -4,8 +4,31 @@ sys.path.append('../../')
 import pdb
 import cvtool
 from cvtool import CV
-from cvtool.core.stdout import view
+from cvtool.core.stdout import view,listify,debug_print
+
+# print = debug_print
+
+
 import pandas as pd
+
+# debug on error 
+import sys
+import pdb
+def custom_excepthook(type, value, traceback):
+    print("\033[91m")
+
+    print("An error occurred. Entering debugger.")
+    print(type, value, traceback)
+    # Print the full stack trace including file paths and line numbers
+    print("\033[0m")
+    pdb.post_mortem(traceback)
+
+# Set custom excepthook
+sys.excepthook = custom_excepthook
+
+
+
+
 
 # we need a different table set for DAMIP (only)
 
@@ -13,8 +36,11 @@ if  os.getlogin() in ['daniel.ellis','root']:
 
     print( 'WARN WARN WARN WARN Moved Non-table files in "Auxillary" folder' )
     CMIP6Tables4DAMIP = os.environ['HOME']+ '/WIPwork/cmip6-cmor-tables/Tables/Auxillary/CMIP6'
+
+    mergeLoc = os.environ['HOME']+'/WIPwork/CMIP6Plus_CVs/'
 else:
     CMIP6Tables4DAMIP = os.environ['HOME']+ '/CDDS/github/cmip6-cmor-tables/Tables/CMIP6'
+    mergeLoc = -1
 
 
 
@@ -34,7 +60,8 @@ def create_env():
     # envdict = dict(out_directory='testdirLESF',tables='/home/h03/hadmm/CDDS/github/cmip6-cmor-tables/Tables/',table_prefix='CMIP6')
 
     # dan
-    envdict = dict(out_directory='testdirLESF', table_prefix='CMIP6Plus', MIPTABLE_SHA = '9fa6eda52792b51326dfc77b955c4e46a8334a2c')
+    envdict = dict(out_directory='LESF_CVs', table_prefix='MIP',clean='True')
+    #  MIPTABLE_SHA = '9fa6eda52792b51326dfc77b955c4e46a8334a2c'
     # tables=os.environ['HOME']+ '/WIPwork/cmip6-cmor-tables/Tables/'
     # !!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -60,7 +87,6 @@ base_files=[
         "experiment_id",
         "source_id",
         "sub_experiment_id",
-        "further_info_url",
     ]
 
 
@@ -87,7 +113,7 @@ handler = CV.CVDIR(
 # # Update all files with data using the example update function
 if UPDATE_CVS:
 
-    deck = handler.get_activity()
+    deck = handler.get_activity(activity='CMIP', external_path=CMIP6Tables4DAMIP)
 
     damip = handler.get_activity(activity='DAMIP',external_path=CMIP6Tables4DAMIP)
 
@@ -105,6 +131,11 @@ if UPDATE_CVS:
     # Update the original damip dictionary
     damip = new_damip
     del new_damip
+
+    '''
+    DRS
+    '''
+    DRS = cvtool.core.io.json_read(mergeLoc+'CMIP6Plus_DRS.json')['DRS']
 
 
     '''
@@ -137,13 +168,14 @@ if UPDATE_CVS:
             #  existing historical in damip
             entry = damip['experiment_id'][name.lower()].copy()
             entry['description'] = entry.get('description') or r.Description
+            entry['sub_experiment_id'] = ["f2023"]
 
         elif name.lower().replace('fut', 'hist') in damip_names:
             # print('fut')
             # if we are creating future occurances
             entry = damip['experiment_id'][name.replace('fut', 'hist').lower()].copy()
             entry['parent_experiment_id'] = [damip_case.get(name.replace('fut', 'hist'))]  # Not perfect as fut-ghg should have hist-GHG
-            entry['parent_activity_id'] = ['LESFMIP']
+            entry['parent_activity_id'] = ['CMIP']
             entry['experiment'] = entry['experiment'].replace(
                 'historical', 'future')
             entry['experiment_id'] = name
@@ -169,8 +201,8 @@ if UPDATE_CVS:
         
 
         # activity info
-        entry['activity_id'] = ['LESFMIP']
-        entry['parent_activity_id'] = ['LESFMIP']
+        entry['activity_id'] = entry.get('activity_id', ['LESFMIP'])
+        entry['parent_activity_id'] = entry.get('parent_activity_id',['CMIP'])
 
         # dates and numbers 
         entry['tier'] = y(r.Tier)
@@ -181,8 +213,43 @@ if UPDATE_CVS:
         entry['additional_allowed_model_components'] = 'AER CHEM BGC'.split() #entry.get('additional_allowed_model_components', 'AER CHEM BGC'.split())
         entry['required_model_components'] = entry.get('required_model_components', ['AOGCM'])
         entry['sub_experiment_id'] =  entry.get('sub_experiment_id',["f2023"])
-        
+
+
+        experiments = listify(experiments,['parent_experiment_id','parent)sub_experiment_id','parent_activity_id'])
+        # print('-------', name)
         experiments[name] = entry
+        
+
+        
+    print('Filtering out past1000, past2k')
+
+
+
+
+    experiments = {
+    key: value
+    for key, value in experiments.items()
+    if not any(parent_id in ['past1000', 'past2k'] for parent_id in value.get('parent_experiment_id', []))
+    }  
+
+
+
+    # it atually comes from the deck
+    deck['experiment_id'] = {
+    key: value
+    for key, value in deck['experiment_id'].items()
+    if not any(parent_id in ['past1000', 'past2k'] for parent_id in value.get('parent_experiment_id', []))
+    }  
+
+    # manual changes
+    experiments['historical'].update({'parent_activity_id':'CMIP','activity_id':'CMIP'})
+    experiments['hist-sol'].update({'parent_activity_id':'piControl','activity_id':'CMIP'})
+    experiments['hist-aer'].update({'parent_activity_id':'piControl','activity_id':'CMIP'})
+    experiments['hist-lu'].update({'parent_activity_id':'piControl','activity_id':'CMIP'})
+
+    experiments_to_remove = ['historical-cmip5', 'historical-ext', 'piControl-cmip5', '"piControl-spinup-cmip5"']
+    for experiment_id in experiments_to_remove:
+        deck['experiment_id'].pop(experiment_id, None)
 
 
 ##############################################
@@ -191,16 +258,21 @@ if UPDATE_CVS:
 
     data = {
         'globals': {
-            'institution': "myInstitution"
+            'institution': "CMIP-IPO",
+            'mergeLoc' : mergeLoc,
+            # 'merge':'all'
         },
         'mip_era': {
             'create': {
                 'mipera': prefix,
-                'institution': 'testipo'
+                # 'institution': 'testipo'
             },
             'update': {
                 'updatedadd': 'topleveltest'
             }
+        },
+        "DRS":{
+            "create":DRS
         },
         "activity_id": {
             'create': {
@@ -212,7 +284,8 @@ if UPDATE_CVS:
                     'PMIP' : 'Paleoclimat Modeling Intercomparison Project',
 
                 }
-            }
+            },
+            'merge':'all'
         },
         'experiment_id': {
             'create': {
@@ -226,7 +299,8 @@ if UPDATE_CVS:
         'sub_experiment_id' : {
             'create':{
                 'sub_experiment_id':{
-                    'f2023': 'Forcings 2023'
+                    'f2023': 'Forcings 2023',
+                    "none": "none"
                 }
             }
         }
@@ -235,4 +309,15 @@ if UPDATE_CVS:
     handler.update_all(data)
 
 # create the CV.json file in an out directory
-handler.createCV('testinstitution')
+handler.createCV('CMIP-IPO')
+# merge with the existing CVs
+merge_location = handler.merge(CVtables = mergeLoc,prefix = 'CMIP6Plus')
+
+handler.createCV('CMIP-IPO',merge_location)
+
+# handler.createIni()
+
+
+
+# place the output files into the CV directory and push 
+handler.push(mergeLoc, branch = 'lesfmip', source_location = merge_location, overwrite=True)

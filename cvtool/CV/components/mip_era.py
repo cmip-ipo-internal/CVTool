@@ -28,7 +28,7 @@ def create(optdata):
 
     """
     this = core.io.get_current_function_name()
-    print(whoami, this,optdata)
+    # print(whoami, this,optdata)
 
     institution = optdata['globals']['institution']
 
@@ -65,7 +65,7 @@ def update(jsn, optdata):
     assert len(jsn) >= 0
 
     # Update some of the metadata
-    current_date = core.stdout.yymmdd()
+    # current_date = core.stdout.yymmdd()
     overwrite = meta.update()
 
     optdata = core.io.combine(optdata, overwrite)

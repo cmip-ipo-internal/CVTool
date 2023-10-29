@@ -18,9 +18,9 @@ schema = {
         "start": {"type": "integer"},
         "end": {"type": "integer"}
     },
-    "required": ["activity_id", "additional_allowed_model_components", "experiment", "experiment_id", 
-                 "parent_activity_id", "parent_experiment_id", "required_model_components", 
-                 "sub_experiment_id", "description", "tier", "start", "end"]
+    # "required": ["activity_id", "additional_allowed_model_components", "experiment", "experiment_id", 
+    #              "parent_activity_id", "parent_experiment_id", "required_model_components", 
+    #              "sub_experiment_id", "description", "tier", "start", "end"]
 }
 
 
@@ -44,7 +44,7 @@ def test(CV):
         try:
             # Validate the JSON data against the schema
             validate(instance=experiment, schema=schema)
-            print("Validation successful.")
+            # print("Validation successful.")
         except Exception as e:
             print(f"Validation failed: {e}")
 

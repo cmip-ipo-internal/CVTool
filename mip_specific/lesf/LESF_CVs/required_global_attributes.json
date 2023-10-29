@@ -6,28 +6,24 @@
         },
         "specs_doc": "v6.3.0 (link TBC)",
         "CMIP6Plus_CVS dir?": {
-            "CV_collection_modified": "2023-10-02",
-            "CV_collection_version": "0.0.1",
-            "previous_commit": "0.0.1"
+            "CV_collection_modified": "2023-10-29",
+            "CV_collection_version": "6.5.0",
+            "previous_commit": "6.5.0"
         },
         "miptables": {
             "tag": {
-                "version": "0.0.1",
+                "version": "v6.5.0.0",
                 "latest": true
             },
             "commit": {
-                "SHA": "9fa6eda52792b51326dfc77b955c4e46a8334a2c",
+                "SHA": "f6a6f930dda2a66e1a48c16c3edecc3effb0c603",
                 "latest": true
             },
-            "Repository URL": "https://github.com/wolfiex/mip-cmor-tables.git",
-            "DOI": null
+            "Repository URL": "https://github.com/PCMDI/mip-cmor-tables.git",
+            "DOI": null,
+            "license": "/var/folders/hc/s_7lggq12nndglbdyrn3f91m1l58yd/T/cvtool.miptables.s1snbpn0/LICENSE-CC-BY"
         },
-        "institutions": {
-            "tag": "0.0.2",
-            "Repository URL": "https://github.com/cmip-ipo-internal/CMIPInstitutions.git",
-            "DOI": null
-        },
-        "CMOR": "3.7.2",
+        "CMOR": "3.7.3",
         "CVTool": "0.0.3"
     },
     "required_global_attributes": [

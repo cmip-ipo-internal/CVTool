@@ -41,7 +41,7 @@ def combine(new: dict, old: dict) -> dict:
         old (dict): The old dictionary to merge into.
 
     Returns:
-        dict: The merged dictionary.
+        dict: The merged_dict dictionary.
     """
     merged_dict = old.copy()
     for key, value in new.items():
@@ -162,7 +162,8 @@ def rmdir(directory_path: str) -> None:
         shutil.rmtree(directory_path)
         print(f"Removed directory: {directory_path}")
     except Exception as e:
-        print(f"Error deleting directory {directory_path}: {e}")
+        # print(f"Error deleting directory {directory_path}: {e}")
+        ...
 
 def write_temp(prefix: str, content: dict) -> None:
     """
@@ -196,6 +197,30 @@ def read_temp(prefix: str, index: int = 0) -> dict:
         
     return None
 
+def rm_temp(prefix: str, index: int = 0) -> bool:
+    """
+    Remove a temporary file with the specified prefix and index.
+
+    Args:
+        prefix (str): The prefix of the temporary file name.
+        index (int): The index of the temporary file to remove (default is 0).
+
+    Returns:
+        bool: True if the file was successfully removed, False otherwise.
+    """
+    tmp = tempfile.gettempdir()
+    existing = glob.glob(f'{tmp}/{prefix}*')
+
+    for tmpfl in existing: 
+        try:
+            os.remove(tmpfl)
+            return True
+        except Exception as e:
+            print(f"Error: {e}")
+            return False
+
+    return False
+
 
 def relative_to(absolte,current):
         
@@ -212,3 +237,90 @@ def relative_to(absolte,current):
 def terminal():
     size = os.get_terminal_size()
     return size
+
+
+def merge_dict(dict1, dict2, overwrite_keys=None):
+    """
+    Merge two dictionaries together.
+    
+    Args:
+        dict1 (dict): First dictionary to merge.
+        dict2 (dict): Second dictionary to merge.
+        overwrite_keys (list): List of keys that are allowed to be overwritten if they exist in both dictionaries.
+
+    ** dict 2 will overwrite values from dict one if those are allowed. 
+    
+    Returns:
+        dict: Merged dictionary.
+    
+    Raises:
+        ValueError: If any identical first-level keys are found and not included in overwrite_keys.
+    """
+    if overwrite_keys is None:
+        overwrite_keys = set()
+
+    conflicting_keys = False
+    if overwrite_keys != 'all':
+        common_keys = set(dict1) & set(dict2)
+        conflicting_keys = common_keys - overwrite_keys
+    
+    if conflicting_keys:
+        raise ValueError(f"Duplicate keys found: {', '.join(conflicting_keys)}. Use overwrite_keys list to allow overwriting or correct the error. ")
+    
+    # merged_dict = {**dict1, **dict2}
+
+    merged_dict = dict(dict1)
+    for key, value in dict2.items():
+        if key in merged_dict and isinstance(merged_dict[key], dict) and isinstance(value, dict):
+            merged_dict[key] = merge_dict(merged_dict[key], value, overwrite_keys)
+        elif key in merged_dict and isinstance(merged_dict[key], list) and isinstance(value, list):
+            merged_dict[key].extend(value)
+            merged_dict[key] = list(set(merged_dict[key]))
+
+        else:
+            merged_dict[key] = value
+
+    return merged_dict
+
+
+# def copy_files(src_dir, dest_dir, prefix=''):
+#     # Walk through the source directory
+#     for foldername, _, filenames in os.walk(src_dir):
+#         # Create corresponding folder in the destination directory
+#         dest_folder = dest_dir
+#         mkdir(dest_folder)
+        
+#         # Copy files from the current folder to the destination folder
+#         for filename in filenames:
+#             # Add the specified prefix to individual files
+#             new_filename = prefix + filename
+#             src_file = os.path.join(foldername, filename)
+#             dest_file = os.path.join(dest_folder, new_filename)
+#             shutil.copy2(src_file, dest_file)  # Use shutil.copy2 to preserve metadata like timestamps
+
+
+def copy_files(src_dir, dest_dir, prefix=''):
+    # Create the destination directory if it doesn't exist
+    os.makedirs(dest_dir, exist_ok=True)
+
+    # Recursive function to handle nested directories and files
+    def copy_recursive(src, dest):
+        for item in os.listdir(src):
+            src_item = os.path.join(src, item)
+
+            dir_item = dest_item = os.path.join(dest, item)
+
+            if prefix not in item:
+                item = prefix+item
+
+            dest_item = os.path.join(dest, item)
+            
+            if os.path.isdir(src_item):
+                # If it's a directory, copy it recursively
+                os.makedirs(dir_item, exist_ok=True)
+                copy_recursive(src_item, dir_item)
+            else:
+                # If it's a file, copy it with the specified prefix
+                shutil.copy2(src_item, dest_item)
+
+    copy_recursive(src_dir, dest_dir)

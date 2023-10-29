@@ -1,0 +1,30 @@
+{
+    "Header": {
+        "latest change": {
+            "author": "Daniel Ellis <daniel.ellis@ext.esa.int>",
+            "institution_id": null
+        },
+        "specs_doc": "v6.3.0 (link TBC)",
+        "CMIP6Plus_CVS dir?": {
+            "CV_collection_modified": "2023-10-29",
+            "CV_collection_version": "6.5.0",
+            "previous_commit": "6.5.0"
+        },
+        "miptables": {
+            "tag": {
+                "version": "v6.5.0.0",
+                "latest": true
+            },
+            "commit": {
+                "SHA": "f6a6f930dda2a66e1a48c16c3edecc3effb0c603",
+                "latest": true
+            },
+            "Repository URL": "https://github.com/PCMDI/mip-cmor-tables.git",
+            "DOI": null,
+            "license": "/var/folders/hc/s_7lggq12nndglbdyrn3f91m1l58yd/T/cvtool.miptables.s1snbpn0/LICENSE-CC-BY"
+        },
+        "CMOR": "3.7.3",
+        "CVTool": "0.0.3"
+    },
+    "license": "^CMIP6Plus model data produced by .* is licensed under a Creative Commons .* License (https://creativecommons\\.org/.*)\\. *Consult https://pcmdi\\.llnl\\.gov/CMIP6Plus/TermsOfUse for terms of use governing CMIP6Plus output, including citation requirements and proper acknowledgment\\. *Further information about this data, including some limitations, can be found via the further_info_url (recorded as a global attribute in this file).*\\. *The data producers and data providers make no warranty, either express or implied, including, but not limited to, warranties of merchantability and fitness for a particular purpose\\. *All liabilities arising from the supply of the information (including any liability arising in negligence) are excluded to the fullest extent permitted by law\\.$"
+}

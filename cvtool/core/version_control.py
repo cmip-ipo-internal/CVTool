@@ -4,10 +4,10 @@ This file contains all the git, github and versioning functions for the cvtools 
 
 import requests
 import subprocess
-import os,re
+import os,re,glob
 from typing import Dict
 from .custom_errors import GitAPIError
-from .io import read_temp, write_temp, exists
+from .io import read_temp, write_temp, exists, rm_temp
 from git import Repo
 from datetime import datetime
 
@@ -53,6 +53,13 @@ def last_commit(repo_owner: str, repo_name: str) -> Dict[str, str]:
                 raise GitAPIError(f"No commits found in the repository: {api_url}")
         else:
             raise GitAPIError(f"Failed to fetch commit information from the GitHub API: {api_url}")
+
+
+def clear_last(repo_owner: str, repo_name: str) -> Dict[str, str]:
+    today_date = datetime.today().strftime("%Y%m%d")
+    envname = f'cvtool.{repo_owner}.{repo_name}.{today_date}'
+    rm_temp(envname)
+
 
 def git_user() -> Dict[str, str]:
     """
@@ -230,5 +237,28 @@ def query_repo(repo_path,verbose = True):
             "Repository URL": repo_url,
             "DOI": zenodo_doi
         }
+
+    # license 
+
+    license_files = glob.glob(os.path.join(repo_path, '*LICENSE*'))
+
+    for license_file in license_files:
+        try:
+
+            if license_file == 'LICENSE':
+                with open(license_file, 'r', encoding='utf-8') as file:
+                    lines = file.readlines()
+                    if len(lines) >= 3:
+                        license_info = lines[2].strip()
+                        if license_info:
+                            output_dict['license'] = license_info
+                            break  # Stop searching if a valid license is found
+            else:
+                output_dict['license'] = license_file
+        except FileNotFoundError:
+            print(f'License file {license_file} not found.')
+
+    if 'license' not in output_dict:
+        print('No valid license information found in the specified files.')
 
     return output_dict

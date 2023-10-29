@@ -17,7 +17,7 @@ except:
     cmor_version = "cmor python library not installed - version unknown"
 
 import cvtool.core as core
-from cvtool.core.institutions import institutions , institutions_meta
+# from cvtool.core.institutions import institutions , institutions_meta
 
 
 
@@ -56,7 +56,6 @@ def create(institution, gitowner='WCRP-CMIP', gitrepo='CMIP6Plus_CVs', user=None
                 "previous_commit": core.version_control.get_github_version(gitowner, gitrepo),
             },
             "miptables":tables, 
-            "institutions":institutions_meta,
             "CMOR":cmor_version,
             "CVTool":cvtool_version
             
@@ -81,7 +80,7 @@ def update(gitowner='WCRP-CMIP', gitrepo='CMIP6Plus_CVs'):
 
     return {
         "Header": {
-            "CMIP6Plus_CVS dir?":{
+            "CMIP6Plus_CVS dir":{
                  # 'updatetest': 'Yay! - to be removed.',
                 "CV_collection_modified": current_date,
                 "CV_collection_version": core.version_control.get_github_version(gitowner, gitrepo),
@@ -92,7 +91,6 @@ def update(gitowner='WCRP-CMIP', gitrepo='CMIP6Plus_CVs'):
                 # "institution_id": institution,
             },
             "miptables":tables,
-            "institutions":institutions_meta,
             "CMOR":cmor_version,
             "CVTool":cvtool_version
         }

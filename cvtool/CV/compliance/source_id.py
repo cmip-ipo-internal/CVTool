@@ -85,6 +85,7 @@ def test(CV):
 
     for name, source in CV.get('source_id').items():
 
+
         # schema test
         try:
             # Validate the JSON data against the schema
@@ -100,7 +101,6 @@ def test(CV):
         check("activity_participation",activity_id,source)
         # check("parent_activity_id",activity_id,experiment)
         
-        print(source)
         assert source.get('cohort')[0] in ['Published']
 
         # id 
@@ -111,5 +111,6 @@ def test(CV):
 print('source institution checks happen in the CV creation process.')
 
 if __name__ == '__main__':
-    CV = json.load(open('/Users/daniel.ellis/WIPwork/CVTool/mip_specific/lesf/testdirLESF/cv_cmor/CMIP6Plus_CV.json')).get('CV')
-    test(CV)
+    # CV = json.load(open('/Users/daniel.ellis/WIPwork/CVTool/mip_specific/lesf/testdirLESF/cv_cmor/CMIP6Plus_CV.json')).get('CV')
+    # test(CV)
+    ...

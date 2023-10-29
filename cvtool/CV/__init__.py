@@ -15,10 +15,9 @@ from typing import Optional, Dict, Callable
 
 from .. import core
 from ..core.miptables import setup_mip_tables #this will trigger the miptables import.
-
 from ..core.dynamic_imports import load_module,import_script,script_path
 from ..core.custom_errors import MipTableError
-
+# print = core.stdout.debug_print
 # from .components import meta
 from . import meta
 
@@ -84,7 +83,7 @@ class CVDIR:
             return os.environ.get('cmor_' + name, default)
         
         
-        self.miptable_meta, self.tables = setup_mip_tables(commit_hash = config('MIPTABLE_SHA') or None)
+        self.miptable_meta, self.tables, self.institutions = setup_mip_tables(commit_hash = config('MIPTABLE_SHA') or None)
         meta.tables = self.miptable_meta
     
 
@@ -95,13 +94,17 @@ class CVDIR:
         self.tables = config('tables') or self.tables
         if not self.tables: MipTableError(f'Table: "{self.tables}" not found in environmental variables "cmor+tables". This is usually generated from cvtool.core.miptables ')
         self.table_prefix = config('table_prefix')
-        self.cvout = config('cvout', 'cv_cmor')
+        self.cvout = config('cvout', 'CVs')
 
         core.io.exists(self.tables)
 
-        if not core.io.exists(self.directory, False):
+        if bool(config('clean', 'False')):
+            print('removing the directory')
+            core.io.rmdir(self.directory)
 
+        if not core.io.exists(self.directory, False):
             self.create_project()
+
 
         for file_name in self.file_names:
             self.files[file_name] = core.io.json_read(
@@ -119,20 +122,20 @@ class CVDIR:
         for file_name in self.files:
             output_name = file_name.split('.')[0]
 
-            output_path = os.path.join(self.directory, output_name)
+            output_path = os.path.join(self.directory, output_name )
 
-            # module_path = os.path.join(os.path.dirname(__file__), output_name)
-            module_path = os.path.join(os.path.dirname(__file__),'components', output_name+'.py')
+            # module_path = os.path.join(os.path.dirname(__file__), output_name )
+            module_path = os.path.join(os.path.dirname(__file__),'components', output_name +'.py')
 
 
             file_path = os.path.join(self.directory, self.prefix + file_name)
 
             if not core.io.exists(file_path, False):
                 if core.io.exists(output_path, False):
-                    # module = importlib.import_module(module_path, output_name)
-                        # loader = importlib.machinery.SourceFileLoader(output_name, module_path)
+                    # module = importlib.import_module(module_path, output_name )
+                        # loader = importlib.machinery.SourceFileLoader(output_name , module_path)
                         # module = loader.load_module()
-                    import_script(output_name, module_path)
+                    import_script(output_name , module_path)
                     opt_func = opt_func or getattr(module, "create", None)
 
                     if callable(opt_func):
@@ -154,8 +157,8 @@ class CVDIR:
             data (dict): New data to be updated in the file.
             update_func (callable, optional): Custom update function. Defaults to None.
         """
-        output_name = file_name.split('.')[0]
-        output_path = os.path.join(self.directory, output_name + '.json')
+        section_name = file_name.split('.')[0]
+        output_path = os.path.join(self.directory, section_name + '.json')
 
         # module = load_module(*basepath(file_name))
         module = import_script(*script_path(file_name))
@@ -165,6 +168,7 @@ class CVDIR:
         if callable(update_func):
             preprocessed_data = self.pre_parse_update(file_name, data)
             data = update_func(self.files[file_name], preprocessed_data)
+
 
         # import inspect
         # print('**********',module,[member for member in inspect.getmembers(module) if inspect.isfunction(member[1])])
@@ -182,6 +186,10 @@ class CVDIR:
             jsn_data = module.update(jsn_data, data)
         else:
             jsn_data = data
+
+
+
+
 
         core.io.json_write(jsn_data, output_path)
 
@@ -248,11 +256,12 @@ class CVDIR:
         Returns:
             dict: Activity data.
         """
-        path = external_path or self.tables + self.table_prefix
+        path = external_path or f"{self.tables}/{self.table_prefix}"
+        
+        cvpath = f"{path}_CV.json"
+        core.io.exists(cvpath)
 
-        core.io.exists(f"{path}_CV.json")
-
-        tabledata = core.io.json_read(f"{path}_CV.json", 'r')
+        tabledata = core.io.json_read(cvpath, 'r')
 
         if 'CV' in tabledata:
             tabledata = tabledata['CV']
@@ -269,24 +278,26 @@ class CVDIR:
                         (isinstance(value, dict) and filter_dict(value.get('activity_id', ''))) or
                         (isinstance(value, str) and value == activity)}
 
+
         experiments = tabledata['experiment_id']
         deck['experiment_id'] = filter_dict(experiments)
 
         return deck
 
-    def createCV(self, institution: str) -> None:
+    def createCV(self, institution: str, location=None) -> None:
         """
         Create CV data.
 
         Args:
             institution (str): Institution name.
         """
+        location = location or self.directory
         # from .components import compileCV
         compileCV = import_script(*script_path('compileCV'))
-        cvloc = f"{self.directory}"
+        # cvloc = f"{self.directory}"
         cvfile = compileCV.create(
-            self.directory, self.prefix, self.tables, outloc=self.cvout)
-        print('check disabled')
+            location, self.prefix, self.tables, self.institutions,outloc=self.cvout)
+        # print('check disabled')
         # self.checkCV(cvfile, institution)
 
     def checkCV(self, cvfile: str, institution: str) -> None:
@@ -344,52 +355,60 @@ class CVDIR:
 
         # print(cmor_input)
 
+    def merge(self,CVtables,prefix='',exceptions = 'all'):
+        mergeloc = self.directory+'merged_data/'
+        
+        core.io.rmdir(mergeloc)
+        core.io.mkdir(mergeloc)
 
-# class ProjectCreator:
-#     """
-#     Class for creating a project.
-#     """
 
-#     def __init__(self, prefix: str = '', directory: str = '', base_files: Optional[list] = None) -> None:
-#         """
-#         Initialize the ProjectCreator class.
 
-#         Args:
-#             prefix (str, optional): Custom prefix for file names. Defaults to an empty string.
-#             directory (str, optional): Directory where parent modules reside. Defaults to an empty string.
-#             base_files (list, optional): List of base file names. Defaults to None.
-#         """
-#         self.prefix = prefix
-#         if not self.prefix.endswith('_'):
-#             self.prefix += '_'
-#         self.directory = directory
-#         if not core.io.exists(directory, False):
-#             os.makedirs(directory)
-#         self.files = base_files or base
+        for section_name in self.file_names:
 
-#     def create(self) -> None:
-#         """
-#         Create the project by running the 'create' function from the parent module for each file.
-#         """
-#         for file_name in self.files:
-#             output_name = file_name.split('.')[0]
-#             output_path = os.path.join(self.directory, output_name)
-#             module_path = os.path.join(os.path.dirname(__file__), output_name)
-#             file_path = os.path.join(self.directory, self.prefix + file_name)
+            if exceptions == 'all':
+                skip = 'all'
+            elif isinstance(exceptions,dict):
+                skip = exceptions.get(section_name,None)
+            else:
+                skip = None
 
-#             if not core.io.exists(file_path, False):
-#                 if core.io.exists(output_path, False):
-#                     module = importlib.import_module(module_path, output_name)
-#                     opt_func = opt_func or getattr(module, "create", None)
+            # only the data
+            mergeData = core.io.json_read(f"{CVtables}{prefix}_{section_name}.json","r")[section_name]
 
-#                     if callable(opt_func):
-#                         with open(file_path, 'w') as file:
-#                             json.dump(opt_func(), file, sort_keys=True)
-#                     else:
-#                         print(
-#                             f"Create function not implemented for {file_name}")
-#             else:
-#                 print(
-#                     f"ERROR: No function provided for processing. Writing an empty file at {file_name}")
+            # complete file data
+            currentData = core.io.json_read(f"{self.directory}{section_name}.json","r")
 
-# Example usage
+            if isinstance(mergeData, dict):
+                currentData[section_name] = core.io.merge_dict(mergeData,currentData[section_name],skip) 
+
+            elif isinstance(currentData[section_name], list):
+                if isinstance(mergeData, list):
+                    currentData[section_name].extend(mergeData)
+                else: 
+                    currentData[section_name].append(mergeData)
+                
+                currentData[section_name] = list(set(currentData[section_name]))
+            else:
+                currentData[section_name] = currentData[section_name] or mergeData
+
+            output_path = os.path.join(mergeloc, section_name + '.json')
+            core.io.json_write(currentData, output_path)
+
+            # self.createCV()
+
+        return mergeloc
+
+
+
+    def push(self,repo_location,branch,source_location, overwrite = False):
+
+        from .merge_git import pull_updates, push_output
+
+        pull_updates(repo_location,overwrite=overwrite)
+
+        push_output(repo_location,branch,source_location,prefix=self.prefix,overwrite=overwrite)
+
+        
+
+
+
