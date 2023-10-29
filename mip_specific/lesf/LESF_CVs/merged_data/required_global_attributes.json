@@ -1,0 +1,61 @@
+{
+    "Header": {
+        "latest change": {
+            "author": "Daniel Ellis <daniel.ellis@ext.esa.int>",
+            "institution_id": null
+        },
+        "specs_doc": "v6.3.0 (link TBC)",
+        "CMIP6Plus_CVS dir?": {
+            "CV_collection_modified": "2023-10-29",
+            "CV_collection_version": "6.5.0",
+            "previous_commit": "6.5.0"
+        },
+        "miptables": {
+            "tag": {
+                "version": "v6.5.0.0",
+                "latest": true
+            },
+            "commit": {
+                "SHA": "f6a6f930dda2a66e1a48c16c3edecc3effb0c603",
+                "latest": true
+            },
+            "Repository URL": "https://github.com/PCMDI/mip-cmor-tables.git",
+            "DOI": null,
+            "license": "/var/folders/hc/s_7lggq12nndglbdyrn3f91m1l58yd/T/cvtool.miptables.1_s_5yy9/LICENSE-CC-BY"
+        },
+        "CMOR": "3.7.3",
+        "CVTool": "0.0.3"
+    },
+    "required_global_attributes": [
+        "grid_label",
+        "table_id",
+        "forcing_index",
+        "source",
+        "variant_label",
+        "grid",
+        "data_specs_version",
+        "initialization_index",
+        "Conventions",
+        "mip_era",
+        "realization_index",
+        "nominal_resolution",
+        "frequency",
+        "physics_index",
+        "sub_experiment",
+        "experiment_id",
+        "realm",
+        "variable_id",
+        "tracking_id",
+        "creation_date",
+        "institution_id",
+        "activity_id",
+        "further_info_url",
+        "license",
+        "source_type",
+        "product",
+        "institution",
+        "sub_experiment_id",
+        "source_id",
+        "experiment"
+    ]
+}

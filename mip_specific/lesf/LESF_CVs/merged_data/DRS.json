@@ -1,0 +1,37 @@
+{
+    "Header": {
+        "latest change": {
+            "author": "Daniel Ellis <daniel.ellis@ext.esa.int>",
+            "institution_id": "CMIP-IPO"
+        },
+        "specs_doc": "v6.3.0 (link TBC)",
+        "CMIP6Plus_CVS dir?": {
+            "CV_collection_modified": "2023-10-29",
+            "CV_collection_version": "6.5.0",
+            "previous_commit": "6.5.0"
+        },
+        "miptables": {
+            "tag": {
+                "version": "v6.5.0.0",
+                "latest": true
+            },
+            "commit": {
+                "SHA": "f6a6f930dda2a66e1a48c16c3edecc3effb0c603",
+                "latest": true
+            },
+            "Repository URL": "https://github.com/PCMDI/mip-cmor-tables.git",
+            "DOI": null,
+            "license": "/var/folders/hc/s_7lggq12nndglbdyrn3f91m1l58yd/T/cvtool.miptables.1_s_5yy9/LICENSE-CC-BY"
+        },
+        "CMOR": "3.7.3",
+        "CVTool": "0.0.3"
+    },
+    "DRS": {
+        "directory_path_example": "CMIP6Plus/CMIP/MOHC/HadGEM3-GC31-MM/historical/r1i1p1f3/Amon/tas/gn/v20191207/",
+        "directory_path_sub_experiment_example": "CMIP6Plus/DCPP/MOHC/HadGEM3-GC31-MM/dcppA-hindcast/s1960-r1i1p1f2/Amon/tas/gn/v20200417/",
+        "directory_path_template": "<mip_era>/<activity_id>/<institution_id>/<source_id>/<experiment_id>/<member_id>/<table_id>/<variable_id>/<grid_label>/<version>",
+        "filename_example": "tas_Amon_HadGEM3-GC31-MM_historical_r1i1p1f3_gn_185001-186912.nc",
+        "filename_sub_experiment_example": "tas_Amon_HadGEM3-GC31-MM_dcppA-hindcast_s1960-r1i1p1f2_gn_196011-196012.nc",
+        "filename_template": "<variable_id>_<table_id>_<source_id>_<experiment_id >_<member_id>_<grid_label>[_<time_range>].nc"
+    }
+}

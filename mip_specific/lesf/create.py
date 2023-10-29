@@ -87,7 +87,6 @@ base_files=[
         "experiment_id",
         "source_id",
         "sub_experiment_id",
-        "further_info_url",
     ]
 
 
@@ -132,6 +131,11 @@ if UPDATE_CVS:
     # Update the original damip dictionary
     damip = new_damip
     del new_damip
+
+    '''
+    DRS
+    '''
+    DRS = cvtool.core.io.json_read(mergeLoc+'CMIP6Plus_DRS.json')['DRS']
 
 
     '''
@@ -213,6 +217,7 @@ if UPDATE_CVS:
         experiments = listify(experiments,['parent_experiment_id','parent)sub_experiment_id','parent_activity_id'])
         # print('-------', name)
         experiments[name] = entry
+        
 
         
     print('Filtering out past1000, past2k')
@@ -227,7 +232,6 @@ if UPDATE_CVS:
     }  
 
 
-    experiments['historical'].update({'parent_activity_id':'CMIP','activity_id':'CMIP'})
 
     # it atually comes from the deck
     deck['experiment_id'] = {
@@ -236,7 +240,12 @@ if UPDATE_CVS:
     if not any(parent_id in ['past1000', 'past2k'] for parent_id in value.get('parent_experiment_id', []))
     }  
 
+    # manual changes
+    experiments['historical'].update({'parent_activity_id':'CMIP','activity_id':'CMIP'})
 
+    experiments_to_remove = ['historical-cmip5', 'historical-ext', 'piControl-cmip5', '"piControl-spinup-cmip5"']
+    for experiment_id in experiments_to_remove:
+        deck['experiment_id'].pop(experiment_id, None)
 
 
 ##############################################
@@ -257,6 +266,9 @@ if UPDATE_CVS:
             'update': {
                 'updatedadd': 'topleveltest'
             }
+        },
+        "DRS":{
+            "create":DRS
         },
         "activity_id": {
             'create': {
@@ -283,7 +295,8 @@ if UPDATE_CVS:
         'sub_experiment_id' : {
             'create':{
                 'sub_experiment_id':{
-                    'f2023': 'Forcings 2023'
+                    'f2023': 'Forcings 2023',
+                    "none": "none"
                 }
             }
         }
@@ -295,11 +308,12 @@ if UPDATE_CVS:
 handler.createCV('CMIP-IPO')
 # merge with the existing CVs
 merge_location = handler.merge(CVtables = mergeLoc,prefix = 'CMIP6Plus')
-# create a new updated CV 
-# ha
 
+handler.createCV('CMIP-IPO',merge_location)
+
+# handler.createIni()
 
 
 
 # place the output files into the CV directory and push 
-# handler.push(mergeLoc,branch = 'lesfmip',source_location =merge_location,overwrite=True)
+handler.push(mergeLoc, branch = 'lesfmip', source_location = merge_location, overwrite=True)

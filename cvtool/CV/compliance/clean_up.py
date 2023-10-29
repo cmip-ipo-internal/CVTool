@@ -19,9 +19,9 @@ def prune(CV):
         for a in ['activity_id','parent_activity_id']:
             activity_id.extend(experiment.get(a,[]))
 
-        source_type.extend(experiment.get('additional_allowed_model_source_type',[]))
+        # source_type.extend(experiment.get('additional_allowed_model_source_type',[]))
 
-        source_type.extend(experiment.get('required_model_source_type',[]))
+        # source_type.extend(experiment.get('required_model_source_type',[]))
 
         sub_experiment_id.extend(experiment.get('"sub_experiment_id"',[]))
 
@@ -31,11 +31,16 @@ def prune(CV):
 
         institution_id.extend(source.get("institution_id",[]))
 
-    keys = ['activity_id','source_type','sub_experiment_id','institution_id']
+    keys = ['institution_id']
+
+    # 'source_type','activity_id','sub_experiment_id'
 
     lc = locals()
     for keystr in keys:
+
         keyval = set(lc[keystr])
+
+        # print(keyval, keystr)
         CV[keystr] = {key: value for key, value in CV[keystr].items() if key in keyval}
 
     return CV

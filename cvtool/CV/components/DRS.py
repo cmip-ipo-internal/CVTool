@@ -26,9 +26,8 @@ def create(optdata):
     # print(whoami, this,optdata)
     institution = optdata['globals']['institution']
     # print(optdata)
-    DRSpath = optdata['globals']['tables']+ optdata['globals']['table_prefix']
-
-  
+    # DRSpath = optdata['globals']['tables']+ '/'+ optdata['globals']['table_prefix']
+    #   '/var/folders/hc/s_7lggq12nndglbdyrn3f91m1l58yd/T/cvtool.miptables.u2_w9lu_MIP'
 
     optdata = optdata.get(this) or {}
     # content = optdata.get(this)
@@ -45,15 +44,18 @@ def create(optdata):
     ]
 
 
-    default_content = core.io.json_read(f"{DRSpath}_CV.json",'r')
+    # default_content = core.io.json_read(f"{DRSpath}_CV.json",'r')
 
-    # hopefully we can remove this at some point
-    if 'CV' in default_content:
-        default_content = default_content['CV']
+    # # hopefully we can remove this at some point
+    # if 'CV' in default_content:
+    #     default_content = default_content['CV']
 
-    default_content = default_content[whoami]
+    # default_content = default_content[whoami]
 
-    content = optdata.get('content') or default_content
+    default_content = False
+    print('TO DO: set DRS default content')
+
+    content = optdata or default_content
     for k in keys: 
         assert k in content
 

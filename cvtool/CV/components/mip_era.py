@@ -28,7 +28,7 @@ def create(optdata):
 
     """
     this = core.io.get_current_function_name()
-    print(whoami, this,optdata)
+    # print(whoami, this,optdata)
 
     institution = optdata['globals']['institution']
 

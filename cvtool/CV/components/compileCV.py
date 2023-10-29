@@ -14,7 +14,7 @@ import shutil
 
 # core = sys.modules.get('cvtool.core')
 import cvtool.core as core
-from cvtool.CV.meta import institutions
+# from cvtool.CV.meta import institutions
 from cvtool.CV.compliance.clean_up import prune
 
 print = core.stdout.debug_print
@@ -31,7 +31,7 @@ except Exception as e:
 
 
 
-def create(directory, prefix, tables, outloc=None):
+def create(directory, prefix, tables, institutions, outloc=None):
 
     outloc = outloc or 'CVs'
     cvdict = {'source_type': set()}
@@ -60,7 +60,8 @@ def create(directory, prefix, tables, outloc=None):
             #     table_name = re.search(r'\w+_(\w+)\.json', os.path.basename(table_file)).group(1)
             #     cvdict['table_id'].append(table_name)
             # Hard code to a single table
-            cvdict['table_id'] = ['APmon']
+            cvdict['table_id'] = [t.split('/')[-1].rstrip('.json') for t in glob(f'{tables}/Tables/*.json')]
+            # ['APmon']
 
         elif core.io.exists(file, False):
             cvdict[entry] = core.io.json_read(file)[entry]
@@ -70,8 +71,8 @@ def create(directory, prefix, tables, outloc=None):
 
 
                 cvdict['source_type'] = set(cvdict['source_type']).union(set(component for experiment in cvdict[entry].values() if "required_model_components" in experiment for component in experiment["required_model_components"]+experiment["additional_allowed_model_components"]))
-
-                                         
+     
+                                
                 if entry == 'experiment_id':
 
                     cvdict[entry] = core.stdout.listify(cvdict[entry],['parent_experiment_id','parent)sub_experiment_id','parent_activity_id'])
@@ -92,8 +93,10 @@ def create(directory, prefix, tables, outloc=None):
                 # source_test(cvdict)
                 print('source test disabled')
 
-                cvdict['institution_id'] = {i: institutions[i] for i in sorted(
+                cvdict['institution_id'] = {i: f"{institutions[i]['indentifiers']['ror']} - {institutions[i]['indentifiers']['institution_name']}" for i in sorted(
                     {component for source in cvdict[entry].values() for component in source.get("institution_id", [])})}
+                
+
 
                 # cvdict['institution_id'] = {i: institutions[i] for i in sorted({component for source in cvdict[entry].values() for component in source.get("institution_id", [])})}
 
@@ -115,10 +118,9 @@ def create(directory, prefix, tables, outloc=None):
     core.stdout.MissingValueError(f'The following fields are required:{diff} ')
 
     #  update this to the correct format.
-
     cvdict['source_type'] = dict([[s, source_type[s]]
                                  for s in cvdict['source_type']])
-
+    print(cvdict['source_type'])
     cvdict = prune(cvdict)
 
     CVfile = f"{directory}{outloc}/{core.io.ensure_suffix(prefix,'_')}CV.json"

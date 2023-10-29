@@ -106,8 +106,6 @@ class CVDIR:
             self.create_project()
 
 
-
-
         for file_name in self.file_names:
             self.files[file_name] = core.io.json_read(
                 os.path.join(self.directory, self.prefix + file_name))
@@ -298,7 +296,7 @@ class CVDIR:
         compileCV = import_script(*script_path('compileCV'))
         # cvloc = f"{self.directory}"
         cvfile = compileCV.create(
-            location, self.prefix, self.tables, outloc=self.cvout)
+            location, self.prefix, self.tables, self.institutions,outloc=self.cvout)
         # print('check disabled')
         # self.checkCV(cvfile, institution)
 

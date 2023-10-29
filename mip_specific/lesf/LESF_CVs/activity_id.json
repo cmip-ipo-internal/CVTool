@@ -7,7 +7,7 @@
         },
         "latest change": {
             "author": "Daniel Ellis <daniel.ellis@ext.esa.int>",
-            "institution_id": "CMIP-IPO"
+            "institution_id": null
         },
         "miptables": {
             "tag": {
@@ -31,6 +31,9 @@
             "previous_commit": "6.5.0"
         }
     },
-    "updatedadd": "topleveltest",
-    "mip_era": "CMIP6Plus"
+    "activity_id": {
+        "LESFMIP": "The Large Ensemble Single Forcing Model Intercomparison Project",
+        "PMIP": "Paleoclimat Modeling Intercomparison Project",
+        "CMIP": "CMIP DECK: 1pctCO2, abrupt4xCO2, amip, esm-piControl, esm-historical, historical, and piControl experiments"
+    }
 }
