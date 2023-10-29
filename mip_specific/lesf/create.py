@@ -19,11 +19,13 @@ def custom_excepthook(type, value, traceback):
 
     print("An error occurred. Entering debugger.")
     print(type, value, traceback)
+    # Print the full stack trace including file paths and line numbers
     print("\033[0m")
     pdb.post_mortem(traceback)
 
 # Set custom excepthook
 sys.excepthook = custom_excepthook
+
 
 
 
@@ -58,7 +60,8 @@ def create_env():
     # envdict = dict(out_directory='testdirLESF',tables='/home/h03/hadmm/CDDS/github/cmip6-cmor-tables/Tables/',table_prefix='CMIP6')
 
     # dan
-    envdict = dict(out_directory='LESF_CVs', table_prefix='CMIP6Plus', MIPTABLE_SHA = '9fa6eda52792b51326dfc77b955c4e46a8334a2c',clean='True')
+    envdict = dict(out_directory='LESF_CVs', table_prefix='MIP',clean='True')
+    #  MIPTABLE_SHA = '9fa6eda52792b51326dfc77b955c4e46a8334a2c'
     # tables=os.environ['HOME']+ '/WIPwork/cmip6-cmor-tables/Tables/'
     # !!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -111,7 +114,7 @@ handler = CV.CVDIR(
 # # Update all files with data using the example update function
 if UPDATE_CVS:
 
-    deck = handler.get_activity()
+    deck = handler.get_activity(activity='CMIP', external_path=CMIP6Tables4DAMIP)
 
     damip = handler.get_activity(activity='DAMIP',external_path=CMIP6Tables4DAMIP)
 
@@ -293,9 +296,8 @@ handler.createCV('CMIP-IPO')
 # merge with the existing CVs
 merge_location = handler.merge(CVtables = mergeLoc,prefix = 'CMIP6Plus')
 # create a new updated CV 
-handler.createCV('CMIP-IPO',merge_location)
+# ha
 
-handler.createIni()
 
 
 

@@ -197,6 +197,30 @@ def read_temp(prefix: str, index: int = 0) -> dict:
         
     return None
 
+def rm_temp(prefix: str, index: int = 0) -> bool:
+    """
+    Remove a temporary file with the specified prefix and index.
+
+    Args:
+        prefix (str): The prefix of the temporary file name.
+        index (int): The index of the temporary file to remove (default is 0).
+
+    Returns:
+        bool: True if the file was successfully removed, False otherwise.
+    """
+    tmp = tempfile.gettempdir()
+    existing = glob.glob(f'{tmp}/{prefix}*')
+
+    for tmpfl in existing: 
+        try:
+            os.remove(tmpfl)
+            return True
+        except Exception as e:
+            print(f"Error: {e}")
+            return False
+
+    return False
+
 
 def relative_to(absolte,current):
         

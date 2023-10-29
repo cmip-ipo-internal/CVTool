@@ -83,7 +83,7 @@ class CVDIR:
             return os.environ.get('cmor_' + name, default)
         
         
-        self.miptable_meta, self.tables = setup_mip_tables(commit_hash = config('MIPTABLE_SHA') or None)
+        self.miptable_meta, self.tables, self.institutions = setup_mip_tables(commit_hash = config('MIPTABLE_SHA') or None)
         meta.tables = self.miptable_meta
     
 
@@ -258,11 +258,12 @@ class CVDIR:
         Returns:
             dict: Activity data.
         """
-        path = external_path or self.tables + self.table_prefix
+        path = external_path or f"{self.tables}/{self.table_prefix}"
+        
+        cvpath = f"{path}_CV.json"
+        core.io.exists(cvpath)
 
-        core.io.exists(f"{path}_CV.json")
-
-        tabledata = core.io.json_read(f"{path}_CV.json", 'r')
+        tabledata = core.io.json_read(cvpath, 'r')
 
         if 'CV' in tabledata:
             tabledata = tabledata['CV']
@@ -278,6 +279,7 @@ class CVDIR:
                 return {key: value for key, value in data.items() if
                         (isinstance(value, dict) and filter_dict(value.get('activity_id', ''))) or
                         (isinstance(value, str) and value == activity)}
+
 
         experiments = tabledata['experiment_id']
         deck['experiment_id'] = filter_dict(experiments)

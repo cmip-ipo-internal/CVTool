@@ -111,5 +111,6 @@ def test(CV):
 print('source institution checks happen in the CV creation process.')
 
 if __name__ == '__main__':
-    CV = json.load(open('/Users/daniel.ellis/WIPwork/CVTool/mip_specific/lesf/testdirLESF/cv_cmor/CMIP6Plus_CV.json')).get('CV')
-    test(CV)
+    # CV = json.load(open('/Users/daniel.ellis/WIPwork/CVTool/mip_specific/lesf/testdirLESF/cv_cmor/CMIP6Plus_CV.json')).get('CV')
+    # test(CV)
+    ...
