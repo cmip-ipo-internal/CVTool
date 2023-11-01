@@ -1,7 +1,13 @@
 import sys
 import os
-import json
-from collections import OrderedDict
+
+# # Importing 'cvtool.core' and 'cvtool.CV.meta' modules
+# core = sys.modules.get('cvtool.core')
+# meta = sys.modules.get('cvtool.CV.meta')
+
+# # Extracting the parent directory name from the current file path
+# whoami = __file__.split('/')[-2]
+
 import cvtool.core as core
 import cvtool.CV.meta as meta
 whoami = __file__.split('/')[-1].replace('.py','')
@@ -9,30 +15,6 @@ whoami = __file__.split('/')[-1].replace('.py','')
 # Logging 'info' level message using 'core.stdout.log' function
 logger = core.stdout.log(whoami, level='info')
 
-template = OrderedDict({
-    # immediate identifiers
-      "experiment_id": "",
-      "activity_id": [],
-    # experiment descriptors
-      "experiment": "",
-      "description": "",
-      "start": 1,
-      "end": 0,
-    # origin
-      "sub_experiment_id": ["none"],
-      "parent_activity_id": ["none"],
-      "parent_experiment_id": ["none"],
-    # components
-      "required_model_components": [],
-      "additional_allowed_model_components": [],
-      "tier": 1
-    }
-)
-
-default = {}
-# create a blank as it needs to be populated
-
-    # default_content = json.load(open(f"{DRSpath}_CV.json",'r'))[whoami]
 
 def create(optdata):
     """
@@ -46,16 +28,17 @@ def create(optdata):
 
     """
     this = core.io.get_current_function_name()
+    # print(whoami, this,optdata)
 
-    # get the globals before overwriting
     institution = optdata['globals']['institution']
+
     optdata = optdata.get(this) or {}
 
-    content = optdata.get(whoami) # this may be different if the varaible does not reflect the file name (e.g. mip_era and mipera)
-    institution = optdata.get('institution')
+    content = optdata.get('mipera')
+  
 
     header = meta.create(institution)
-    header[whoami] = content or default
+    header[whoami] = content
 
     return header
 
@@ -75,13 +58,14 @@ def update(jsn, optdata):
     this = core.io.get_current_function_name()
     optdata = optdata.get(this)
     if not optdata:
-        logger.info('nothing to update')
+        info('nothing to update')
         return jsn
 
     # Check if there is something to update
     assert len(jsn) >= 0
 
     # Update some of the metadata
+    # current_date = core.stdout.yymmdd()
     overwrite = meta.update()
 
     optdata = core.io.combine(optdata, overwrite)

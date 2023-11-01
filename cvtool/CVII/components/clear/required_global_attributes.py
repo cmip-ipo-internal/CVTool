@@ -1,7 +1,41 @@
 import sys
 import os
-import json
-from collections import OrderedDict
+
+
+defaults = [
+    "Conventions",
+    "activity_id",
+    "creation_date",
+    "data_specs_version",
+    "experiment",
+    "experiment_id",
+    "forcing_index",
+    "frequency",
+    "further_info_url",
+    "grid",
+    "grid_label",
+    "initialization_index",
+    "institution",
+    "institution_id",
+    "license",
+    "mip_era",
+    "nominal_resolution",
+    "physics_index",
+    "product",
+    "realization_index",
+    "realm",
+    "source",
+    "source_id",
+    "source_type",
+    "sub_experiment",
+    "sub_experiment_id",
+    "table_id",
+    "tracking_id",
+    "variable_id",
+    "variant_label"
+  ]
+
+
 import cvtool.core as core
 import cvtool.CV.meta as meta
 whoami = __file__.split('/')[-1].replace('.py','')
@@ -9,30 +43,6 @@ whoami = __file__.split('/')[-1].replace('.py','')
 # Logging 'info' level message using 'core.stdout.log' function
 logger = core.stdout.log(whoami, level='info')
 
-template = OrderedDict({
-    # immediate identifiers
-      "experiment_id": "",
-      "activity_id": [],
-    # experiment descriptors
-      "experiment": "",
-      "description": "",
-      "start": 1,
-      "end": 0,
-    # origin
-      "sub_experiment_id": ["none"],
-      "parent_activity_id": ["none"],
-      "parent_experiment_id": ["none"],
-    # components
-      "required_model_components": [],
-      "additional_allowed_model_components": [],
-      "tier": 1
-    }
-)
-
-default = {}
-# create a blank as it needs to be populated
-
-    # default_content = json.load(open(f"{DRSpath}_CV.json",'r'))[whoami]
 
 def create(optdata):
     """
@@ -51,11 +61,11 @@ def create(optdata):
     institution = optdata['globals']['institution']
     optdata = optdata.get(this) or {}
 
-    content = optdata.get(whoami) # this may be different if the varaible does not reflect the file name (e.g. mip_era and mipera)
+    content = optdata.get(this) # this may be different if the varaible does not reflect the file name (e.g. mip_era and mipera)
     institution = optdata.get('institution')
 
     header = meta.create(institution)
-    header[whoami] = content or default
+    header[whoami] = content or defaults
 
     return header
 

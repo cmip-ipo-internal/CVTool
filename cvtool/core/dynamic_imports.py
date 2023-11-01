@@ -97,7 +97,7 @@ def import_relative(__file__, module_name):
     globals()[module_name] = my_module
 
 
-def basepath(name: str, basepath: str = '') -> tuple:
+def base_path(name: str, basepath: str = '') -> tuple:
     """
     Generate the base path for a module file.
 
@@ -110,7 +110,7 @@ def basepath(name: str, basepath: str = '') -> tuple:
     """
     return __file__.replace('__init__', f'{basepath}{name}/__init__'), name
 
-def script_path(name: str, basepath: str = LIBPATH) -> tuple:
+def script_path(name: str, basepath: str = LIBPATH, module: str = 'CV') -> tuple:
     """
     Generate the base path for a module file.
 
@@ -121,7 +121,7 @@ def script_path(name: str, basepath: str = LIBPATH) -> tuple:
     Returns:
         tuple: Tuple containing the base path and module name.
     """
-    return  f'{basepath}/CV/components/{name}.py', name
+    return  f'{basepath}/{module}/components/{name}.py', name
 
 
 def check_module_functions(module):
