@@ -9,6 +9,7 @@ import cvtool.CV.meta as meta
 from p_tqdm import p_map
 from tqdm import tqdm
 whoami = __file__.split('/')[-1].replace('.py', '')
+from pprint import pprint
 
 
 # Logging 'info' level message using 'core.stdout.log' function
@@ -21,8 +22,9 @@ template = OrderedDict({
     # experiment descriptors
     "experiment": "",
     "description": "",
-    "start": 1700,
-    "end": 2100,
+    "start": 'none',
+    "end": 'none',
+    'min_number_yrs_per_sim':0,
     # origin
     "sub_experiment_id": ["none"],
     "parent_activity_id": ["none"],
@@ -57,18 +59,18 @@ def schema(activities):
             },
             "experiment": {"type": "string"},
             "description": {"type": "string"},
-            "start": {
-                "anyOf": [
-                    {"type": "integer", "minimum": 1700},
-                    {"enum": ["none"]}
-                ]
-            },
-            "end": {
-                "anyOf": [
-                    {"type": "integer", "maximum": 2100},
-                    {"enum": ["none"]}
-                ]
-            },
+            # "start": {
+            #     "anyOf": [
+            #         {"type": "integer", "minimum": 1700},
+            #         {"enum": ['none']}
+            #     ]
+            # },
+            # "end": {
+            #     "anyOf": [
+            #         {"type": "integer", "maximum": 2100},
+            #         {"enum": ['none']}
+            #     ]
+            # },
             "sub_experiment_id": {
                 "type": "array",
                 "items": {"type": "string"},
@@ -103,10 +105,10 @@ def schema(activities):
             "tier": {
                 "type": "integer",
                 "enum": [1, 2, 3]
-            }
+            },
+            "min_number_yrs_per_sim": {"type": "integer"}
         },
-        # "required": ["experiment_id", "activity_id", "experiment", "description", "start", "end", "sub_experiment_id", "parent_activity_id", "parent_experiment_id", "required_model_components", "additional_allowed_model_components", "tier"],
-        "additionalProperties": False
+        "required": ["experiment_id", "activity_id", "experiment", "description", "start", "end", "sub_experiment_id", "parent_activity_id", "parent_experiment_id", "required_model_components", "additional_allowed_model_components", "tier"],
     }
 
 
@@ -120,8 +122,28 @@ def fix(exp):
   dummy = deepcopy(template)
   dummy.update(exp[1])
 
+  # lists
   dummy = core.stdout.listify(dummy,['parent_experiment_id','parent)sub_experiment_id','parent_activity_id','activity_id'])
 
+  # integers
+  for i in 'tier start end'.split(' '):
+    # print(dummy[i],i )min_number_yrs_per_sim
+
+    this = dummy[i]
+
+    if isinstance(this, list):
+      dummy[i] = this[0]
+
+    if not this or this == '':
+        dummy[i] = 'none'
+        continue
+
+    if this == 'none':
+      continue
+
+    dummy[i] = int(dummy[i]) or 'none'
+
+  # nones
   if not dummy.get('parent_experiment_id')[0] == None:
     dummy['parent_experiment_id'] = ['none']
 
@@ -147,7 +169,7 @@ def test(cvloc, prefix, experiments):
             # print("Validation successful.")
             # print(f"{name} is valid. ")
         except Exception as e:
-            print(f"Validation failed:{name}- {e}")
+            print(f"Validation failed:{name}  - {e}")
 
 
         # id
@@ -159,12 +181,41 @@ def test(cvloc, prefix, experiments):
 #  main
 
 
-def load_cv(cvloc, prefix, parse = None):
+def load_existing(cvloc, prefix, parse = None):
     fname = f"{cvloc}{prefix}{whoami}.json"
     core.io.exists(fname)
     experiments = dict(p_map(fix,core.io.json_read(fname)[whoami].items(),desc= 'standardising existing experiments',disable=True))
+
+    
     if parse:
       experiments = parse(experiments)
+      # pprint(experiments)
     
     test(cvloc, prefix, experiments)
     return experiments
+
+def add_new(cvloc, prefix, existing ,new):
+
+    duplicates = [new_item for new_item in new if new_item in existing]
+    # any(new_item in existing for new_item in new)
+    
+    assert not duplicates, f'Please remove duplicates from your experiment "add" section. \nYou can put them in the "update" to instead.\n Duplicates: {duplicates}'
+
+
+    new = dict(p_map(fix,new.items(),desc= 'standardising new experiments',disable=True))
+
+
+    test(cvloc, prefix, new)
+    existing.update(new)
+    return existing
+
+def ammend(cvloc,prefix,existing,overwrite):
+    overwrite = dict(p_map(fix,overwrite.items(),desc= 'standardising overwriting experiments',disable=True))
+    
+    test(cvloc, prefix, overwrite)
+
+    existing.update(overwrite)
+    return existing
+
+
+
