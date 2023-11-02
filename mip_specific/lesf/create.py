@@ -169,17 +169,22 @@ if UPDATE_CVS:
             entry = damip['experiment_id'][name.lower()].copy()
             entry['description'] = entry.get('description') or r.Description
             entry['sub_experiment_id'] = ["f2023"]
+            entry['activity_id'] = ['LESFMIP']
+            # entry['parent_experiment_id'] = [damip_case.get(name,'no-parent')]
+            # if 'fut' in name.lower():
+
 
         elif name.lower().replace('fut', 'hist') in damip_names:
             # print('fut')
             # if we are creating future occurances
             entry = damip['experiment_id'][name.replace('fut', 'hist').lower()].copy()
-            entry['parent_experiment_id'] = [damip_case.get(name.replace('fut', 'hist'))]  # Not perfect as fut-ghg should have hist-GHG
+            entry['parent_experiment_id'] = [damip_case.get(name.replace('fut', 'hist'),'no-parent')]  # Not perfect as fut-ghg should have hist-GHG
             entry['parent_activity_id'] = ['CMIP']
             entry['experiment'] = entry['experiment'].replace(
                 'historical', 'future')
             entry['experiment_id'] = name
             entry['description'] = entry.get('description') or r.Description
+            entry['activity_id'] = ['LESFMIP']
 
         else:
             # view(r.to_dict())
@@ -242,10 +247,9 @@ if UPDATE_CVS:
     }  
 
     # manual changes
-    experiments['historical'].update({'parent_activity_id':'CMIP','activity_id':'CMIP'})
-    experiments['hist-sol'].update({'parent_activity_id':'piControl','activity_id':'CMIP'})
-    experiments['hist-aer'].update({'parent_activity_id':'piControl','activity_id':'CMIP'})
-    experiments['hist-lu'].update({'parent_activity_id':'piControl','activity_id':'CMIP'})
+    for key in experiments:
+        if 'hist' in key:
+            experiments[key].update({'parent_activity_id':'CMIP','activity_id':'CMIP'})
 
     experiments_to_remove = ['historical-cmip5', 'historical-ext', 'piControl-cmip5', '"piControl-spinup-cmip5"']
     for experiment_id in experiments_to_remove:
@@ -320,4 +324,4 @@ handler.createCV('CMIP-IPO',merge_location)
 
 
 # place the output files into the CV directory and push 
-handler.push(mergeLoc, branch = 'lesfmip', source_location = merge_location, overwrite=True)
+# handler.push(mergeLoc, branch = 'lesfmip', source_location = merge_location, overwrite=True)

@@ -1,38 +1,20 @@
 import sys
 import os
 import json
-from collections import OrderedDict
+
+# Importing 'cvtool.core' and 'cvtool.CV.meta' modules
+# core = sys.modules.get('cvtool.core')
+# meta = sys.modules.get('cvtool.CV.meta')
 import cvtool.core as core
 import cvtool.CV.meta as meta
 whoami = __file__.split('/')[-1].replace('.py','')
 
+
 # Logging 'info' level message using 'core.stdout.log' function
 logger = core.stdout.log(whoami, level='info')
 
-template = OrderedDict({
-    # immediate identifiers
-      "experiment_id": "",
-      "activity_id": [],
-    # experiment descriptors
-      "experiment": "",
-      "description": "",
-      "start": 1,
-      "end": 0,
-    # origin
-      "sub_experiment_id": ["none"],
-      "parent_activity_id": ["none"],
-      "parent_experiment_id": ["none"],
-    # components
-      "required_model_components": [],
-      "additional_allowed_model_components": [],
-      "tier": 1
-    }
-)
+default = None
 
-default = {}
-# create a blank as it needs to be populated
-
-    # default_content = json.load(open(f"{DRSpath}_CV.json",'r'))[whoami]
 
 def create(optdata):
     """
@@ -78,6 +60,7 @@ def update(jsn, optdata):
         logger.info('nothing to update')
         return jsn
 
+
     # Check if there is something to update
     assert len(jsn) >= 0
 
@@ -85,5 +68,6 @@ def update(jsn, optdata):
     overwrite = meta.update()
 
     optdata = core.io.combine(optdata, overwrite)
-
+    
     return core.io.combine(jsn, optdata)
+

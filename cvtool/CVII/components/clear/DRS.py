@@ -1,7 +1,8 @@
 import sys
 import os
 import json
-from collections import OrderedDict
+
+# Importing 'cvtool.core' and 'cvtool.CV.meta' modules
 import cvtool.core as core
 import cvtool.CV.meta as meta
 whoami = __file__.split('/')[-1].replace('.py','')
@@ -9,30 +10,6 @@ whoami = __file__.split('/')[-1].replace('.py','')
 # Logging 'info' level message using 'core.stdout.log' function
 logger = core.stdout.log(whoami, level='info')
 
-template = OrderedDict({
-    # immediate identifiers
-      "experiment_id": "",
-      "activity_id": [],
-    # experiment descriptors
-      "experiment": "",
-      "description": "",
-      "start": 1,
-      "end": 0,
-    # origin
-      "sub_experiment_id": ["none"],
-      "parent_activity_id": ["none"],
-      "parent_experiment_id": ["none"],
-    # components
-      "required_model_components": [],
-      "additional_allowed_model_components": [],
-      "tier": 1
-    }
-)
-
-default = {}
-# create a blank as it needs to be populated
-
-    # default_content = json.load(open(f"{DRSpath}_CV.json",'r'))[whoami]
 
 def create(optdata):
     """
@@ -46,16 +23,47 @@ def create(optdata):
 
     """
     this = core.io.get_current_function_name()
-
-    # get the globals before overwriting
+    # print(whoami, this,optdata)
     institution = optdata['globals']['institution']
-    optdata = optdata.get(this) or {}
+    # print(optdata)
+    # DRSpath = optdata['globals']['tables']+ '/'+ optdata['globals']['table_prefix']
+    #   '/var/folders/hc/s_7lggq12nndglbdyrn3f91m1l58yd/T/cvtool.miptables.u2_w9lu_MIP'
 
-    content = optdata.get(whoami) # this may be different if the varaible does not reflect the file name (e.g. mip_era and mipera)
-    institution = optdata.get('institution')
+    optdata = optdata.get(this) or {}
+    # content = optdata.get(this)
+    
+    
+
+    keys = [
+    "directory_path_example",
+    "directory_path_sub_experiment_example",
+    "directory_path_template",
+    "filename_example",
+    "filename_sub_experiment_example",
+    "filename_template"
+    ]
+
+
+    # default_content = core.io.json_read(f"{DRSpath}_CV.json",'r')
+
+    # # hopefully we can remove this at some point
+    # if 'CV' in default_content:
+    #     default_content = default_content['CV']
+
+    # default_content = default_content[whoami]
+
+    default_content = False
+    print('TO DO: set DRS default content')
+
+    content = optdata or default_content
+    for k in keys: 
+        assert k in content
+
 
     header = meta.create(institution)
-    header[whoami] = content or default
+    header[whoami] = content
+
+
 
     return header
 
@@ -75,7 +83,7 @@ def update(jsn, optdata):
     this = core.io.get_current_function_name()
     optdata = optdata.get(this)
     if not optdata:
-        logger.info('nothing to update')
+        logger.info('Nothing to update')
         return jsn
 
     # Check if there is something to update
@@ -84,6 +92,11 @@ def update(jsn, optdata):
     # Update some of the metadata
     overwrite = meta.update()
 
+    logger.INFO(overwrite)
+
     optdata = core.io.combine(optdata, overwrite)
 
     return core.io.combine(jsn, optdata)
+
+
+

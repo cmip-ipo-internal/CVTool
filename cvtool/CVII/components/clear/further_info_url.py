@@ -1,7 +1,6 @@
 import sys
 import os
-import json
-from collections import OrderedDict
+
 import cvtool.core as core
 import cvtool.CV.meta as meta
 whoami = __file__.split('/')[-1].replace('.py','')
@@ -9,30 +8,11 @@ whoami = __file__.split('/')[-1].replace('.py','')
 # Logging 'info' level message using 'core.stdout.log' function
 logger = core.stdout.log(whoami, level='info')
 
-template = OrderedDict({
-    # immediate identifiers
-      "experiment_id": "",
-      "activity_id": [],
-    # experiment descriptors
-      "experiment": "",
-      "description": "",
-      "start": 1,
-      "end": 0,
-    # origin
-      "sub_experiment_id": ["none"],
-      "parent_activity_id": ["none"],
-      "parent_experiment_id": ["none"],
-    # components
-      "required_model_components": [],
-      "additional_allowed_model_components": [],
-      "tier": 1
-    }
-)
 
-default = {}
-# create a blank as it needs to be populated
+default = ["https://furtherinfo.es-doc.org/.*"]
 
-    # default_content = json.load(open(f"{DRSpath}_CV.json",'r'))[whoami]
+
+
 
 def create(optdata):
     """
@@ -51,7 +31,8 @@ def create(optdata):
     institution = optdata['globals']['institution']
     optdata = optdata.get(this) or {}
 
-    content = optdata.get(whoami) # this may be different if the varaible does not reflect the file name (e.g. mip_era and mipera)
+    # this may be different if the varaible does not reflect the file name (e.g. mip_era and mipera)
+    content = optdata.get(this)
     institution = optdata.get('institution')
 
     header = meta.create(institution)
@@ -72,6 +53,10 @@ def update(jsn, optdata):
         dict: The updated CV collection dictionary.
 
     """
+
+    print('FurtherInfo - maybe append to this rather than merging dictionary updates. ')
+
+
     this = core.io.get_current_function_name()
     optdata = optdata.get(this)
     if not optdata:
