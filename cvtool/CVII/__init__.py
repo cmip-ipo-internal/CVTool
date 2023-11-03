@@ -29,6 +29,7 @@ from ..core.custom_errors import MipTableError
 from .merge_git import pull_updates, push_output
 # print = core.stdout.debug_print
 # from .components import meta
+from . import components
 from . import meta
 
 

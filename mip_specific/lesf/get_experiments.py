@@ -68,7 +68,8 @@ def lesf ():
             ],
             "parent_experiment_id": [
                 "piControl"
-            ],}
+            ],
+            "experiment": "all-forcing simulation of the recent past (CO2 concentration-driven)"}
             
             continue
 

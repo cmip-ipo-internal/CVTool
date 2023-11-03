@@ -61,12 +61,22 @@ keydict = { 'start_year':'start','end_year':'end'}
 
 # sequence == load(parse) -> update -> add
 
+fix_deck = {
+                'amip':{'start':1979,'end':2022,'min_number_yrs_per_sim': 43},
+                'esm-piControl':{'experiment':'pre-industrial control simulation with preindustrial CO2 emissions defined (CO2 emission-driven)'},
+                'esm-hist':{'experiment':"all-forcing simulation of the recent past with atmospheric CO2 concentration calculated (CO2 emission-driven)"},
+                'piControl':{'experiment' : "pre-industrial control (CO2 concentration-driven)"}
+
+            }
+
+
+
 data = {
 
         # experiments
         'experiment_id': {
                 "add":ldata.get('add'),
-                "update": ldata.get('update'),
+                "update": {**ldata.get('update'),**fix_deck},
                 "parse": lambda d: {key: {keydict.get(subkey,subkey):subvalue for subkey, subvalue in value.items()} for key, value in d.items() if (('DAMIP' not in value.get("activity_id", [])) and ( key.split('-')[-1] not in 'cmip5 ext'.split()))}
 
                     },
@@ -86,6 +96,7 @@ data = {
             }
     
 }
+
 handler.process(data)
 
 handler.push(branch,overwrite=True)

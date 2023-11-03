@@ -104,14 +104,16 @@ def push_output(repo_path,new_branch_name,source_directory,prefix='CMIP6Plus',ov
         else: 
             raise FileExistsError(f'The branch "{new_branch_name}" already exists in {repo_path}')
         
-        repo.remotes.origin.pull(new_branch_name)
+        # 
         
-        new_branch = repo.branches[new_branch_name]
-        new_branch.checkout()
+
         # Pull latest changes to the EXISTING branch
         try:
             repo.remotes.origin.pull(new_branch_name)
-        except:...
+            new_branch = repo.branches[new_branch_name]
+            new_branch.checkout()
+        except:
+            ...
     else:
         # If the branch doesn't exist, create it and check it out
         print('creating new branch:',new_branch_name)

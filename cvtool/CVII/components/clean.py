@@ -43,7 +43,7 @@ def run(cvloc,prefix,metadata):
 
         sub_experiment_id.extend(experiment.get('sub_experiment_id',[]))
 
-
+    # activites fileter
     activity_diff = set(collection['activity_id']) -  set(activity_id) - set(['no_parent'])
     if activity_diff :
         corrected = {**metadata,"activity_id":core.io.filter_dict(collection['activity_id'],list(activity_id))}
@@ -54,9 +54,7 @@ def run(cvloc,prefix,metadata):
         print(f"corrected activites file: <removed> {activity_diff}")
 
 
-    print(activity_diff,set(collection['activity_id']) ,  set(activity_id) )
-
-
+    #  sub experiment filter 
     sub_experiment_diff = set(collection['sub_experiment_id']) -  set(sub_experiment_id) 
     if sub_experiment_diff :
         corrected = {**metadata,"sub_experiment_id":core.io.filter_dict(collection['sub_experiment_id'],list(sub_experiment_id))}

@@ -13,7 +13,6 @@ from pprint import pprint
 from functools import partial
 
 
-
 # Logging 'info' level message using 'core.stdout.log' function
 logger = core.stdout.log(whoami, level='info')
 
@@ -216,9 +215,7 @@ def add_new(cvloc, prefix, existing ,new):
     
     assert not duplicates, f'Please remove duplicates from your experiment "add" section. \nYou can put them in the "update" to instead.\n Duplicates: {duplicates}'
 
-
     new = dict(p_map(fix,new.items(),desc= 'standardising new experiments',disable=True))
-
 
     test(cvloc, prefix, new)
     existing.update(new)
@@ -232,7 +229,6 @@ def ammend(cvloc,prefix,existing,overwrite):
     # test the updated values
     ecopy = core.io.filter_dict(deepcopy(existing),overwrite)
     ecopy.update(overwrite)
-    print(ecopy)
     test(cvloc, prefix, ecopy)
 
 
@@ -240,6 +236,4 @@ def ammend(cvloc,prefix,existing,overwrite):
     return existing
 
 
-# def append():
-#    Where we add items
-# is this needed, we can read and merge beforehand?
+

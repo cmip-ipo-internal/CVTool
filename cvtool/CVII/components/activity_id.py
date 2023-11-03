@@ -11,7 +11,7 @@ from tqdm import tqdm
 whoami = __file__.split('/')[-1].replace('.py', '')
 from pprint import pprint
 from functools import partial
-
+from cvtool.CVII.components import * 
 
 
 # Logging 'info' level message using 'core.stdout.log' function
@@ -50,37 +50,13 @@ def test(activities):
         except Exception as e:
             print(f"Validation failed:{name}  - {e}")
 
-    pbar.set_description(f"Validation complete")
+        pbar.set_description(f"{whoami}")
 
 #########################
 #  main
 
 
-def load_existing(cvloc, prefix, parse = None):
-    fname = f"{cvloc}{prefix}{whoami}.json"
-    core.io.exists(fname)
-    load = core.io.json_read(fname)[whoami]
-    
-    if parse:
-      load = parse(load)
 
-    test(load)
-    return load
-
-def add_new(cvloc, prefix, existing ,new):
-    duplicates = [new_item for new_item in new if new_item in existing]
-
-    assert not duplicates, f'Please remove duplicates from your activity "add" section. \nYou can put them in the "update" to instead.\n Duplicates: {duplicates}'
-
-    test(new)
-    existing.update(new)
-    return existing
-
-def ammend(cvloc,prefix,existing,overwrite):
-    
-    # test the updated values
-    ecopy = deepcopy(existing)
-    ecopy.update(overwrite)
-    test(ecopy)
-    existing = core.io.merge_entries(existing,overwrite,append = False)
-    return existing
+load_existing = partial(generic_load_existing, whoami=whoami, test=test)
+add_new = partial(generic_add_new, test=test)
+ammend = partial(generic_ammend, test=test)
