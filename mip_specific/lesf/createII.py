@@ -6,10 +6,13 @@ from cvtool.core.stdout import view, listify, debug_print
 from cvtool import CVII as CV
 
 import pandas as pd
-from get_experiments import lesef
+from get_experiments import lesf
 
 
-# debug on error
+
+##############################################
+# open debugger on error
+##############################################
 def custom_excepthook(type, value, traceback):
     print("\033[91m")
 
@@ -18,7 +21,6 @@ def custom_excepthook(type, value, traceback):
     # Print the full stack trace including file paths and line numbers
     print("\033[0m")
     pdb.post_mortem(traceback)
-
 
 # Set custom excepthook
 sys.excepthook = custom_excepthook
@@ -35,7 +37,7 @@ else:
 # set defaults
 ##############################################
 prefix = 'CMIP6Plus'
-branch = 'lesefII'
+branch = 'lesfII'
 
 ##############################################
 #  intialise the handler
@@ -50,38 +52,41 @@ handler = CV.CV_update(
 handler.force_pull_CVs(overwrite = True)
 print(handler.cvloc)
 
-ldata = lesef()
+
+
+# get the changed data. 
+ldata = lesf()
 
 keydict = { 'start_year':'start','end_year':'end'}
 
 # sequence == load(parse) -> update -> add
 
-data = {'experiment_id': {
-            "add":ldata.get('add'),
-            "update": ldata.get('update'),
-            "parse": lambda d: {key: {keydict.get(subkey,subkey):subvalue for subkey, subvalue in value.items()} for key, value in d.items() if (('DAMIP' not in value.get("activity_id", [])) and ( key.split('-')[-1] not in 'cmip5 ext'.split()))}
+data = {
 
-            },
+        # experiments
+        'experiment_id': {
+                "add":ldata.get('add'),
+                "update": ldata.get('update'),
+                "parse": lambda d: {key: {keydict.get(subkey,subkey):subvalue for subkey, subvalue in value.items()} for key, value in d.items() if (('DAMIP' not in value.get("activity_id", [])) and ( key.split('-')[-1] not in 'cmip5 ext'.split()))}
+
+                    },
+
+        # activites
         "activity_id": {
                 "add":{"LESFMIP": {'long_name':"The Large Ensemble Single Forcing Model Intercomparison Project",'URL':"https://www.frontiersin.org/articles/10.3389/fclim.2022.955414/full"}
                 },
-                "update":{"CMIP": {'long_name':"The Large Ensemble Single Forcing Model Intercomparison Project",'URL':"https://gmd.copernicus.org/articles/9/1937/2016/gmd-9-1937-2016.pdf"}
+                "update":{"CMIP": {'long_name':"CMIP DECK: 1pctCO2, abrupt4xCO2, amip, esm-piControl, esm-historical, historical, and piControl experiments",'URL':"https://gmd.copernicus.org/articles/9/1937/2016/gmd-9-1937-2016.pdf"}
                 },
-                "parse": lambda x: dict(long_name=x,URL='none') 
+                "parse": lambda x: {list(x.keys())[0]: {'long_name': list(x.values())[0], 'URL': 'https://wcrp-cmip.org'}}
 
         },
+        # sub experiments
         'sub_experiment_id':{
-            "add":{'f2023': 'Forcings 2023'}
+                "add":{'f2023': 'Forcings 2023'}
             }
     
 }
 handler.process(data)
 
+handler.push(branch,overwrite=True)
 
-# handler.createCV('CMIP-IPO',merge_location)
-
-# # handler.createIni()
-
-
-# # place the output files into the CV directory and push
-# # handler.push(mergeLoc, branch = 'lesfmip', source_location = merge_location, overwrite=True)

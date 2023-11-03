@@ -21,7 +21,7 @@ num = re.compile('\d+')
 def y(x): return int(num.findall(str(x))[0])
 
 
-def lesef ():
+def lesf ():
     damip = CV.get_activity(cvfile ,activity='DAMIP')
 
     # lets solve the case issues when indexing by duplicating all.

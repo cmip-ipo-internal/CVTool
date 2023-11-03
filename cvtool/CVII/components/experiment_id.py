@@ -108,11 +108,17 @@ def schema(activities):
                 "type": "integer",
                 "enum": [1, 2, 3]
             },
-            "min_number_yrs_per_sim": {"type": "integer"}
+            "min_number_yrs_per_sim": {
+                "anyOf": [
+                        {"type": "integer"},
+                        {"enum": ['none']}
+                    ]
+            }
+            # {"type": "integer"}
         },
-        "required": ["experiment_id", "activity_id", "experiment", "description", "start", "end", "sub_experiment_id", "parent_activity_id", "parent_experiment_id", "required_model_components", "additional_allowed_model_components", "tier"],
+        # "required": ["experiment_id", "activity_id", "experiment", "description", "start", "end", "sub_experiment_id", "parent_activity_id", "parent_experiment_id", "required_model_components", "additional_allowed_model_components", "tier"],
     }
-
+# reenable required once update bug is fixed. 
 
 def check(key, compareset, experiment):
     if set(experiment.get(key)) - compareset:
@@ -125,10 +131,10 @@ def fix(exp,update = False):
   dummy.update(exp[1])
 
   # lists
-  dummy = core.stdout.listify(dummy,['parent_experiment_id','parent)sub_experiment_id','parent_activity_id','activity_id'])
+  dummy = core.stdout.listify(dummy,['parent_experiment_id','parent_sub_experiment_id','parent_activity_id','activity_id'])
 
   # integers
-  for i in 'tier start end'.split(' '):
+  for i in 'tier start end min_number_yrs_per_sim'.split(' '):
     # print(dummy[i],i )min_number_yrs_per_sim
 
     this = dummy[i]
@@ -224,8 +230,9 @@ def ammend(cvloc,prefix,existing,overwrite):
     overwrite = dict(p_map(fix_update,overwrite.items(),desc= 'standardising overwriting experiments',disable=True))
     
     # test the updated values
-    ecopy = deepcopy(existing)
+    ecopy = core.io.filter_dict(deepcopy(existing),overwrite)
     ecopy.update(overwrite)
+    print(ecopy)
     test(cvloc, prefix, ecopy)
 
 

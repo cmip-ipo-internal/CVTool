@@ -46,13 +46,16 @@ else:
     import pdb
 
 
-# This is the order we compute the files.
+# This is the order we compute the files. 
+# It is the master list of everything that may processed in an order. 
+# This does not have to correspond to the data fields we have entered. 
 order = [
-    #  stand alone files go first (e.g. lisence etc. )
+    #  stand alone 0 dependancy files go first (e.g. lisence etc. )
     'required_global_attributes',
     'source_id',
     'mip_era',
     'sub_experiment_id',
+    # activity needs to come before experiments
     'activity_id',
     'experiment_id'
 ]
@@ -88,19 +91,31 @@ class CV_update:
         core.io.exists(self.tables)
         core.io.exists(self.cvloc)
 
+        self.tempdir = core.io.mk_tempdir()
+        print('Temporary directory stored at : '+ self.tempdir)
+
+        core.io.copy_files(self.cvloc,self.tempdir)
+        print('Successfully copied files from CVdir to Temporary Directory.')
+
         
 
         # push_output(repo_location,branch,source_location,prefix=self.prefix,overwrite=overwrite)
 
     def force_pull_CVs(self,overwrite=False):
+        '''
+        Use this function to ensure that our github CVs repository is current and most up to date. 
+        
+        '''
         pull_updates(self.cvloc,overwrite=overwrite)
 
 
     def process(self, updata):
         # file is the subheading, e.g. source_id
+        metadata = meta.create(self.institution)
+
         for file in order:
             if file in updata:
-
+                # debug(f'****************\n{file}\n**************')     
 
                 module = import_script(*script_path(file,module='CVII')
                 )
@@ -108,40 +123,48 @@ class CV_update:
 
                 # loadcv = getattr(module, "loadcv", None)
 
-                existing = module.load_existing(self.cvloc, self.prefix, parse = current.get('parse'))
+                existing = module.load_existing(self.tempdir, self.prefix, parse = current.get('parse'))
 
-                print('======================update')
+                # debug('======================update')
                 if 'update' in current:
-                    existing = module.ammend(self.cvloc, self.prefix, existing,current.get('update'))
+                    existing = module.ammend(self.tempdir, self.prefix, existing,current.get('update'))
 
-                print('======================exist')
+                # debug('======================exist')
                 if 'add' in current:
-                    existing = module.add_new(self.cvloc, self.prefix,existing,current.get('add'))
+                    existing = module.add_new(self.tempdir, self.prefix,existing,current.get('add'))
+
+
+
+                existing = core.io.sort_dict(existing,reverse=False)
+                complete = {**metadata,file:existing}
+                
+                
+                core.io.json_write(complete,f'{self.tempdir}{self.prefix}{file}.json')
+
+                print(self.tempdir)
+
+        # remove any unused entries. These can be readded as-of and when they are needed. 
+        clean = import_script(*script_path('clean',module='CVII'))
+        clean.run(self.tempdir,self.prefix,metadata)
+
+    def push(self,branch,overwrite= False):
+        '''
+        A function to force push the changes to a new branch. 
+        '''
+        push_output(self.cvloc,branch,self.tempdir,overwrite = overwrite)
 
 
 
 
-                complete = {'Header': meta.create(self.institution),file:existing}
-
-
-                core.io.json_write(complete,'experiments.json')
-    
 
 
 
 
 
 
-
-
-
-
-
-
-################
-# other 
-################
-
+##############################################
+# getting data from CVs. CV.extract maybe?
+##############################################
 
 def get_activity(cvfile, activity: str = 'CMIP', ) -> dict:
         

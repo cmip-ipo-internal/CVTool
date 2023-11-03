@@ -24,7 +24,7 @@ template = OrderedDict()
 
 
 def schema():
-    key_pattern = r"^\w\d{4}$"
+    key_pattern = r"^(?:\w\d{4}|none)$"
     description_pattern = r"^[A-Za-z0-9\-\. ]+$"
     
     return {
@@ -35,7 +35,7 @@ def schema():
                 "pattern": description_pattern
             }
         },
-        "additionalProperties": False
+        # "additionalProperties": False
     }
 
 

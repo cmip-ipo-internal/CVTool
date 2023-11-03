@@ -29,16 +29,10 @@ def schema():
 
     return {
     "type": "object",
-    "properties": {
-            "type": "object",
-            "properties": {
-                "long_name": {"type": "string", "pattern": "^[A-Za-z0-9\-\. ]+$"},
-                "URL": {"type": "string", "format": "uri"}
-            },
-            "required": ["long_name", "URL"]
-    },
-    "required": ["long_name",'URL'],
-    "additionalProperties": False
+        "properties": {
+            "long_name": {"type": "string", "pattern": "^[A-Za-z0-9\-\. ]+$"},
+            "URL": {"type": "string", "format": "uri"},
+        },
 }
 
 
