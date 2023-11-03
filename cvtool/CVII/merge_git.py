@@ -32,7 +32,6 @@ def pull_updates(repo_path, online_repo_url = 'https://github.com/WCRP-CMIP/CMIP
         # Open the local repository
         repo = Repo(repo_path)
 
-        
         # Add the online repository as a remote if it doesn't exist already
         if 'origin' not in repo.remotes:
             repo.create_remote('origin', online_repo_url)
@@ -58,14 +57,14 @@ def pull_updates(repo_path, online_repo_url = 'https://github.com/WCRP-CMIP/CMIP
             print(f'Updates from the online repository {repo_path} have been pulled into the local branch {branch}.')
 
         # Check out the branch
-        # repo.git.checkout(branch)
-        # repo.remotes.origin.pull(branch)
-        # main_branch = repo.branches[branch]
-        # main_branch.checkout()
-        # repo.remotes.origin.pull(branch)
+        repo.git.checkout(branch)
+        repo.remotes.origin.pull(branch)
+        main_branch = repo.branches[branch]
+        main_branch.checkout()
+        repo.remotes.origin.pull(branch)
  
         # Pull updates from the online repository into the local branch
-        # repo.remotes.origin.pull(branch)
+        repo.remotes.origin.pull(branch)
         
         print(f'Updates from the online repository {repo_path} have been pulled into the local branch {branch}.')
     
@@ -89,30 +88,39 @@ def push_output(repo_path,new_branch_name,source_directory,prefix='CMIP6Plus',ov
         # repo.git.checkout('--', '.')
 
     # Switch to the main branch and pull the latest updates
+    repo.remotes.origin.fetch()
     repo.remotes.origin.pull('main')
     main_branch = repo.branches['main']
     main_branch.checkout()
-    repo.remotes.origin.pull(new_branch_name)
+
 
 # Check if the branch already exists
     if new_branch_name in [b.name for b in repo.branches]:
+
         # If the branch exists, check it out
         if overwrite:
             repo.git.branch('-D', new_branch_name)
             print(f'{new_branch_name} branch deleted and will be re-made.')
         else: 
             raise FileExistsError(f'The branch "{new_branch_name}" already exists in {repo_path}')
-        # new_branch = repo.branches[new_branch_name]
-        # new_branch.checkout()
-        # # Pull latest changes to the EXISTING branch
-        # try:
-        #     repo.remotes.origin.pull(new_branch_name)
-        # except:...
-    # else:
+        
+        # 
+        
+
+        # Pull latest changes to the EXISTING branch
+        try:
+            repo.remotes.origin.pull(new_branch_name)
+            new_branch = repo.branches[new_branch_name]
+            new_branch.checkout()
+        except:
+            ...
+    else:
         # If the branch doesn't exist, create it and check it out
-            
-    new_branch = repo.create_head(new_branch_name)
-    new_branch.checkout()
+        print('creating new branch:',new_branch_name)
+        new_branch = repo.create_head(new_branch_name)
+        new_branch.checkout()
+        
+    
 
 
 
@@ -123,12 +131,16 @@ def push_output(repo_path,new_branch_name,source_directory,prefix='CMIP6Plus',ov
     # Stage, commit, and push the changes to the new branch
     # repo.index.add(target_directory)
 
+
+
     repo.git.add('--all')
     commit_message = f'Updating CVs for experiement {new_branch_name} - {datetime.now()}.'
     repo.index.commit(commit_message)
     check = input('Type "y" to push:\n')
     if check == "y":
-        repo.git.push('--set-upstream', 'origin', new_branch_name)
+        # repo.git.push('--set-upstream', 'origin', new_branch_name)
+        remote = repo.remote(name='origin')
+        remote.push(refspec=f'{new_branch_name}:{new_branch_name}', force=overwrite)
 
         print(f'Updates pushed to the repository with commit {commit_message}')
 

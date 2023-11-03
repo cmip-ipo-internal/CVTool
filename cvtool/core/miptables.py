@@ -127,14 +127,16 @@ def setup_mip_tables(commit_hash = None) -> None:
     # os.environ['cmor_tables'] = LOCATION
     # os.environ['cmor_tableorigin'] = commit_link
 
-    miptables = query_repo(repo.working_dir)
+    miptables = query_repo(repo.working_dir,verbose=False)
+    info = query_repo(repo.working_dir,verbose=True)
+    
     print('*'*term.columns)
     print(f"""
           MipTable location: {LOCATION} 
           With Commit: {current.get('SHA')}
           
-          Latest Tag: {miptables['tag']['latest']}
-          Latest Commit:{miptables['commit']['latest']}
+          Latest Tag: {info['tag']['latest']}
+          Latest Commit:{info['commit']['latest']}
           
           Viewable URL: {commit_link}
 

@@ -229,13 +229,14 @@ def query_repo(repo_path,verbose = True):
                 "latest": is_latest_commit,
             },
             "Repository URL": repo_url,
-            "DOI": zenodo_doi
+            # "DOI": zenodo_doi
         }
     else:
         output_dict = {
             "tag":str(closest_previous_tag),
+            "commit":current_commit,
             "Repository URL": repo_url,
-            "DOI": zenodo_doi
+            # "DOI": zenodo_doi
         }
 
     # license 
@@ -254,7 +255,7 @@ def query_repo(repo_path,verbose = True):
                             output_dict['license'] = license_info
                             break  # Stop searching if a valid license is found
             else:
-                output_dict['license'] = license_file
+                output_dict['license'] = license_file.split('/')[-1]
         except FileNotFoundError:
             print(f'License file {license_file} not found.')
 

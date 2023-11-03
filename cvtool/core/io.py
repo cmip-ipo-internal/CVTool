@@ -9,7 +9,11 @@ import shutil
 import tempfile
 import inspect
 import glob
-from typing import Union, Dict, Any
+import tempfile
+import atexit
+import shutil
+import time
+from typing import Union, Dict, Any, OrderedDict
 
 def exists(path: str, error: bool = True) -> Union[str, bool]:
     """
@@ -222,6 +226,19 @@ def rm_temp(prefix: str, index: int = 0) -> bool:
     return False
 
 
+
+
+def mk_tempdir():
+    # Create a temporary directory
+    temp_dir = tempfile.mkdtemp()
+    
+    # Register a cleanup function to remove the temporary directory on program exit
+    atexit.register(shutil.rmtree, temp_dir)
+    
+    # Return the path of the temporary directory
+    return temp_dir+'/'
+
+
 def relative_to(absolte,current):
         
     absolute = os.path.abspath(absolte)
@@ -238,6 +255,37 @@ def terminal():
     size = os.get_terminal_size()
     return size
 
+def filter_dict(input_dict, keys_to_keep):
+    """
+    Filters a dictionary to contain only key-value pairs with keys present in keys_to_keep list.
+    
+    Args:
+        input_dict (dict): Input dictionary.
+        keys_to_keep (list): List of keys to keep in the filtered dictionary.
+        
+    Returns:
+        dict: Filtered dictionary containing only specified keys.
+    """
+    return {key: input_dict[key] for key in keys_to_keep if key in input_dict}
+
+def sort_dict(d,reverse = False):
+    """
+    Recursively sort a dictionary by its keys, including nested dictionaries.
+
+    Args:
+        d (dict): Dictionary to be sorted.
+
+    Returns:
+        dict: Sorted dictionary.
+    """
+    if isinstance(d, dict):
+        sorted_dict = OrderedDict()
+        for key in sorted(d,reverse=reverse):
+            sorted_dict[key] = sort_dict(d[key],reverse)
+        return sorted_dict
+    else:
+        return d
+    # return dict(sorted(d.items()))
 
 def merge_dict(dict1, dict2, overwrite_keys=None):
     """
@@ -282,6 +330,31 @@ def merge_dict(dict1, dict2, overwrite_keys=None):
 
     return merged_dict
 
+def merge_entries(dict1, dict2, append=True):
+    '''
+    When we are merging multiple items
+
+    append = true :: combines the values
+    append =false :: replaces the values 
+
+    '''
+    common_keys = set(dict1) & set(dict2)
+    for key in common_keys:
+        if not append:
+            # dict1[key] = dict1[key].update(dict2[key])
+
+            # for k2 in dict2[key]:
+            #     print(k2)
+            #     dict1[key][k2] = dict2[key][k2]
+
+            dict1[key] = {**dict1[key],**dict2[key]}
+        else:
+            dict1[key] = merge_dict(dict1[key],dict2[key],'all')
+
+    return dict1
+    
+
+
 
 # def copy_files(src_dir, dest_dir, prefix=''):
 #     # Walk through the source directory
@@ -324,3 +397,23 @@ def copy_files(src_dir, dest_dir, prefix=''):
                 shutil.copy2(src_item, dest_item)
 
     copy_recursive(src_dir, dest_dir)
+
+
+def rm_older(directory_path,minutes = 5):
+    current_time = time.time()
+    five_minutes_ago = current_time - minutes * 60  # 5 minutes ago in seconds
+
+    for foldername, subfolders, filenames in os.walk(directory_path):
+        for filename in filenames:
+            file_path = os.path.join(foldername, filename)
+            # Get the last modification time of the file
+            file_modified_time = os.path.getmtime(file_path)
+
+            # Check if the file was not modified in the last 5 minutes
+            if file_modified_time < five_minutes_ago:
+                try:
+                    # Remove the file
+                    os.remove(file_path)
+                    # print(f"Removed old file: {file_path}")
+                except Exception as e:
+                    print(f"Error occurred while removing file {file_path}: {e}")

@@ -21,7 +21,7 @@ num = re.compile('\d+')
 def y(x): return int(num.findall(str(x))[0])
 
 
-def lesef ():
+def lesf ():
     damip = CV.get_activity(cvfile ,activity='DAMIP')
 
     # lets solve the case issues when indexing by duplicating all.
@@ -55,12 +55,23 @@ def lesef ():
     # for i in damip_names:
     #     print('\t-'+i)
 
-    # print('\nLESEFMIP table extracted names(see lesef/data dir):')
+    # print('\nLESFMIPMIP table extracted names(see LESFMIP/data dir):')
     # for i in df.Name:
     #     print('\t-'+i)
 
     for _, r in df.iterrows():
         name = r.Name
+
+        if name == 'historical':
+            experiments['historical'] = {   "parent_activity_id": [
+                "CMIP"
+            ],
+            "parent_experiment_id": [
+                "piControl"
+            ],
+            "experiment": "all-forcing simulation of the recent past (CO2 concentration-driven)"}
+            
+            continue
 
 
         if name.lower() in damip_names:
@@ -70,7 +81,7 @@ def lesef ():
 
             entry['description'] = entry.get('description') or r.Description
 
-            entry.update({'parent_activity_id':'CMIP','activity_id':'LESEF','parent_experiment_id': 'piControl',})
+            entry.update({'parent_activity_id':'CMIP','activity_id':'LESFMIP','parent_experiment_id': 'piControl',})
 
 
 
@@ -85,7 +96,7 @@ def lesef ():
             entry['experiment_id'] = name
             entry['description'] = entry.get('description') or r.Description
 
-            entry.update({'parent_activity_id':'LESEF','activity_id':'LESEF','parent_experiment_id': name.replace('fut', 'hist')})
+            entry.update({'parent_activity_id':'LESFMIP','activity_id':'LESFMIP','parent_experiment_id': name.replace('fut', 'hist')})
 
 
         else:
@@ -98,7 +109,7 @@ def lesef ():
             # entry['sub_experiment_id'] =  entry['sub_experiment_id']
             entry['description'] = entry.get('description') or r.Description
 
-            entry.update({'parent_activity_id':'CMIP','activity_id':'LESEF','parent_experiment_id': 'piControl',})
+            entry.update({'parent_activity_id':'CMIP','activity_id':'LESFMIP','parent_experiment_id': 'piControl',})
 
 
             # print(f'Not in DAMIP[{name}]: {entry["experiment"]}-{entry["description"]}')
@@ -138,7 +149,7 @@ def lesef ():
     # manual changes
     # for key in experiments:
     #     if 'hist' in key:
-    #         experiments[key].update({'parent_activity_id':'CMIP','activity_id':'LESEF','parent_experiment_id': 'piControl',})
+    #         experiments[key].update({'parent_activity_id':'CMIP','activity_id':'LESFMIP','parent_experiment_id': 'piControl',})
 
 
     # experiments_to_remove = ['historical-cmip5', 'historical-ext', 'piControl-cmip5', '"piControl-spinup-cmip5"']
@@ -161,4 +172,4 @@ def lesef ():
     return dict(add=experiments,update = {'historical':historical})
 
 if __name__ == '__main__':
-    lesef()
+    LESFMIP()
