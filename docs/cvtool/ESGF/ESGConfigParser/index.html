@@ -1,11 +1,39 @@
-# #!/usr/bin/env python
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>cvtool.ESGF.ESGConfigParser API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>cvtool.ESGF.ESGConfigParser</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># #!/usr/bin/env python
 # # -*- coding: utf-8 -*-
 
-# """
+# &#34;&#34;&#34;
 # .. module:: ESGConfigParser
-# .. moduleauthor:: Guillaume Levavasseur <glipsl@ipsl.fr>
+# .. moduleauthor:: Guillaume Levavasseur &lt;glipsl@ipsl.fr&gt;
 
-# """
+# &#34;&#34;&#34;
 
 # import os
 # import re
@@ -16,11 +44,11 @@
 
 
 # class SectionParser(ConfigParser):
-#     """
+#     &#34;&#34;&#34;
 #     Custom ConfigParser class to parse ESGF .ini files from a source directory.
 #     Parse a configuration section (mandatory).
 
-#     """
+#     &#34;&#34;&#34;
 
 #     def __init__(self, section, directory=None):
 #         ConfigParser.__init__(self)
@@ -34,11 +62,11 @@
 #             self.add_section(section)
 
 #     def set(self, option, value=None, newline=False, section=None):
-#         """
+#         &#34;&#34;&#34;
 #         Overwrite the original method to set an option value for the given section.
 #         The value can be written on a new line.
 
-#         """
+#         &#34;&#34;&#34;
 #         if self.section == DEFAULTSECT:
 #             sectdict = self._defaults
 #         else:
@@ -47,37 +75,37 @@
 #             except KeyError:
 #                 raise NoConfigSection()
 #         if newline:
-#             value = '\n{}'.format(value)
+#             value = &#39;\n{}&#39;.format(value)
 #         sectdict[self.optionxform(option)] = value
 
 #     def write(self, fp):
-#         """
+#         &#34;&#34;&#34;
 #         Overwrite the original method to write options value for the given section.
 #         An ending newline is added in any case.
 
-#         """
+#         &#34;&#34;&#34;
 #         if self._defaults:
-#             fp.write("[%s]\n" % DEFAULTSECT)
-#             fp.write("\n")
+#             fp.write(&#34;[%s]\n&#34; % DEFAULTSECT)
+#             fp.write(&#34;\n&#34;)
 #             for (key, value) in self._defaults.items():
-#                 fp.write("%s = %s\n" % (key, str(value)))
-#                 fp.write("\n")
+#                 fp.write(&#34;%s = %s\n&#34; % (key, str(value)))
+#                 fp.write(&#34;\n&#34;)
 #         for section in self._sections:
-#             fp.write("[%s]\n" % section)
-#             fp.write("\n")
+#             fp.write(&#34;[%s]\n&#34; % section)
+#             fp.write(&#34;\n&#34;)
 #             for (key, value) in self._sections[section].items():
-#                 if key == "__name__":
+#                 if key == &#34;__name__&#34;:
 #                     continue
 #                 if (value is not None) or (self._optcre == self.OPTCRE):
-#                     key = " = ".join((key, str(value)))
-#                 fp.write("%s\n" % key)
-#                 fp.write("\n")
+#                     key = &#34; = &#34;.join((key, str(value)))
+#                 fp.write(&#34;%s\n&#34; % key)
+#                 fp.write(&#34;\n&#34;)
 
 #     def get(self, option, raw=True, variables=None, section=None):
-#         """
+#         &#34;&#34;&#34;
 #         Overwrite the original method to get an option value for the given section.
 
-#         """
+#         &#34;&#34;&#34;
 #         sectiondict = {}
 #         try:
 #             sectiondict = self._sections[self.section]
@@ -101,10 +129,10 @@
 #             return self._interpolate(self.section, option, value, d)
 
 #     def has_option(self, option, section=None):
-#         """
+#         &#34;&#34;&#34;
 #         Overwrite the original method to check for the existence of a given option in the given section.
 
-#         """
+#         &#34;&#34;&#34;
 #         if not self.section or self.section == DEFAULTSECT:
 #             option = self.optionxform(option)
 #             return option in self._defaults
@@ -117,15 +145,15 @@
 
 #     @staticmethod
 #     def reset():
-#         """
+#         &#34;&#34;&#34;
 #         Resets exception constants
 
-#         """
+#         &#34;&#34;&#34;
 #         ConfigException.FILE = None
 #         ConfigException.SECTION = None
 
 #     def parse(self, path):
-#         """
+#         &#34;&#34;&#34;
 #         Parses the configuration files.
 
 #         :param str path: The directory path of configuration files
@@ -135,15 +163,15 @@
 #         :raises Error: If no configuration section exist
 #         :raises Error: If the configuration file parsing fails
 
-#         """
-#         # If the section is not "[project:.*]", only read esg.ini
-#         ConfigException.FILE = os.path.join(path, 'esg.ini')
-#         self.file = os.path.join(path, 'esg.ini')
+#         &#34;&#34;&#34;
+#         # If the section is not &#34;[project:.*]&#34;, only read esg.ini
+#         ConfigException.FILE = os.path.join(path, &#39;esg.ini&#39;)
+#         self.file = os.path.join(path, &#39;esg.ini&#39;)
 #         self.read(self.file)
-#         if re.match(r'project:.*', self.section) and self.section not in self.sections():
-#             project = self.section.split('project:')[1]
-#             ConfigException.FILE = os.path.join(path, 'esg.{}.ini'.format(project))
-#             self.file = os.path.join(path, 'esg.{}.ini'.format(project))
+#         if re.match(r&#39;project:.*&#39;, self.section) and self.section not in self.sections():
+#             project = self.section.split(&#39;project:&#39;)[1]
+#             ConfigException.FILE = os.path.join(path, &#39;esg.{}.ini&#39;.format(project))
+#             self.file = os.path.join(path, &#39;esg.{}.ini&#39;.format(project))
 #             if not os.path.isfile(self.file):
 #                 raise NoConfigFile(self.file)
 #             self.read(self.file)
@@ -153,10 +181,10 @@
 #             raise EmptyConfigFile()
 
 #     def read(self, filenames):
-#         """
+#         &#34;&#34;&#34;
 #         Read and parse a filename or a list of filenames, and records their paths.
 
-#         """
+#         &#34;&#34;&#34;
 #         if isinstance(filenames, str):
 #             filenames = [filenames]
 #         for filename in filenames:
@@ -168,90 +196,90 @@
 #             fp.close()
 
 #     def sections(self, default=True):
-#         """
+#         &#34;&#34;&#34;
 #         Returns the list of section names with/without [DEFAULT]
 
-#         """
+#         &#34;&#34;&#34;
 #         if default:
-#             return self._sections.keys() + ['DEFAULT']
+#             return self._sections.keys() + [&#39;DEFAULT&#39;]
 #         else:
 #             return self._sections.keys()
 
 #     def options(self, defaults=True):
-#         """
+#         &#34;&#34;&#34;
 #         Returns the list of options names into the section with/without defaults.
 
-#         """
+#         &#34;&#34;&#34;
 #         opts = self._sections[self.section].copy()
 #         if defaults:
 #             opts.update(self._defaults)
-#         if '__name__' in opts:
-#             del opts['__name__']
+#         if &#39;__name__&#39; in opts:
+#             del opts[&#39;__name__&#39;]
 #         return opts.keys()
 
-#     def translate(self, option, add_ending_filename=False, add_ending_version=False, sep='/'):
-#         """
+#     def translate(self, option, add_ending_filename=False, add_ending_version=False, sep=&#39;/&#39;):
+#         &#34;&#34;&#34;
 #         Return a regular expression associated with a ``pattern_format`` option
 #         in the configuration file. This can be passed to the Python ``re`` methods.
 
 #         :returns: The corresponding ``re`` pattern
 
-#         """
+#         &#34;&#34;&#34;
 #         # Default is to translate the pattern string as it
 #         # Without forcing ending version or filename
 #         if not self.has_option(option):
 #             raise NoConfigOption(option)
 #         pattern = self.get(option, raw=True).strip()
 #         # Start translation
-#         pattern = pattern.replace('\.', '__ESCAPE_DOT__')
-#         pattern = pattern.replace('.', r'\.')
-#         pattern = pattern.replace('__ESCAPE_DOT__', r'\.')
+#         pattern = pattern.replace(&#39;\.&#39;, &#39;__ESCAPE_DOT__&#39;)
+#         pattern = pattern.replace(&#39;.&#39;, r&#39;\.&#39;)
+#         pattern = pattern.replace(&#39;__ESCAPE_DOT__&#39;, r&#39;\.&#39;)
 #         # Translate all patterns matching [.*] as optional pattern
-#         pattern = re.sub(re.compile(r'\[(.*)\]'), r'(\1)?', pattern)
+#         pattern = re.sub(re.compile(r&#39;\[(.*)\]&#39;), r&#39;(\1)?&#39;, pattern)
 #         # Remove underscore from latest mandatory pattern to allow optional brackets
-#         pattern = re.sub(re.compile(r'%\(([^()]*)\)s\('), r'(?P<\1>[^-_]+)(', pattern)
+#         pattern = re.sub(re.compile(r&#39;%\(([^()]*)\)s\(&#39;), r&#39;(?P&lt;\1&gt;[^-_]+)(&#39;, pattern)
 #         # Translate all patterns matching %(digit)s
-#         pattern = re.sub(re.compile(r'%\((digit)\)s'), r'[\d]+', pattern)
+#         pattern = re.sub(re.compile(r&#39;%\((digit)\)s&#39;), r&#39;[\d]+&#39;, pattern)
 #         # Translate all patterns matching %(string)s
-#         pattern = re.sub(re.compile(r'%\((string)\)s'), r'[\w-]+', pattern)
+#         pattern = re.sub(re.compile(r&#39;%\((string)\)s&#39;), r&#39;[\w-]+&#39;, pattern)
 #         # Translate %(root)s variable if exists but not required. Can include the project name.
-#         if re.compile(r'%\((root)\)s').search(pattern):
-#             pattern = re.sub(re.compile(r'%\((root)\)s'), r'(?P<\1>[\w./-]+)', pattern)
+#         if re.compile(r&#39;%\((root)\)s&#39;).search(pattern):
+#             pattern = re.sub(re.compile(r&#39;%\((root)\)s&#39;), r&#39;(?P&lt;\1&gt;[\w./-]+)&#39;, pattern)
 #         # Constraint on %(version)s number
-#         pattern = re.sub(re.compile(r'%\((version)\)s'), r'(?P<\1>v[\d]+|latest)', pattern)
+#         pattern = re.sub(re.compile(r&#39;%\((version)\)s&#39;), r&#39;(?P&lt;\1&gt;v[\d]+|latest)&#39;, pattern)
 #         # Translate all patterns matching %(name)s
-#         pattern = re.sub(re.compile(r'%\(([^()]*)\)s'), r'(?P<\1>[\w.-]+)', pattern)
+#         pattern = re.sub(re.compile(r&#39;%\(([^()]*)\)s&#39;), r&#39;(?P&lt;\1&gt;[\w.-]+)&#39;, pattern)
 #         # Add ending version pattern if needed and missing
-#         if add_ending_version and 'version' not in pattern:
-#             pattern = '{}{}(?P<version>v[\d]+|latest)$'.format(pattern, sep)
+#         if add_ending_version and &#39;version&#39; not in pattern:
+#             pattern = &#39;{}{}(?P&lt;version&gt;v[\d]+|latest)$&#39;.format(pattern, sep)
 #         # Add ending filename pattern if needed and missing
-#         if add_ending_filename and 'filename' not in pattern:
-#             pattern = '{}{}(?P<filename>[\w.-]+)$'.format(pattern, sep)
+#         if add_ending_filename and &#39;filename&#39; not in pattern:
+#             pattern = &#39;{}{}(?P&lt;filename&gt;[\w.-]+)$&#39;.format(pattern, sep)
 #         return pattern
 
 #     def get_facets(self, option, ignored=None):
-#         """
-#         Returns the set of facets declared into "*_format" attributes in the configuration file.
+#         &#34;&#34;&#34;
+#         Returns the set of facets declared into &#34;*_format&#34; attributes in the configuration file.
 #         :param str option: The option to get facet names
 #         :param list ignored: The list of facets to ignored
 #         :returns: The collection of facets
 #         :rtype: *set*
 
-#         """
-#         facets = re.findall(re.compile(r'%\(([^()]*)\)s'), self.get(option, raw=True))
+#         &#34;&#34;&#34;
+#         facets = re.findall(re.compile(r&#39;%\(([^()]*)\)s&#39;), self.get(option, raw=True))
 #         if ignored:
 #             return [f for f in facets if f not in ignored]
 #         else:
 #             return facets
 
 #     def check_options(self, pairs):
-#         """
+#         &#34;&#34;&#34;
 #         Checks a {key: value} pairs against the corresponding options from the configuration file.
 
 #         :param dict pairs: A dictionary of {key: value} to check
 #         :raises Error: If the value is missing in the corresponding options list
 
-#         """
+#         &#34;&#34;&#34;
 #         for key in pairs.keys():
 #             # Do the check only if value exists (i.e.,not None)
 #             if pairs[key]:
@@ -268,7 +296,7 @@
 #                         self.check_options(options.match(pairs[key]).groupdict())
 
 #     def get_options(self, option):
-#         """
+#         &#34;&#34;&#34;
 #         Returns the list of attribute options.
 
 #         :param str option: The option to get available values
@@ -276,23 +304,23 @@
 #         :rtype: *list* or *re.RegexObject*
 #         :raises Error: If the option is missing
 
-#         """
-#         if self.has_option('{}_options'.format(option)):
-#             option = '{}_options'.format(option)
+#         &#34;&#34;&#34;
+#         if self.has_option(&#39;{}_options&#39;.format(option)):
+#             option = &#39;{}_options&#39;.format(option)
 #             return self.get_options_from_list(option), option
-#         elif self.has_option('{}_map'.format(option)):
-#             option = '{}_map'.format(option)
+#         elif self.has_option(&#39;{}_map&#39;.format(option)):
+#             option = &#39;{}_map&#39;.format(option)
 #             return self.get_options_from_map(option), option
-#         elif self.has_option('{}_pattern'.format(option)):
-#             option = '{}_pattern'.format(option)
+#         elif self.has_option(&#39;{}_pattern&#39;.format(option)):
+#             option = &#39;{}_pattern&#39;.format(option)
 #             return self.get_options_from_pattern(option), option
-#         elif self.has_option('category_defaults'):
-#             return self.get_option_from_pairs('category_defaults', option), 'category_defaults'
+#         elif self.has_option(&#39;category_defaults&#39;):
+#             return self.get_option_from_pairs(&#39;category_defaults&#39;, option), &#39;category_defaults&#39;
 #         else:
 #             raise NoConfigOptions(option)
 
 #     def get_options_from_list(self, option):
-#         """
+#         &#34;&#34;&#34;
 #         Returns the list of option values from options list.
 
 #         :param str option: The option to get available values
@@ -301,18 +329,18 @@
 #         :raises Error: If the section does not exist
 #         :raises Error: If the option does not exist
 
-#         """
+#         &#34;&#34;&#34;
 #         if not self.has_option(option):
 #             raise NoConfigOption(option)
-#         if option in ['experiment_options', 'project_options']:
+#         if option in [&#39;experiment_options&#39;, &#39;project_options&#39;]:
 #             options = self.get_options_from_table(option, field_id=2)
 #         else:
-#             options = split_line(self.get(option), sep=',')
+#             options = split_line(self.get(option), sep=&#39;,&#39;)
 #         return options
 
 #     def get_options_from_table(self, option, field_id=None):
-#         """
-#         Returns the list of options from options table (i.e., <field1> | <field2> | <field3> | etc.).
+#         &#34;&#34;&#34;
+#         Returns the list of options from options table (i.e., &lt;field1&gt; | &lt;field2&gt; | &lt;field3&gt; | etc.).
 
 #         :param str option: The option to get available values
 #         :param int field_id: The field number starting from 1 (if not return the tuple)
@@ -322,10 +350,10 @@
 #         :raises Error: If the option does not exist
 #         :raises Error: If the options table is misdeclared
 
-#         """
+#         &#34;&#34;&#34;
 #         if not self.has_option(option):
 #             raise NoConfigOption(option)
-#         option_lines = split_line(self.get(option).lstrip(), sep='\n')
+#         option_lines = split_line(self.get(option).lstrip(), sep=&#39;\n&#39;)
 #         if len(option_lines) == 1 and not option_lines[0]:
 #             return list()
 #         try:
@@ -338,8 +366,8 @@
 #         return options
 
 #     def get_option_from_pairs(self, option, key):
-#         """
-#         Returns the list of option values from pairs table (i.e., <key> | <value>).
+#         &#34;&#34;&#34;
+#         Returns the list of option values from pairs table (i.e., &lt;key&gt; | &lt;value&gt;).
 
 #         :param str option: The option to get available values
 #         :param str key: The key to get the value
@@ -350,10 +378,10 @@
 #         :raises Error: If the key does not exist
 #         :raises Error: If the options table is misdeclared
 
-#         """
+#         &#34;&#34;&#34;
 #         if not self.has_option(option):
 #             raise NoConfigOption(option)
-#         options_lines = split_line(self.get(option), sep='\n')
+#         options_lines = split_line(self.get(option), sep=&#39;\n&#39;)
 #         try:
 #             options = dict((k, v) for k, v in map(lambda x: split_line(x), options_lines[1:]))
 #         except:
@@ -364,9 +392,9 @@
 #             raise NoConfigKey(key, option)
 
 #     def get_options_from_map(self, option, key=None):
-#         """
+#         &#34;&#34;&#34;
 #         Returns the list of option values from maptable.
-#         If no key submitted, the option name has to be ``<key>_map``.
+#         If no key submitted, the option name has to be ``&lt;key&gt;_map``.
 
 #         :param str option: The option to get available values
 #         :param str key: The key to get the values
@@ -376,11 +404,11 @@
 #         :raises Error: If the option does not exist
 #         :raises Error: If the related key is not in the source/destination keys of the maptable
 
-#         """
+#         &#34;&#34;&#34;
 #         if not self.has_option(option):
 #             raise NoConfigOption(option)
 #         if not key:
-#             key = option.split('_map')[0]
+#             key = option.split(&#39;_map&#39;)[0]
 #         from_keys, to_keys, value_map = split_map(self.get(option))
 #         if key in from_keys:
 #             return list(set([value[from_keys.index(key)] for value in value_map.keys()]))
@@ -388,9 +416,9 @@
 #             return list(set([value[to_keys.index(key)] for value in value_map.values()]))
 
 #     def get_option_from_map(self, option, pairs):
-#         """
+#         &#34;&#34;&#34;
 #         Returns the destination values corresponding to key values from maptable.
-#         The option name has to be ``<key>_map``. The key has to be in the destination keys of the maptable header.
+#         The option name has to be ``&lt;key&gt;_map``. The key has to be in the destination keys of the maptable header.
 
 #         :param str option: The option to get the value
 #         :param dict pairs: A dictionary of {from_key: value} to input the maptable
@@ -400,21 +428,21 @@
 #         :raises Error: If the option does not exist
 #         :raises Error: If the key values are not in the destination keys of the maptable
 
-#         """
+#         &#34;&#34;&#34;
 #         if not self.has_option(option):
 #             raise NoConfigOption(option)
 #         from_keys, to_keys, value_map = split_map(self.get(option))
-#         key = option.split('_map')[0]
+#         key = option.split(&#39;_map&#39;)[0]
 #         if key not in to_keys:
-#             raise MisdeclaredOption(option, details="'{}' has to be in 'destination key'".format(key))
+#             raise MisdeclaredOption(option, details=&#34;&#39;{}&#39; has to be in &#39;destination key&#39;&#34;.format(key))
 #         from_values = tuple(pairs[k] for k in from_keys)
 #         to_values = value_map[from_values]
 #         return to_values[to_keys.index(key)]
 
 #     def get_options_from_pattern(self, option):
-#         """
+#         &#34;&#34;&#34;
 #         Returns the expanded regex from ``key_pattern``.
-#         The option name has to be ``<attr>_pattern``.
+#         The option name has to be ``&lt;attr&gt;_pattern``.
 
 #         :param str option: The option to get available values
 #         :returns: The expanded regex
@@ -422,24 +450,24 @@
 #         :raises Error: If the section does not exist
 #         :raises Error: If the option does not exist
 
-#         """
+#         &#34;&#34;&#34;
 #         return re.compile(self.translate(option))
 
 
 # def interpolate(rawval, variables):
-#     """
+#     &#34;&#34;&#34;
 #     Makes string interpolation outside of ``ConfigParser.ConfigParser`` class.
 
 #     :param str rawval: The string to interpolate
 #     :param dict variables: The dictionary of variables to replace with
 #     :return:
-#     """
-#     pattern = re.compile(r"%\(([^)]*)\)s|.")
+#     &#34;&#34;&#34;
+#     pattern = re.compile(r&#34;%\(([^)]*)\)s|.&#34;)
 #     value = rawval
 #     depth = MAX_INTERPOLATION_DEPTH
 #     while depth:
 #         depth -= 1
-#         if value and "%(" in value:
+#         if value and &#34;%(&#34; in value:
 #             value = pattern.sub(interpolation_replace, value)
 #             try:
 #                 value = value % variables
@@ -447,24 +475,24 @@
 #                 raise BadInterpolation(value, variables)
 #         else:
 #             break
-#     if value and "%(" in value:
+#     if value and &#34;%(&#34; in value:
 #         raise InterpolationDepthError(rawval)
 #     return value
 
 
 # def interpolation_replace(match):
-#     """
+#     &#34;&#34;&#34;
 #     Used to interpolate deep strings.
-#     """
+#     &#34;&#34;&#34;
 #     s = match.group(1)
 #     if s is None:
 #         return match.group()
 #     else:
-#         return "%%(%s)s" % s.lower()
+#         return &#34;%%(%s)s&#34; % s.lower()
 
 
-# def split_line(line, sep='|'):
-#     """
+# def split_line(line, sep=&#39;|&#39;):
+#     &#34;&#34;&#34;
 #     Split a line into fields removing trailing and leading characters.
 
 #     :param str line: String line to split
@@ -472,13 +500,13 @@
 #     :returns: The fields
 #     :rtype: *list*
 
-#     """
+#     &#34;&#34;&#34;
 #     fields = map(string.strip, line.split(sep))
 #     return fields
 
 
-# def build_line(fields, sep=' | ', length=None, indent=False):
-#     """
+# def build_line(fields, sep=&#39; | &#39;, length=None, indent=False):
+#     &#34;&#34;&#34;
 #     Build a line from fields adding trailing and leading characters.
 
 #     :param tuple fields: Tuple of ordered fields
@@ -488,39 +516,39 @@
 #     :returns: The line
 #     :rtype: *str*
 
-#     """
+#     &#34;&#34;&#34;
 #     if length:
 #         fields = [format(fields[i], str(length[i])) for i in range(len(fields))]
 #     line = sep.join(fields)
 #     if indent:
-#         return ' ' * 4 + line
+#         return &#39; &#39; * 4 + line
 #     else:
 #         return line
 
 
 # def lengths(fields):
-#     """
+#     &#34;&#34;&#34;
 #     Returns the maximum length among items of a list of tuples.
 #     :param list fields:
 #     :returns: The fields lengths
 #     :rtype: *tuple*
 
-#     """
+#     &#34;&#34;&#34;
 #     return tuple([max(map(len, f)) for f in zip(*fields)])
 
 
-# def split_record(option, sep='|'):
-#     """
+# def split_record(option, sep=&#39;|&#39;):
+#     &#34;&#34;&#34;
 #     Split a multi-line record in a configuration file.
 
 #     :param str option: Option in the configuration file.
 #     :param str sep: Separator character.
 #     :returns: A list of the form [[field1A, field2A, ...], [field1B, field2B, ...]]
 
-#     """
+#     &#34;&#34;&#34;
 #     result = []
-#     for record in option.split('\n'):
-#         if record == '':
+#     for record in option.split(&#39;\n&#39;):
+#         if record == &#39;&#39;:
 #             continue
 #         fields = split_line(record, sep)
 #         result.append(fields)
@@ -528,39 +556,39 @@
 
 
 # def split_map_header(header):
-#     """
+#     &#34;&#34;&#34;
 #     Split header of a multi-line map in a configuration file.
 #     A map header defines the mapping between two sets of facets id.
 
 #     :param str header: Header line of multi-line map
-#     :returns: 'from' and 'to' tuples representing the keys for the mapping
+#     :returns: &#39;from&#39; and &#39;to&#39; tuples representing the keys for the mapping
 
-#     """
-#     header_pattern = re.compile(r'map\s*\((?P<from_keys>[^(:)]*):(?P<to_keys>[^(:)]*)\)')
+#     &#34;&#34;&#34;
+#     header_pattern = re.compile(r&#39;map\s*\((?P&lt;from_keys&gt;[^(:)]*):(?P&lt;to_keys&gt;[^(:)]*)\)&#39;)
 #     result = re.match(header_pattern, header).groupdict()
 #     if result is None:
 #         raise InvalidMapHeader(header_pattern, header)
-#     from_keys = split_line(result['from_keys'], sep=',')
-#     to_keys = split_line(result['to_keys'], sep=',')
+#     from_keys = split_line(result[&#39;from_keys&#39;], sep=&#39;,&#39;)
+#     to_keys = split_line(result[&#39;to_keys&#39;], sep=&#39;,&#39;)
 #     return from_keys, to_keys
 
 
-# def split_map(option, sep='|'):
-#     """
+# def split_map(option, sep=&#39;|&#39;):
+#     &#34;&#34;&#34;
 #     Split a multi-line map in a configuration file.
 
 #     :param str option: Option in the configuration file
 #     :param str sep: Separator character
-#     :returns: A dictionary mapping the 'from' tuples to the 'to' tuples
+#     :returns: A dictionary mapping the &#39;from&#39; tuples to the &#39;to&#39; tuples
 
-#     """
-#     lines = option.split('\n')
+#     &#34;&#34;&#34;
+#     lines = option.split(&#39;\n&#39;)
 #     header = lines[0]
 #     from_keys, to_keys = split_map_header(header)
 #     n_from = len(from_keys)
 #     result = {}
 #     for record in lines[1:]:
-#         if record == '':
+#         if record == &#39;&#39;:
 #             continue
 #         fields = map(string.strip, record.split(sep))
 #         from_values = tuple(fields[0:n_from])
@@ -571,4 +599,53 @@
 #             raise DuplicatedMapEntry(fields, option)
 #         if len(from_values) != n_from:
 #             raise InvalidMapEntry(fields, header, option)
-#     return from_keys, to_keys, result
+#     return from_keys, to_keys, result</code></pre>
+</details>
+</section>
+<section>
+<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+<dl>
+<dt><code class="name"><a title="cvtool.ESGF.ESGConfigParser.constants" href="constants.html">cvtool.ESGF.ESGConfigParser.constants</a></code></dt>
+<dd>
+<div class="desc"><p>:platform: Unix
+:synopsis: Constants used in this package.</p></div>
+</dd>
+<dt><code class="name"><a title="cvtool.ESGF.ESGConfigParser.custom_exceptions" href="custom_exceptions.html">cvtool.ESGF.ESGConfigParser.custom_exceptions</a></code></dt>
+<dd>
+<div class="desc"><p>:platform: Unix
+:synopsis: Custom exceptions.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="cvtool.ESGF" href="../index.html">cvtool.ESGF</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<ul>
+<li><code><a title="cvtool.ESGF.ESGConfigParser.constants" href="constants.html">cvtool.ESGF.ESGConfigParser.constants</a></code></li>
+<li><code><a title="cvtool.ESGF.ESGConfigParser.custom_exceptions" href="custom_exceptions.html">cvtool.ESGF.ESGConfigParser.custom_exceptions</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

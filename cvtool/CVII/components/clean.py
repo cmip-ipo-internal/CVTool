@@ -3,7 +3,6 @@ from copy import deepcopy
 from collections import OrderedDict
 from jsonschema import validate
 import cvtool.core as core
-import cvtool.CV.meta as meta
 from p_tqdm import p_map
 from tqdm import tqdm
 from pprint import pprint

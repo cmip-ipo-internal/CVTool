@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>cvtool.core.institutions API documentation</title>
-<meta name="description" content="Institutions are now in the mip tables." />
+<title>cvtool.CVII.components.compileCV API documentation</title>
+<meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -19,98 +19,142 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>cvtool.core.institutions</code></h1>
+<h1 class="title">Module <code>cvtool.CVII.components.compileCV</code></h1>
 </header>
 <section id="section-intro">
-<p>Institutions are now in the mip tables.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#39;&#39;&#39; Institutions are now in the mip tables. &#39;&#39;&#39;
-
-
+<pre><code class="python"># &#39;&#39;&#39; 
+# Script to merge all the respective components of the CV directory.
 # &#39;&#39;&#39;
-# This file is set up such that importing it will run the relevant setup scripts.
-# *******
-# WARN: This does mean that once imported, it will not import again unless you start a new independent program.
-# *******
+# import ast
+# # import importlib.util
+# # import os
+# # import re
+# from glob import glob
+# import shutil
 
 
-# &#39;&#39;&#39;
+# # import sys
+# # import os
 
-# from typing import List, Dict, Any
-# import git
-# from git import Repo
-# import tempfile
-# import glob
-# import os
-# from . import io
-# from .version_control import last_commit, query_repo  # Assuming version_control is properly set up
+# # core = sys.modules.get(&#39;cvtool.core&#39;)
+# import cvtool.core as core
+# # from cvtool.CV.meta import institutions
+# from cvtool.CVII.compliance.clean_up import prune
 
-# __REPOPREFIX__ = &#39;cvtool.institutions.&#39;
+# print = core.stdout.debug_print
 
 
-# repo_url = &#39;https://github.com/cmip-ipo-internal/CMIPInstitutions&#39;
-
-
-# term = io.terminal()
-
-# # # we want the current only 
-# # current = last_commit(*repo_url.split(&#39;/&#39;)[-2:])
-
-# # The location of the system temporary files
-# tmp = tempfile.gettempdir()
-# repo = None
-
-# # Check if we have any existing repositories in the tmp
-# existing = glob.glob(f&#39;{tmp}/{__REPOPREFIX__}*&#39;)
-
-
-# for path in existing:
-#     repo = Repo(path)
-#     repo.remotes.origin.pull()
-#     existing.remove(path)
-
-#     # Remove the outdated duplicates if they exist
-#     for p in existing:
-#         io.rmdir(p)
-#     break
-
-# if not repo:
-#     # If the repo does not exist or is not current, we download a new one.
-#     try:
-#         temp_dir = tempfile.mkdtemp(prefix=__REPOPREFIX__, suffix=&#39;&#39;)
-#     except FileExistsError:
-#         print(&#34;Directory already exists with the same name [this is unusual]&#34;)
-
-#     # Let&#39;s download the latest repository
-#     repo = Repo.clone_from(repo_url + &#39;.git&#39;, temp_dir)
+# # save eval of the variables files.
+# with open(__file__.replace(&#39;.py&#39;, &#39;-variables.py&#39;), &#34;r&#34;) as file:
+#     script_code = file.read()
+# try:
+#     parsed_code = ast.parse(script_code, filename=&#34;variables.py&#34;, mode=&#34;exec&#34;)
+#     exec(compile(parsed_code, filename=&#34;variables.py&#34;, mode=&#34;exec&#34;))
+# except Exception as e:
+#     print(&#34;Error:&#34;, e)
 
 
 
-# # Get the repository URL
-# repo_url = repo.remotes.origin.url
-# # Get the current commit hash
-# current_commit_hash = repo.head.commit.hexsha
-# # Create clickable links
-# repo_link = repo_url.replace(&#34;.git&#34;, &#34;&#34;).replace(&#34;:&#34;, &#34;/&#34;).replace(&#34;git@&#34;, &#34;https://&#34;)
-# commit_link = f&#34;{repo_link}/commit/{current_commit_hash}&#34;
+# def create(directory, prefix, tables, institutions, outloc=None):
 
-# LOCATION = repo.working_dir
+#     outloc = outloc or &#39;CVs&#39;
+#     cvdict = {&#39;source_type&#39;: set()}
+#     missing = []
 
-# institutions_meta = query_repo(repo.working_dir,False)
-# print(&#39;*&#39;*term.columns)
-# print(f&#34;&#34;&#34;
-#         Institution list: {LOCATION} 
-#         Latest Tag: {institutions_meta[&#39;tag&#39;]}
-#         Viewable URL: {commit_link}
+#     # MSM: Comment out for testing purposes
+#     if core.io.exists(f&#39;{directory}{outloc}&#39;, False):
+#         # Delete the directory
+#         shutil.rmtree(f&#39;{directory}{outloc}&#39;)
 
-#         &#34;&#34;&#34;)
-# print(&#39;*&#39;*term.columns)
+#     # WARN! Do not comment this out!
+#     core.io.mkdir(f&#39;{directory}{outloc}&#39;)
 
-# import json
-# institutions = json.load(open(f&#39;{LOCATION}/institutions.json&#39;,&#39;r&#39;))</code></pre>
+#     # structure comes from imported vars file 
+#     for entry in structure:
+#         file = f&#34;{directory}{entry}.json&#34;
+
+#         if entry == &#39;table_id&#39;:
+#             # print()
+#             # MSM rstrip will strip off any occurrence of the characters given to it in the string, not the string itself
+#             # cvdict[entry] = sorted([os.path.basename(table.rstrip(&#39;.json&#39;)) for table in glob(tables+&#39;*&#39;) if re.search(frequencypattern, table) and &#39;.json&#39; in table])
+#             # following block would get list from directory, but currently pointing at CMIP6 tables
+#             # cvdict[&#39;table_id&#39;] = []
+#             # table_files = glob(tables+&#39;*&#39;)
+#             # for table_file in sorted(table_files):
+#             #     table_name = re.search(r&#39;\w+_(\w+)\.json&#39;, os.path.basename(table_file)).group(1)
+#             #     cvdict[&#39;table_id&#39;].append(table_name)
+#             # Hard code to a single table
+#             cvdict[&#39;table_id&#39;] = [t.split(&#39;/&#39;)[-1].rstrip(&#39;.json&#39;) for t in glob(f&#39;{tables}/Tables/*.json&#39;)]
+#             # [&#39;APmon&#39;]
+
+#         elif core.io.exists(file, False):
+#             cvdict[entry] = core.io.json_read(file)[entry]
+
+#             if &#39;experiment_id&#39; in entry:
+#                 # this section updates the sources. We expect this to come afterwards, and therefore this should not throw an exception and should work as expected.
+
+
+#                 cvdict[&#39;source_type&#39;] = set(cvdict[&#39;source_type&#39;]).union(set(component for experiment in cvdict[entry].values() if &#34;required_model_components&#34; in experiment for component in experiment[&#34;required_model_components&#34;]+experiment[&#34;additional_allowed_model_components&#34;]))
+     
+                                
+#                 if entry == &#39;experiment_id&#39;:
+
+#                     cvdict[entry] = core.stdout.listify(cvdict[entry],[&#39;parent_experiment_id&#39;,&#39;parent)sub_experiment_id&#39;,&#39;parent_activity_id&#39;])
+
+#                     cvdict[entry] = core.stdout.notnull(cvdict[entry],[&#39;parent_experiment_id&#39;,&#39;parent)sub_experiment_id&#39;], &#39;no parent&#39;)
+
+
+
+
+#                 from cvtool.CV.compliance.experiment_id import test as experiment_test
+
+#                 # experiment_test(cvdict)
+
+
+#             if entry == &#39;source_id&#39;:
+#                 # this section updates the institutions
+#                 from cvtool.CV.compliance.source_id import test as source_test
+#                 # source_test(cvdict)
+#                 print(&#39;source test disabled&#39;)
+
+#                 cvdict[&#39;institution_id&#39;] = {i: f&#34;{institutions[i][&#39;indentifiers&#39;][&#39;ror&#39;]} - {institutions[i][&#39;indentifiers&#39;][&#39;institution_name&#39;]}&#34; for i in sorted(
+#                     {component for source in cvdict[entry].values() for component in source.get(&#34;institution_id&#34;, [])})}
+                
+
+
+#                 # cvdict[&#39;institution_id&#39;] = {i: institutions[i] for i in sorted({component for source in cvdict[entry].values() for component in source.get(&#34;institution_id&#34;, [])})}
+
+#                 # [[i,instutitions[i]] for i in sorted(list(set(component for source in cvdict[entry].values() for component in source.get(&#34;institution_id&#34;,[]))))]
+
+#         elif entry in template:
+#             cvdict[entry] = template[entry]
+
+#         else:
+#             missing.append(entry)
+
+#     #  final check
+#     diff = set(missing) - set(cvdict)
+
+#     if diff:
+#         raise core.stdout.MissingValueError(
+#             f&#39;The following fields are required:{diff} &#39;)
+
+#     core.stdout.MissingValueError(f&#39;The following fields are required:{diff} &#39;)
+
+#     #  update this to the correct format.
+#     cvdict[&#39;source_type&#39;] = dict([[s, source_type[s]]
+#                                  for s in cvdict[&#39;source_type&#39;]])
+#     print(cvdict[&#39;source_type&#39;])
+#     cvdict = prune(cvdict)
+
+#     CVfile = f&#34;{directory}{outloc}/{core.io.ensure_suffix(prefix,&#39;_&#39;)}CV.json&#34;
+#     core.io.json_write(dict(CV=cvdict), CVfile, sort=True)
+
+#     return CVfile</code></pre>
 </details>
 </section>
 <section>
@@ -130,7 +174,7 @@
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="cvtool.core" href="index.html">cvtool.core</a></code></li>
+<li><code><a title="cvtool.CVII.components" href="index.html">cvtool.CVII.components</a></code></li>
 </ul>
 </li>
 </ul>

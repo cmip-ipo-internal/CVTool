@@ -33,10 +33,10 @@ This file contains all the git, github and versioning functions for the cvtools 
 
 import requests
 import subprocess
-import os,re
+import os,re,glob
 from typing import Dict
 from .custom_errors import GitAPIError
-from .io import read_temp, write_temp, exists
+from .io import read_temp, write_temp, exists, rm_temp
 from git import Repo
 from datetime import datetime
 
@@ -82,6 +82,13 @@ def last_commit(repo_owner: str, repo_name: str) -&gt; Dict[str, str]:
                 raise GitAPIError(f&#34;No commits found in the repository: {api_url}&#34;)
         else:
             raise GitAPIError(f&#34;Failed to fetch commit information from the GitHub API: {api_url}&#34;)
+
+
+def clear_last(repo_owner: str, repo_name: str) -&gt; Dict[str, str]:
+    today_date = datetime.today().strftime(&#34;%Y%m%d&#34;)
+    envname = f&#39;cvtool.{repo_owner}.{repo_name}.{today_date}&#39;
+    rm_temp(envname)
+
 
 def git_user() -&gt; Dict[str, str]:
     &#34;&#34;&#34;
@@ -251,23 +258,38 @@ def query_repo(repo_path,verbose = True):
                 &#34;latest&#34;: is_latest_commit,
             },
             &#34;Repository URL&#34;: repo_url,
-            &#34;DOI&#34;: zenodo_doi
+            # &#34;DOI&#34;: zenodo_doi
         }
     else:
         output_dict = {
             &#34;tag&#34;:str(closest_previous_tag),
+            &#34;commit&#34;:current_commit,
             &#34;Repository URL&#34;: repo_url,
-            &#34;DOI&#34;: zenodo_doi
+            # &#34;DOI&#34;: zenodo_doi
         }
 
     # license 
-    with open(os.path.join(repo_path, &#39;LICENSE&#39;), &#39;r&#39;, encoding=&#39;utf-8&#39;) as file:
-        lines = file.readlines()
-        if len(lines) &gt;= 3:
-            license_info = lines[2].strip()
-            if license_info:
-                output_dict[&#39;lisence&#39;] = license_info
 
+    license_files = glob.glob(os.path.join(repo_path, &#39;*LICENSE*&#39;))
+
+    for license_file in license_files:
+        try:
+
+            if license_file == &#39;LICENSE&#39;:
+                with open(license_file, &#39;r&#39;, encoding=&#39;utf-8&#39;) as file:
+                    lines = file.readlines()
+                    if len(lines) &gt;= 3:
+                        license_info = lines[2].strip()
+                        if license_info:
+                            output_dict[&#39;license&#39;] = license_info
+                            break  # Stop searching if a valid license is found
+            else:
+                output_dict[&#39;license&#39;] = license_file.split(&#39;/&#39;)[-1]
+        except FileNotFoundError:
+            print(f&#39;License file {license_file} not found.&#39;)
+
+    if &#39;license&#39; not in output_dict:
+        print(&#39;No valid license information found in the specified files.&#39;)
 
     return output_dict</code></pre>
 </details>
@@ -279,6 +301,21 @@ def query_repo(repo_path,verbose = True):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="cvtool.core.version_control.clear_last"><code class="name flex">
+<span>def <span class="ident">clear_last</span></span>(<span>repo_owner: str, repo_name: str) ‑> Dict[str, str]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clear_last(repo_owner: str, repo_name: str) -&gt; Dict[str, str]:
+    today_date = datetime.today().strftime(&#34;%Y%m%d&#34;)
+    envname = f&#39;cvtool.{repo_owner}.{repo_name}.{today_date}&#39;
+    rm_temp(envname)</code></pre>
+</details>
+</dd>
 <dt id="cvtool.core.version_control.get_commit_hashes"><code class="name flex">
 <span>def <span class="ident">get_commit_hashes</span></span>(<span>owner: str, repo: str, latest: bool = True) ‑> str</span>
 </code></dt>
@@ -563,23 +600,38 @@ def query_repo(repo_path,verbose = True):
                 &#34;latest&#34;: is_latest_commit,
             },
             &#34;Repository URL&#34;: repo_url,
-            &#34;DOI&#34;: zenodo_doi
+            # &#34;DOI&#34;: zenodo_doi
         }
     else:
         output_dict = {
             &#34;tag&#34;:str(closest_previous_tag),
+            &#34;commit&#34;:current_commit,
             &#34;Repository URL&#34;: repo_url,
-            &#34;DOI&#34;: zenodo_doi
+            # &#34;DOI&#34;: zenodo_doi
         }
 
     # license 
-    with open(os.path.join(repo_path, &#39;LICENSE&#39;), &#39;r&#39;, encoding=&#39;utf-8&#39;) as file:
-        lines = file.readlines()
-        if len(lines) &gt;= 3:
-            license_info = lines[2].strip()
-            if license_info:
-                output_dict[&#39;lisence&#39;] = license_info
 
+    license_files = glob.glob(os.path.join(repo_path, &#39;*LICENSE*&#39;))
+
+    for license_file in license_files:
+        try:
+
+            if license_file == &#39;LICENSE&#39;:
+                with open(license_file, &#39;r&#39;, encoding=&#39;utf-8&#39;) as file:
+                    lines = file.readlines()
+                    if len(lines) &gt;= 3:
+                        license_info = lines[2].strip()
+                        if license_info:
+                            output_dict[&#39;license&#39;] = license_info
+                            break  # Stop searching if a valid license is found
+            else:
+                output_dict[&#39;license&#39;] = license_file.split(&#39;/&#39;)[-1]
+        except FileNotFoundError:
+            print(f&#39;License file {license_file} not found.&#39;)
+
+    if &#39;license&#39; not in output_dict:
+        print(&#39;No valid license information found in the specified files.&#39;)
 
     return output_dict</code></pre>
 </details>
@@ -632,6 +684,7 @@ def query_repo(repo_path,verbose = True):
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="two-column">
+<li><code><a title="cvtool.core.version_control.clear_last" href="#cvtool.core.version_control.clear_last">clear_last</a></code></li>
 <li><code><a title="cvtool.core.version_control.get_commit_hashes" href="#cvtool.core.version_control.get_commit_hashes">get_commit_hashes</a></code></li>
 <li><code><a title="cvtool.core.version_control.get_github_version" href="#cvtool.core.version_control.get_github_version">get_github_version</a></code></li>
 <li><code><a title="cvtool.core.version_control.git_user" href="#cvtool.core.version_control.git_user">git_user</a></code></li>

@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>cvtool.core.institutions API documentation</title>
-<meta name="description" content="Institutions are now in the mip tables." />
+<title>cvtool.ESGF.cv2esgf API documentation</title>
+<meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -19,98 +19,103 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>cvtool.core.institutions</code></h1>
+<h1 class="title">Module <code>cvtool.ESGF.cv2esgf</code></h1>
 </header>
 <section id="section-intro">
-<p>Institutions are now in the mip tables.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#39;&#39;&#39; Institutions are now in the mip tables. &#39;&#39;&#39;
-
-
-# &#39;&#39;&#39;
-# This file is set up such that importing it will run the relevant setup scripts.
-# *******
-# WARN: This does mean that once imported, it will not import again unless you start a new independent program.
-# *******
-
-
-# &#39;&#39;&#39;
-
-# from typing import List, Dict, Any
-# import git
-# from git import Repo
-# import tempfile
-# import glob
+<pre><code class="python"># import json
 # import os
-# from . import io
-# from .version_control import last_commit, query_repo  # Assuming version_control is properly set up
+# import re
+# import glob
+# from collections import Counter
 
-# __REPOPREFIX__ = &#39;cvtool.institutions.&#39;
+# # pip install -e git://github.com/ESGF/esgf-prepare.git@master#egg=esgprep
 
+# from ESGConfigParser import SectionParser, build_line, lengths
+# from constants import FILENAME_FORMAT, DATASET_ID # Import constants
 
-# repo_url = &#39;https://github.com/cmip-ipo-internal/CMIPInstitutions&#39;
+# &#34;&#34;&#34;
+# Convert CMIP6 CV json files to an ESGConfigParser ini file
+# &#34;&#34;&#34;
 
+# def read_cv(cvdir=None, cvfile=None):
+#     &#34;&#34;&#34;
+#     Read CMIP6 CV json files
+    
+#     Params:
+#         cvdir: Base directory containing CV json files
+#         cvfile: Single CV json file
+        
+#     Returns: 
+#         project: CMIP6 project ID
+#         cv: Dict containing parsed CV data
+#     &#34;&#34;&#34;
+    
+#     cv = {}
+    
+#     if cvdir and cvfile:
+#         print(&#34;Both CVDIR and CVFILE defined, using CVDIR&#34;)
 
-# term = io.terminal()
+#     if cvdir:
+#         # Read all json files in cvdir
+#         project = Counter([f.split(&#34;/&#34;)[-1].split(&#34;_&#34;)[0] for f in glob.glob(f&#34;{cvdir}/*.json&#34;)]).most_common()[0][0]
+#         for f in glob.glob(f&#34;{cvdir}/*.json&#34;):
+#             section = f.split(&#34;/&#34;)[-1].replace(&#34;.json&#34;, &#34;&#34;)
+#             cv[section] = json.load(open(f, &#34;r&#34;))
 
-# # # we want the current only 
-# # current = last_commit(*repo_url.split(&#39;/&#39;)[-2:])
+#     elif cvfile:
+#         # Read single CV json file
+#         project = re.search(&#34;/(\w+)_CV.json&#34;, cvfile)[1]  
+#         cv = json.load(open(cvfile, &#34;r&#34;))
 
-# # The location of the system temporary files
-# tmp = tempfile.gettempdir()
-# repo = None
+#     return project, cv
 
-# # Check if we have any existing repositories in the tmp
-# existing = glob.glob(f&#39;{tmp}/{__REPOPREFIX__}*&#39;)
+# def get_options(cv, section):
+#     &#34;&#34;&#34;Extract comma separated list of options from CV section&#34;&#34;&#34;
+#     return &#34;, &#34;.join(sorted(cv[section].keys()))
 
+# def get_map(cv, section, key):
+#     &#34;&#34;&#34;
+#     Extract key:value map from CV section
+    
+#     Format as:
+#         map(key : value)
+#             value1
+#             value2
+#             ...
+#     &#34;&#34;&#34;
+#     header = f&#34;map({section} : {key})&#34; 
+#     lines = [f&#34;{k}: {v.get(key)}&#34; for k, v in sorted(cv[section].items())]
+#     return build_line((header,) + tuple(lines), sep=&#34;\n&#34;, indent=True)
+    
+# if __name__ == &#34;__main__&#34;:
 
-# for path in existing:
-#     repo = Repo(path)
-#     repo.remotes.origin.pull()
-#     existing.remove(path)
+#     # Constants
+#     CVFile = &#34;/Users/daniel.ellis/WIPwork/CVTool/mip_specific/lesf/LESF_CVs/merged_data/CVs/CMIP6Plus_CV.json&#34;
+#     OUTDIR = &#34;./&#34;
+#     PROJECT = &#34;CMIP6&#34; 
 
-#     # Remove the outdated duplicates if they exist
-#     for p in existing:
-#         io.rmdir(p)
-#     break
+#     # Read CV 
+#     project, cv = read_cv(cvfile=CVFile)
 
-# if not repo:
-#     # If the repo does not exist or is not current, we download a new one.
-#     try:
-#         temp_dir = tempfile.mkdtemp(prefix=__REPOPREFIX__, suffix=&#39;&#39;)
-#     except FileExistsError:
-#         print(&#34;Directory already exists with the same name [this is unusual]&#34;)
+#     # Create config
+#     config = SectionParser(section=f&#34;project:{PROJECT}&#34;)
 
-#     # Let&#39;s download the latest repository
-#     repo = Repo.clone_from(repo_url + &#39;.git&#39;, temp_dir)
+#     # Populate options
+#     config.set(&#34;filename_format&#34;, FILENAME_FORMAT)
+#     config.set(&#34;dataset_id&#34;, DATASET_ID)
+    
+#     config.set(&#34;mip_era_options&#34;, get_options(cv, &#34;mip_era&#34;))
+#     config.set(&#34;activity_drs_options&#34;, get_options(cv, &#34;activity_id&#34;))
 
-
-
-# # Get the repository URL
-# repo_url = repo.remotes.origin.url
-# # Get the current commit hash
-# current_commit_hash = repo.head.commit.hexsha
-# # Create clickable links
-# repo_link = repo_url.replace(&#34;.git&#34;, &#34;&#34;).replace(&#34;:&#34;, &#34;/&#34;).replace(&#34;git@&#34;, &#34;https://&#34;)
-# commit_link = f&#34;{repo_link}/commit/{current_commit_hash}&#34;
-
-# LOCATION = repo.working_dir
-
-# institutions_meta = query_repo(repo.working_dir,False)
-# print(&#39;*&#39;*term.columns)
-# print(f&#34;&#34;&#34;
-#         Institution list: {LOCATION} 
-#         Latest Tag: {institutions_meta[&#39;tag&#39;]}
-#         Viewable URL: {commit_link}
-
-#         &#34;&#34;&#34;)
-# print(&#39;*&#39;*term.columns)
-
-# import json
-# institutions = json.load(open(f&#39;{LOCATION}/institutions.json&#39;,&#39;r&#39;))</code></pre>
+#     config.set(&#34;experiment_title_map&#34;, get_map(cv, &#34;experiment_id&#34;, &#34;experiment&#34;))
+     
+#     # Write ini file
+#     with open(f&#34;{OUTDIR}/{PROJECT}.ini&#34;, &#34;w&#34;) as f:
+#         config.write(f)</code></pre>
 </details>
 </section>
 <section>
@@ -130,7 +135,7 @@
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="cvtool.core" href="index.html">cvtool.core</a></code></li>
+<li><code><a title="cvtool.ESGF" href="index.html">cvtool.ESGF</a></code></li>
 </ul>
 </li>
 </ul>

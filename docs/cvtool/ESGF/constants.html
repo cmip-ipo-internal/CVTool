@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>cvtool.core.institutions API documentation</title>
-<meta name="description" content="Institutions are now in the mip tables." />
+<title>cvtool.ESGF.constants API documentation</title>
+<meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -19,98 +19,115 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>cvtool.core.institutions</code></h1>
+<h1 class="title">Module <code>cvtool.ESGF.constants</code></h1>
 </header>
 <section id="section-intro">
-<p>Institutions are now in the mip tables.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#39;&#39;&#39; Institutions are now in the mip tables. &#39;&#39;&#39;
+<pre><code class="python">#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+# GitHub configuration
+GITHUB_CV_API = &#39;https://api.github.com/repos/WCRP-CMIP/CMIP6_CVs/contents/{}&#39;
+GITHUB_TABLE_API = &#39;https://api.github.com/repos/ESGF/config/contents/publisher-configs/{}&#39;
 
-# &#39;&#39;&#39;
-# This file is set up such that importing it will run the relevant setup scripts.
-# *******
-# WARN: This does mean that once imported, it will not import again unless you start a new independent program.
-# *******
+# JSON CV file format
+JSON_FILE = &#39;CMIP6_{}.json&#39;
 
+# Facets to ignore
+IGNORED_FACETS = [&#39;root&#39;, &#39;period_start&#39;, &#39;period_end&#39;]
 
-# &#39;&#39;&#39;
+# Facet mapping between INI and JSON attributes (if necessary)
+FACET_MAP = {&#39;activity_drs&#39;: &#39;activity_id&#39;}
 
-# from typing import List, Dict, Any
-# import git
-# from git import Repo
-# import tempfile
-# import glob
-# import os
-# from . import io
-# from .version_control import last_commit, query_repo  # Assuming version_control is properly set up
+# Facet patterns
+FACET_PATTERNS = {&#39;member_id&#39;: &#39;[%(sub_experiment_id)s-]%(variant_label)s&#39;,
+                  &#39;variant_label&#39;: &#39;r%(digit)si%(digit)sp%(digit)sf%(digit)s&#39;,
+                  &#39;version&#39;: &#39;v%(digit)s&#39;,
+                  &#39;variable_id&#39;: &#39;%(string)s&#39;}
 
-# __REPOPREFIX__ = &#39;cvtool.institutions.&#39;
+# LAS time frequencies
+LAS_FREQUENCIES = {&#39;1hr&#39;: &#39;1 hour&#39;,
+                   &#39;1hrCM&#39;: &#39;1 hour&#39;,
+                   &#39;1hrPt&#39;: &#39;1 hour&#39;,
+                   &#39;3hr&#39;: &#39;3 hours&#39;,
+                   &#39;3hrPt&#39;: &#39;3 hours&#39;,
+                   &#39;6hr&#39;: &#39;6 hours&#39;,
+                   &#39;6hrPt&#39;: &#39;6 hours&#39;,
+                   &#39;day&#39;: &#39;1 day&#39;,
+                   &#39;MonDay&#39;: &#39;Monthly(Day)&#39;,
+                   &#39;dec&#39;: &#39;10 years&#39;,
+                   &#39;fx&#39;: &#39;fixed&#39;,
+                   &#39;mon&#39;: &#39;1 month&#39;,
+                   &#39;monC&#39;: &#39;1 month&#39;,
+                   &#39;monPt&#39;: &#39;1 month&#39;,
+                   &#39;MonNight&#39;: &#39;Monthly(Nigh)&#39;,
+                   &#39;sem&#39;: &#39;seasonal mean&#39;,
+                   &#39;subhr&#39;: &#39;1 minute&#39;,
+                   &#39;subhrPt&#39;: &#39;1 minute&#39;,
+                   &#39;yr&#39;: &#39;1 year&#39;,
+                   &#39;yrPt&#39;: &#39;1 year&#39;}
 
+# Help
+PROGRAM_DESC = \
+    &#34;&#34;&#34;
+    This script assembles an INI file for the ESGF publisher provided WCRP JSON CV files and additional static content.
+    The CV files are found in https://github.com/WCRP-CMIP/CMIP6_CVs.git
+    Only CMIP6 CV is supported at the moment. 
+    
+    &#34;&#34;&#34;
 
-# repo_url = &#39;https://github.com/cmip-ipo-internal/CMIPInstitutions&#39;
+EPILOG = \
+    &#34;&#34;&#34;
+    Developed by:\n
+    Ames, S. (DOE/LLNL - ames4@llnl.gov)\n
+    Levavasseur, G. (UPMC/IPSL - glipsl@ipsl.fr)\n
 
+    &#34;&#34;&#34;
 
-# term = io.terminal()
+OPTIONAL = \
+    &#34;&#34;&#34;Optional arguments&#34;&#34;&#34;
 
-# # # we want the current only 
-# # current = last_commit(*repo_url.split(&#39;/&#39;)[-2:])
+POSITIONAL = \
+    &#34;&#34;&#34;Positional arguments&#34;&#34;&#34;
 
-# # The location of the system temporary files
-# tmp = tempfile.gettempdir()
-# repo = None
+HELP = \
+    &#34;&#34;&#34;
+    Show this help message and exit.
 
-# # Check if we have any existing repositories in the tmp
-# existing = glob.glob(f&#39;{tmp}/{__REPOPREFIX__}*&#39;)
+    &#34;&#34;&#34;
 
+PROJECT_HELP = \
+    &#34;&#34;&#34;
+    Required lower-cased project name.
+    
+    &#34;&#34;&#34;
 
-# for path in existing:
-#     repo = Repo(path)
-#     repo.remotes.origin.pull()
-#     existing.remove(path)
+OUTDIR_HELP = \
+    &#34;&#34;&#34;
+    Output directory for generated INI file.
 
-#     # Remove the outdated duplicates if they exist
-#     for p in existing:
-#         io.rmdir(p)
-#     break
+    &#34;&#34;&#34;
 
-# if not repo:
-#     # If the repo does not exist or is not current, we download a new one.
-#     try:
-#         temp_dir = tempfile.mkdtemp(prefix=__REPOPREFIX__, suffix=&#39;&#39;)
-#     except FileExistsError:
-#         print(&#34;Directory already exists with the same name [this is unusual]&#34;)
+GITHUB_USER_HELP = \
+    &#34;&#34;&#34;
+    GitHub username.
 
-#     # Let&#39;s download the latest repository
-#     repo = Repo.clone_from(repo_url + &#39;.git&#39;, temp_dir)
+    &#34;&#34;&#34;
 
+GITHUB_PASSWORD_HELP = \
+    &#34;&#34;&#34;
+    GitHub password.
 
+    &#34;&#34;&#34;
 
-# # Get the repository URL
-# repo_url = repo.remotes.origin.url
-# # Get the current commit hash
-# current_commit_hash = repo.head.commit.hexsha
-# # Create clickable links
-# repo_link = repo_url.replace(&#34;.git&#34;, &#34;&#34;).replace(&#34;:&#34;, &#34;/&#34;).replace(&#34;git@&#34;, &#34;https://&#34;)
-# commit_link = f&#34;{repo_link}/commit/{current_commit_hash}&#34;
+DEVEL_HELP = \
+    &#34;&#34;&#34;
+    Fetch from the devel branch.
 
-# LOCATION = repo.working_dir
-
-# institutions_meta = query_repo(repo.working_dir,False)
-# print(&#39;*&#39;*term.columns)
-# print(f&#34;&#34;&#34;
-#         Institution list: {LOCATION} 
-#         Latest Tag: {institutions_meta[&#39;tag&#39;]}
-#         Viewable URL: {commit_link}
-
-#         &#34;&#34;&#34;)
-# print(&#39;*&#39;*term.columns)
-
-# import json
-# institutions = json.load(open(f&#39;{LOCATION}/institutions.json&#39;,&#39;r&#39;))</code></pre>
+    &#34;&#34;&#34;</code></pre>
 </details>
 </section>
 <section>
@@ -130,7 +147,7 @@
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="cvtool.core" href="index.html">cvtool.core</a></code></li>
+<li><code><a title="cvtool.ESGF" href="index.html">cvtool.ESGF</a></code></li>
 </ul>
 </li>
 </ul>

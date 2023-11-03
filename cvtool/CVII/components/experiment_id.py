@@ -1,11 +1,7 @@
-from copy import deepcopy
-import sys
-import os
-import json
+
 from collections import OrderedDict
 from jsonschema import validate
 import cvtool.core as core
-import cvtool.CV.meta as meta
 from p_tqdm import p_map
 from tqdm import tqdm
 whoami = __file__.split('/')[-1].replace('.py', '')
