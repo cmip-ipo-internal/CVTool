@@ -62,13 +62,13 @@ import git
 from git import Repo
 import tempfile
 import glob
-import os
+import os,json
 from . import io
-from .version_control import last_commit, query_repo  # Assuming version_control is properly set up
+from .version_control import last_commit, query_repo, clear_last  # Assuming version_control is properly set up
 
 __REPOPREFIX__ = &#39;cvtool.miptables.&#39;
 
-def setup_mip_tables(commit_hash = None ) -&gt; None:
+def setup_mip_tables(commit_hash = None) -&gt; None:
     &#34;&#34;&#34;
     Set up the MIP tables by checking for existing versions, downloading the latest version, and updating environment variables.
     &#34;&#34;&#34;
@@ -81,7 +81,8 @@ def setup_mip_tables(commit_hash = None ) -&gt; None:
     # print(&#39;WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN - using wolfiex (test miptables) instead of PCMDI repo&#39;)
     # print(&#39;WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN - using wolfiex (test miptables) instead of PCMDI repo&#39;)
     # repo_url = &#39;https://github.com/wolfiex/mip-cmor-tables&#39;
-    table_subdir = &#39;/mip_cmor_tables/out/&#39;
+
+    table_subdir = &#39;&#39;
 
     term = io.terminal()
     print(&#39;*&#39;*term.columns)
@@ -136,7 +137,24 @@ def setup_mip_tables(commit_hash = None ) -&gt; None:
                 print(f&#34;Commit {commit_hash} not found in the repository.&#34;)
                 print(&#39;WARN - using the latest version of the miptables instead.&#39;)
 
-        assert str(repo.head.commit) == current.get(&#39;SHA&#39;)
+        if str(repo.head.commit) != current.get(&#39;SHA&#39;):
+            user = input(f&#34;\n\nCommit messages: {str(repo.head.commit)} != {current.get(&#39;SHA&#39;)} \n This is likely because the MIPTable repository has been updated recently.\n\nType &#39;yes&#39;, to update the repository info and try again. \n\n&#34;)
+            if user == &#39;yes&#39;:
+                last = repo_url.split(&#39;/&#39;)[-2:]
+                clear_last(*last)
+                current = last_commit(*last)
+            else:
+                try:
+                    # we revert to the last saved commit. 
+                    commit_hash = current.get(&#39;SHA&#39;)
+                    commit = repo.commit(commit_hash)
+                    repo.git.reset(&#39;--hard&#39;, commit)
+                    print(f&#34;Reverted to commit {commit_hash}&#34;)
+                except git.exc.GitCommandError:
+                    print(f&#34;Commit {commit_hash} not found in the repository.&#34;)
+
+
+        assert str(repo.head.commit) == current.get(&#39;SHA&#39;), &#39;Commit hashses must match. [core-&gt;MipTables]&#39;
 
     # Get the repository URL
     repo_url = repo.remotes.origin.url
@@ -150,21 +168,25 @@ def setup_mip_tables(commit_hash = None ) -&gt; None:
     # os.environ[&#39;cmor_tables&#39;] = LOCATION
     # os.environ[&#39;cmor_tableorigin&#39;] = commit_link
 
-    miptables = query_repo(repo.working_dir)
+    miptables = query_repo(repo.working_dir,verbose=False)
+    info = query_repo(repo.working_dir,verbose=True)
+    
     print(&#39;*&#39;*term.columns)
     print(f&#34;&#34;&#34;
           MipTable location: {LOCATION} 
           With Commit: {current.get(&#39;SHA&#39;)}
           
-          Latest Tag: {miptables[&#39;tag&#39;][&#39;latest&#39;]}
-          Latest Commit:{miptables[&#39;commit&#39;][&#39;latest&#39;]}
+          Latest Tag: {info[&#39;tag&#39;][&#39;latest&#39;]}
+          Latest Commit:{info[&#39;commit&#39;][&#39;latest&#39;]}
           
           Viewable URL: {commit_link}
 
           &#34;&#34;&#34;)
     print(&#39;*&#39;*term.columns)
 
-    return miptables, LOCATION</code></pre>
+
+    institutions = json.load(open(f&#39;{LOCATION}/MIP_institutions.json&#39;,&#39;r&#39;))
+    return miptables, LOCATION, institutions</code></pre>
 </details>
 </section>
 <section>
@@ -183,7 +205,7 @@ def setup_mip_tables(commit_hash = None ) -&gt; None:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def setup_mip_tables(commit_hash = None ) -&gt; None:
+<pre><code class="python">def setup_mip_tables(commit_hash = None) -&gt; None:
     &#34;&#34;&#34;
     Set up the MIP tables by checking for existing versions, downloading the latest version, and updating environment variables.
     &#34;&#34;&#34;
@@ -196,7 +218,8 @@ def setup_mip_tables(commit_hash = None ) -&gt; None:
     # print(&#39;WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN - using wolfiex (test miptables) instead of PCMDI repo&#39;)
     # print(&#39;WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN WARN - using wolfiex (test miptables) instead of PCMDI repo&#39;)
     # repo_url = &#39;https://github.com/wolfiex/mip-cmor-tables&#39;
-    table_subdir = &#39;/mip_cmor_tables/out/&#39;
+
+    table_subdir = &#39;&#39;
 
     term = io.terminal()
     print(&#39;*&#39;*term.columns)
@@ -251,7 +274,24 @@ def setup_mip_tables(commit_hash = None ) -&gt; None:
                 print(f&#34;Commit {commit_hash} not found in the repository.&#34;)
                 print(&#39;WARN - using the latest version of the miptables instead.&#39;)
 
-        assert str(repo.head.commit) == current.get(&#39;SHA&#39;)
+        if str(repo.head.commit) != current.get(&#39;SHA&#39;):
+            user = input(f&#34;\n\nCommit messages: {str(repo.head.commit)} != {current.get(&#39;SHA&#39;)} \n This is likely because the MIPTable repository has been updated recently.\n\nType &#39;yes&#39;, to update the repository info and try again. \n\n&#34;)
+            if user == &#39;yes&#39;:
+                last = repo_url.split(&#39;/&#39;)[-2:]
+                clear_last(*last)
+                current = last_commit(*last)
+            else:
+                try:
+                    # we revert to the last saved commit. 
+                    commit_hash = current.get(&#39;SHA&#39;)
+                    commit = repo.commit(commit_hash)
+                    repo.git.reset(&#39;--hard&#39;, commit)
+                    print(f&#34;Reverted to commit {commit_hash}&#34;)
+                except git.exc.GitCommandError:
+                    print(f&#34;Commit {commit_hash} not found in the repository.&#34;)
+
+
+        assert str(repo.head.commit) == current.get(&#39;SHA&#39;), &#39;Commit hashses must match. [core-&gt;MipTables]&#39;
 
     # Get the repository URL
     repo_url = repo.remotes.origin.url
@@ -265,21 +305,25 @@ def setup_mip_tables(commit_hash = None ) -&gt; None:
     # os.environ[&#39;cmor_tables&#39;] = LOCATION
     # os.environ[&#39;cmor_tableorigin&#39;] = commit_link
 
-    miptables = query_repo(repo.working_dir)
+    miptables = query_repo(repo.working_dir,verbose=False)
+    info = query_repo(repo.working_dir,verbose=True)
+    
     print(&#39;*&#39;*term.columns)
     print(f&#34;&#34;&#34;
           MipTable location: {LOCATION} 
           With Commit: {current.get(&#39;SHA&#39;)}
           
-          Latest Tag: {miptables[&#39;tag&#39;][&#39;latest&#39;]}
-          Latest Commit:{miptables[&#39;commit&#39;][&#39;latest&#39;]}
+          Latest Tag: {info[&#39;tag&#39;][&#39;latest&#39;]}
+          Latest Commit:{info[&#39;commit&#39;][&#39;latest&#39;]}
           
           Viewable URL: {commit_link}
 
           &#34;&#34;&#34;)
     print(&#39;*&#39;*term.columns)
 
-    return miptables, LOCATION</code></pre>
+
+    institutions = json.load(open(f&#39;{LOCATION}/MIP_institutions.json&#39;,&#39;r&#39;))
+    return miptables, LOCATION, institutions</code></pre>
 </details>
 </dd>
 </dl>

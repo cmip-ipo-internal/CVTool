@@ -126,6 +126,15 @@ def listify(dictionary, keys):
                 dictionary[key] = [dictionary[key]]
     return dictionary
 
+def notnull(dictionary, keys,replace=&#39;none&#39;):
+    if not isinstance(keys, list): keys = [keys]
+    for key in keys:
+        if key in dictionary:
+            if isinstance(dictionary[key], list):
+                dictionary[key] = [ str(i or replace) for i in dictionary[key]]
+            print(key)
+    return dictionary
+
 
 
 
@@ -286,6 +295,25 @@ def debug_print(*args, **kwargs):
     return logger</code></pre>
 </details>
 </dd>
+<dt id="cvtool.core.stdout.notnull"><code class="name flex">
+<span>def <span class="ident">notnull</span></span>(<span>dictionary, keys, replace='none')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def notnull(dictionary, keys,replace=&#39;none&#39;):
+    if not isinstance(keys, list): keys = [keys]
+    for key in keys:
+        if key in dictionary:
+            if isinstance(dictionary[key], list):
+                dictionary[key] = [ str(i or replace) for i in dictionary[key]]
+            print(key)
+    return dictionary</code></pre>
+</details>
+</dd>
 <dt id="cvtool.core.stdout.view"><code class="name flex">
 <span>def <span class="ident">view</span></span>(<span>x)</span>
 </code></dt>
@@ -384,6 +412,7 @@ def debug_print(*args, **kwargs):
 <li><code><a title="cvtool.core.stdout.get_user" href="#cvtool.core.stdout.get_user">get_user</a></code></li>
 <li><code><a title="cvtool.core.stdout.listify" href="#cvtool.core.stdout.listify">listify</a></code></li>
 <li><code><a title="cvtool.core.stdout.log" href="#cvtool.core.stdout.log">log</a></code></li>
+<li><code><a title="cvtool.core.stdout.notnull" href="#cvtool.core.stdout.notnull">notnull</a></code></li>
 <li><code><a title="cvtool.core.stdout.view" href="#cvtool.core.stdout.view">view</a></code></li>
 <li><code><a title="cvtool.core.stdout.yymmdd" href="#cvtool.core.stdout.yymmdd">yymmdd</a></code></li>
 </ul>

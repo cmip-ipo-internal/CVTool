@@ -128,7 +128,7 @@ def import_relative(__file__, module_name):
     globals()[module_name] = my_module
 
 
-def basepath(name: str, basepath: str = &#39;&#39;) -&gt; tuple:
+def base_path(name: str, basepath: str = &#39;&#39;) -&gt; tuple:
     &#34;&#34;&#34;
     Generate the base path for a module file.
 
@@ -141,7 +141,7 @@ def basepath(name: str, basepath: str = &#39;&#39;) -&gt; tuple:
     &#34;&#34;&#34;
     return __file__.replace(&#39;__init__&#39;, f&#39;{basepath}{name}/__init__&#39;), name
 
-def script_path(name: str, basepath: str = LIBPATH) -&gt; tuple:
+def script_path(name: str, basepath: str = LIBPATH, module: str = &#39;CV&#39;) -&gt; tuple:
     &#34;&#34;&#34;
     Generate the base path for a module file.
 
@@ -152,7 +152,7 @@ def script_path(name: str, basepath: str = LIBPATH) -&gt; tuple:
     Returns:
         tuple: Tuple containing the base path and module name.
     &#34;&#34;&#34;
-    return  f&#39;{basepath}/CV/components/{name}.py&#39;, name
+    return  f&#39;{basepath}/{module}/components/{name}.py&#39;, name
 
 
 def check_module_functions(module):
@@ -181,8 +181,8 @@ if __name__ == &#39;__main__&#39;:
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="cvtool.core.dynamic_imports.basepath"><code class="name flex">
-<span>def <span class="ident">basepath</span></span>(<span>name: str, basepath: str = '') ‑> tuple</span>
+<dt id="cvtool.core.dynamic_imports.base_path"><code class="name flex">
+<span>def <span class="ident">base_path</span></span>(<span>name: str, basepath: str = '') ‑> tuple</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Generate the base path for a module file.</p>
@@ -202,7 +202,7 @@ if __name__ == &#39;__main__&#39;:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def basepath(name: str, basepath: str = &#39;&#39;) -&gt; tuple:
+<pre><code class="python">def base_path(name: str, basepath: str = &#39;&#39;) -&gt; tuple:
     &#34;&#34;&#34;
     Generate the base path for a module file.
 
@@ -367,7 +367,7 @@ if __name__ == &#39;__main__&#39;:
 </details>
 </dd>
 <dt id="cvtool.core.dynamic_imports.script_path"><code class="name flex">
-<span>def <span class="ident">script_path</span></span>(<span>name: str, basepath: str = '/Users/daniel.ellis/WIPwork/CVTool/cvtool') ‑> tuple</span>
+<span>def <span class="ident">script_path</span></span>(<span>name: str, basepath: str = '/Users/daniel.ellis/WIPwork/CVTool/cvtool', module: str = 'CV') ‑> tuple</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Generate the base path for a module file.</p>
@@ -387,7 +387,7 @@ if __name__ == &#39;__main__&#39;:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def script_path(name: str, basepath: str = LIBPATH) -&gt; tuple:
+<pre><code class="python">def script_path(name: str, basepath: str = LIBPATH, module: str = &#39;CV&#39;) -&gt; tuple:
     &#34;&#34;&#34;
     Generate the base path for a module file.
 
@@ -398,7 +398,7 @@ if __name__ == &#39;__main__&#39;:
     Returns:
         tuple: Tuple containing the base path and module name.
     &#34;&#34;&#34;
-    return  f&#39;{basepath}/CV/components/{name}.py&#39;, name</code></pre>
+    return  f&#39;{basepath}/{module}/components/{name}.py&#39;, name</code></pre>
 </details>
 </dd>
 </dl>
@@ -462,7 +462,7 @@ if __name__ == &#39;__main__&#39;:
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="cvtool.core.dynamic_imports.basepath" href="#cvtool.core.dynamic_imports.basepath">basepath</a></code></li>
+<li><code><a title="cvtool.core.dynamic_imports.base_path" href="#cvtool.core.dynamic_imports.base_path">base_path</a></code></li>
 <li><code><a title="cvtool.core.dynamic_imports.check_module_functions" href="#cvtool.core.dynamic_imports.check_module_functions">check_module_functions</a></code></li>
 <li><code><a title="cvtool.core.dynamic_imports.import_relative" href="#cvtool.core.dynamic_imports.import_relative">import_relative</a></code></li>
 <li><code><a title="cvtool.core.dynamic_imports.import_script" href="#cvtool.core.dynamic_imports.import_script">import_script</a></code></li>
