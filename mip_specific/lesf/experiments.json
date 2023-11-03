@@ -6,8 +6,8 @@
                 "institution_id": "CMIP-IPO"
             },
             "specs_doc": "v6.3.0 (link TBC)",
-            "CMIP6Plus_CVS dir?": {
-                "CV_collection_modified": "2023-11-02",
+            "CMIP6Plus_CVS dir": {
+                "CV_collection_modified": "2023-11-03",
                 "CV_collection_version": "6.5.0",
                 "previous_commit": "6.5.0"
             },
@@ -22,10 +22,10 @@
                 },
                 "Repository URL": "https://github.com/PCMDI/mip-cmor-tables.git",
                 "DOI": null,
-                "license": "/var/folders/hc/s_7lggq12nndglbdyrn3f91m1l58yd/T/cvtool.miptables.eyl6a025/LICENSE-CC-BY"
+                "license": "/var/folders/hc/s_7lggq12nndglbdyrn3f91m1l58yd/T/cvtool.miptables.ljcj_tfj/LICENSE-CC-BY"
             },
             "CMOR": "3.7.3",
-            "CVTool": "0.0.4"
+            "CVTool": "0.2.0"
         }
     },
     "experiment_id": {
@@ -46,7 +46,7 @@
                 "CMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "piControl"
             ],
             "required_model_components": [
                 "AOGCM"
@@ -75,7 +75,7 @@
                 "CMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "piControl"
             ],
             "required_model_components": [
                 "AOGCM"
@@ -104,7 +104,7 @@
                 "no parent"
             ],
             "parent_experiment_id": [
-                "none"
+                "no parent"
             ],
             "required_model_components": [
                 "AGCM"
@@ -133,7 +133,7 @@
                 "CMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "esm-piControl"
             ],
             "required_model_components": [
                 "AOGCM",
@@ -162,7 +162,7 @@
                 "CMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "esm-piControl-spinup"
             ],
             "required_model_components": [
                 "AOGCM",
@@ -191,7 +191,7 @@
                 "no parent"
             ],
             "parent_experiment_id": [
-                "none"
+                "no parent"
             ],
             "required_model_components": [
                 "AOGCM",
@@ -206,21 +206,21 @@
         "historical": {
             "experiment_id": "historical",
             "activity_id": [
-                "LESEF"
+                "CMIP"
             ],
-            "experiment": "Combined forcings simulations",
-            "description": "All forcings",
-            "start": 1850,
-            "end": 2020,
-            "min_number_yrs_per_sim": 0,
+            "experiment": "all-forcing simulation of the recent past",
+            "description": "CMIP6 historical",
+            "start": "1850",
+            "end": "2014",
+            "min_number_yrs_per_sim": "165",
             "sub_experiment_id": [
-                "f2023"
+                "none"
             ],
             "parent_activity_id": [
                 "CMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "piControl"
             ],
             "required_model_components": [
                 "AOGCM"
@@ -230,7 +230,7 @@
                 "CHEM",
                 "BGC"
             ],
-            "tier": 3
+            "tier": 1
         },
         "piControl": {
             "experiment_id": "piControl",
@@ -249,7 +249,7 @@
                 "CMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "piControl-spinup"
             ],
             "required_model_components": [
                 "AOGCM"
@@ -278,7 +278,7 @@
                 "no parent"
             ],
             "parent_experiment_id": [
-                "none"
+                "no parent"
             ],
             "required_model_components": [
                 "AOGCM"
@@ -293,7 +293,7 @@
         "hist-GHG": {
             "experiment_id": "hist-GHG",
             "activity_id": [
-                "LESEF"
+                "LESFMIP"
             ],
             "experiment": "historical well-mixed GHG-only run",
             "description": "Well-mixed greenhouse-gas-only historical simulations",
@@ -307,7 +307,7 @@
                 "CMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "piControl"
             ],
             "required_model_components": [
                 "AOGCM"
@@ -322,7 +322,7 @@
         "hist-aer": {
             "experiment_id": "hist-aer",
             "activity_id": [
-                "LESEF"
+                "LESFMIP"
             ],
             "experiment": "historical anthropogenic aerosols-only run",
             "description": "Anthropogenic-aerosol-only historical simulations",
@@ -336,7 +336,7 @@
                 "CMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "piControl"
             ],
             "required_model_components": [
                 "AOGCM"
@@ -351,7 +351,7 @@
         "hist-sol": {
             "experiment_id": "hist-sol",
             "activity_id": [
-                "LESEF"
+                "LESFMIP"
             ],
             "experiment": "historical solar-only run",
             "description": "Solar-only historical simulations",
@@ -365,7 +365,7 @@
                 "CMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "piControl"
             ],
             "required_model_components": [
                 "AOGCM"
@@ -380,7 +380,7 @@
         "hist-volc": {
             "experiment_id": "hist-volc",
             "activity_id": [
-                "LESEF"
+                "LESFMIP"
             ],
             "experiment": "historical volcanic-only run",
             "description": "Volcanic-only historical simulations",
@@ -394,7 +394,7 @@
                 "CMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "piControl"
             ],
             "required_model_components": [
                 "AOGCM"
@@ -409,7 +409,7 @@
         "hist-totalO3": {
             "experiment_id": "hist-totalO3",
             "activity_id": [
-                "LESEF"
+                "LESFMIP"
             ],
             "experiment": "historical total ozone-only run",
             "description": "Ozone-only historical simulations",
@@ -423,7 +423,7 @@
                 "CMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "piControl"
             ],
             "required_model_components": [
                 "AOGCM"
@@ -438,7 +438,7 @@
         "hist-lu": {
             "experiment_id": "hist-lu",
             "activity_id": [
-                "LESEF"
+                "LESFMIP"
             ],
             "experiment": "Single forcing historical simulations",
             "description": "Historical simulations with only land use changes",
@@ -452,7 +452,7 @@
                 "CMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "piControl"
             ],
             "required_model_components": [
                 "AOGCM"
@@ -467,7 +467,7 @@
         "fut-GHG": {
             "experiment_id": "fut-GHG",
             "activity_id": [
-                "LESEF"
+                "LESFMIP"
             ],
             "experiment": "future well-mixed GHG-only run",
             "description": "As hist-GHG but with updated forcings",
@@ -478,10 +478,10 @@
                 "f2023"
             ],
             "parent_activity_id": [
-                "LESEF"
+                "LESFMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "hist-GHG"
             ],
             "required_model_components": [
                 "AOGCM"
@@ -496,7 +496,7 @@
         "fut-Aer": {
             "experiment_id": "fut-Aer",
             "activity_id": [
-                "LESEF"
+                "LESFMIP"
             ],
             "experiment": "future anthropogenic aerosols-only run",
             "description": "As hist-aer but with updated forcings",
@@ -507,10 +507,10 @@
                 "f2023"
             ],
             "parent_activity_id": [
-                "LESEF"
+                "LESFMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "hist-Aer"
             ],
             "required_model_components": [
                 "AOGCM"
@@ -525,7 +525,7 @@
         "fut-sol": {
             "experiment_id": "fut-sol",
             "activity_id": [
-                "LESEF"
+                "LESFMIP"
             ],
             "experiment": "future solar-only run",
             "description": "As hist-sol but with updated forcings",
@@ -536,10 +536,10 @@
                 "f2023"
             ],
             "parent_activity_id": [
-                "LESEF"
+                "LESFMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "hist-sol"
             ],
             "required_model_components": [
                 "AOGCM"
@@ -554,7 +554,7 @@
         "fut-volc": {
             "experiment_id": "fut-volc",
             "activity_id": [
-                "LESEF"
+                "LESFMIP"
             ],
             "experiment": "future volcanic-only run",
             "description": "As hist-volc but with updated forcings",
@@ -565,10 +565,10 @@
                 "f2023"
             ],
             "parent_activity_id": [
-                "LESEF"
+                "LESFMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "hist-volc"
             ],
             "required_model_components": [
                 "AOGCM"
@@ -583,7 +583,7 @@
         "fut-totalO3": {
             "experiment_id": "fut-totalO3",
             "activity_id": [
-                "LESEF"
+                "LESFMIP"
             ],
             "experiment": "future total ozone-only run",
             "description": "As hist-totalO3 but with updated forcings",
@@ -594,10 +594,10 @@
                 "f2023"
             ],
             "parent_activity_id": [
-                "LESEF"
+                "LESFMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "hist-totalO3"
             ],
             "required_model_components": [
                 "AOGCM"
@@ -612,7 +612,7 @@
         "fut-lu": {
             "experiment_id": "fut-lu",
             "activity_id": [
-                "LESEF"
+                "LESFMIP"
             ],
             "experiment": "Single forcing projections",
             "description": "As hist-lu but with updated forcings",
@@ -626,7 +626,7 @@
                 "CMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "piControl"
             ],
             "required_model_components": [
                 "AOGCM"
@@ -641,7 +641,7 @@
         "hist-nat": {
             "experiment_id": "hist-nat",
             "activity_id": [
-                "LESEF"
+                "LESFMIP"
             ],
             "experiment": "historical natural-only run",
             "description": "Natural forcings (solar + volcanic)",
@@ -655,7 +655,7 @@
                 "CMIP"
             ],
             "parent_experiment_id": [
-                "none"
+                "piControl"
             ],
             "required_model_components": [
                 "AOGCM"

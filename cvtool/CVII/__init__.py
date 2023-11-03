@@ -104,18 +104,24 @@ class CV_update:
 
                 module = import_script(*script_path(file,module='CVII')
                 )
+                current = updata[file]
+
                 # loadcv = getattr(module, "loadcv", None)
 
-                existing = module.load_existing(self.cvloc, self.prefix, parse = updata[file].get('parse'))
-
-                print('======================exist')
-                existing = module.add_new(self.cvloc, self.prefix,existing,updata[file].get('add'))
+                existing = module.load_existing(self.cvloc, self.prefix, parse = current.get('parse'))
 
                 print('======================update')
-                final = module.ammend(self.cvloc, self.prefix, existing,updata[file].get('update'))
+                if 'update' in current:
+                    existing = module.ammend(self.cvloc, self.prefix, existing,current.get('update'))
+
+                print('======================exist')
+                if 'add' in current:
+                    existing = module.add_new(self.cvloc, self.prefix,existing,current.get('add'))
 
 
-                complete = {'Header': meta.create(self.institution),file:final}
+
+
+                complete = {'Header': meta.create(self.institution),file:existing}
 
 
                 core.io.json_write(complete,'experiments.json')

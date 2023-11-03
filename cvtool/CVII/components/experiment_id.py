@@ -10,6 +10,8 @@ from p_tqdm import p_map
 from tqdm import tqdm
 whoami = __file__.split('/')[-1].replace('.py', '')
 from pprint import pprint
+from functools import partial
+
 
 
 # Logging 'info' level message using 'core.stdout.log' function
@@ -118,7 +120,7 @@ def check(key, compareset, experiment):
             f"\n\nMissing value: {set(experiment.get(key)) - compareset} \n\n in column '{key}' \n\n for {experiment}")
 
 
-def fix(exp):
+def fix(exp,update = False):
   dummy = deepcopy(template)
   dummy.update(exp[1])
 
@@ -144,11 +146,17 @@ def fix(exp):
     dummy[i] = int(dummy[i]) or 'none'
 
   # nones
-  if not dummy.get('parent_experiment_id')[0] == None:
+  if not dummy.get('parent_experiment_id')[0]:
     dummy['parent_experiment_id'] = ['none']
+
+
+  if update: # dont return all new variables, just those we are changing. 
+     dummy = core.io.filter_dict(dummy,exp[1])
 
   return exp[0],dummy
 
+
+fix_update  = partial(fix, update=True)
 
 
 def test(cvloc, prefix, experiments):
@@ -172,9 +180,10 @@ def test(cvloc, prefix, experiments):
             print(f"Validation failed:{name}  - {e}")
 
 
-        # id
+        #  exp_id checker. If no eperiment_id is found, this is automatically true
         assert name == experiment.get(
-            'experiment_id'), 'Experiment names do not match: ' + name
+            'experiment_id',name), 'Experiment names do not match: ' + name +experiment.get(
+            'experiment_id') +'-'
     pbar.set_description(f"Validation complete")
 
 #########################
@@ -184,15 +193,15 @@ def test(cvloc, prefix, experiments):
 def load_existing(cvloc, prefix, parse = None):
     fname = f"{cvloc}{prefix}{whoami}.json"
     core.io.exists(fname)
-    experiments = dict(p_map(fix,core.io.json_read(fname)[whoami].items(),desc= 'standardising existing experiments',disable=True))
+    load = dict(p_map(fix,core.io.json_read(fname)[whoami].items(),desc= 'standardising existing experiments',disable=True))
 
     
     if parse:
-      experiments = parse(experiments)
+      load = parse(load)
       # pprint(experiments)
     
-    test(cvloc, prefix, experiments)
-    return experiments
+    test(cvloc, prefix, load)
+    return load
 
 def add_new(cvloc, prefix, existing ,new):
 
@@ -210,12 +219,20 @@ def add_new(cvloc, prefix, existing ,new):
     return existing
 
 def ammend(cvloc,prefix,existing,overwrite):
-    overwrite = dict(p_map(fix,overwrite.items(),desc= 'standardising overwriting experiments',disable=True))
-    
-    test(cvloc, prefix, overwrite)
 
-    existing.update(overwrite)
+
+    overwrite = dict(p_map(fix_update,overwrite.items(),desc= 'standardising overwriting experiments',disable=True))
+    
+    # test the updated values
+    ecopy = deepcopy(existing)
+    ecopy.update(overwrite)
+    test(cvloc, prefix, ecopy)
+
+
+    existing = core.io.merge_entries(existing,overwrite,append = False)
     return existing
 
 
-
+# def append():
+#    Where we add items
+# is this needed, we can read and merge beforehand?

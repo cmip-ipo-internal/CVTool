@@ -238,6 +238,20 @@ def terminal():
     size = os.get_terminal_size()
     return size
 
+def filter_dict(input_dict, keys_to_keep):
+    """
+    Filters a dictionary to contain only key-value pairs with keys present in keys_to_keep list.
+    
+    Args:
+        input_dict (dict): Input dictionary.
+        keys_to_keep (list): List of keys to keep in the filtered dictionary.
+        
+    Returns:
+        dict: Filtered dictionary containing only specified keys.
+    """
+    return {key: input_dict[key] for key in keys_to_keep if key in input_dict}
+
+
 
 def merge_dict(dict1, dict2, overwrite_keys=None):
     """
@@ -282,6 +296,31 @@ def merge_dict(dict1, dict2, overwrite_keys=None):
 
     return merged_dict
 
+def merge_entries(dict1, dict2, append=True):
+    '''
+    When we are merging multiple items
+
+    append = true :: combines the values
+    append =false :: replaces the values 
+
+    '''
+    common_keys = set(dict1) & set(dict2)
+    for key in common_keys:
+        if not append:
+            # dict1[key] = dict1[key].update(dict2[key])
+
+            # for k2 in dict2[key]:
+            #     print(k2)
+            #     dict1[key][k2] = dict2[key][k2]
+
+            dict1[key] = {**dict1[key],**dict2[key]}
+        else:
+            dict1[key] = merge_dict(dict1[key],dict2[key],'all')
+
+    return dict1
+    
+
+
 
 # def copy_files(src_dir, dest_dir, prefix=''):
 #     # Walk through the source directory
@@ -324,3 +363,5 @@ def copy_files(src_dir, dest_dir, prefix=''):
                 shutil.copy2(src_item, dest_item)
 
     copy_recursive(src_dir, dest_dir)
+
+
